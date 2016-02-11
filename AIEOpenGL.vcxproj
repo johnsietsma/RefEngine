@@ -21,17 +21,34 @@
   <ItemGroup>
     <ClCompile Include="src\BaseApplication.cpp" />
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\GeometryCreator.cpp" />
     <ClCompile Include="src\Gizmos.cpp" />
     <ClCompile Include="src\gl_core_4_4.c" />
+    <ClCompile Include="src\Helpers.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\Program.cpp" />
     <ClCompile Include="src\TestApplication.cpp" />
+    <ClCompile Include="src\Grid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BaseApplication.h" />
     <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\GeometryCreator.h" />
     <ClInclude Include="src\Gizmos.h" />
     <ClInclude Include="src\gl_core_4_4.h" />
+    <ClInclude Include="src\Helpers.h" />
+    <ClInclude Include="src\Mesh.h" />
+    <ClInclude Include="src\Program.h" />
     <ClInclude Include="src\TestApplication.h" />
+    <ClInclude Include="src\Grid.h" />
+    <ClInclude Include="src\Vertex.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="data\shaders\color.vert" />
+    <None Include="data\shaders\default.vert" />
+    <None Include="data\shaders\red.frag" />
+    <None Include="data\shaders\vertexColor.frag" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{63494F4E-79FA-48AD-AA6C-BDF1FF1619FD}</ProjectGuid>

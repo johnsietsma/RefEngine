@@ -1,5 +1,6 @@
 #include "BaseApplication.h"
 #include "gl_core_4_4.h"
+#include "Helpers.h"
 
 #include <assert.h>
 #include <GLFW/glfw3.h>
@@ -43,7 +44,9 @@ bool BaseApplication::createWindow(const char* title, int width, int height) {
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	
+
+	TurnOnOpenGLDebugLogging();
+		
 	return true;
 }
 

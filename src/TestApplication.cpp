@@ -6,14 +6,17 @@
 #include <glm/ext.hpp>
 
 #include "Camera.h"
+#include "Grid.h"
 #include "Gizmos.h"
 
 using glm::vec3;
 using glm::vec4;
 using glm::mat4;
 
-TestApplication::TestApplication()
-	: m_camera(nullptr) {
+TestApplication::TestApplication() : 
+	m_camera(nullptr) ,
+	m_pGrid( std::make_shared<Grid>() )
+{
 
 }
 
@@ -22,7 +25,6 @@ TestApplication::~TestApplication() {
 }
 
 bool TestApplication::startup() {
-
 
 	// create a basic window
 	const glm::ivec2 windowSize(1024, 768);
@@ -35,19 +37,16 @@ bool TestApplication::startup() {
 	m_camera = new Camera(glm::radians(45.f), windowSize.x/(float)windowSize.y, 0.1f, 1000.f);
 	m_camera->setLookAtFrom(vec3(10, 10, 10), vec3(0));
 	
-	//////////////////////////////////////////////////////////////////////////
-	// YOUR STARTUP CODE HERE
-	//////////////////////////////////////////////////////////////////////////
 	m_pickPosition = glm::vec3(0);
+
+	if (!m_pGrid->create( glm::ivec2(10,10)) ) return false;
 
 	return true;
 }
 
 void TestApplication::shutdown() {
 
-	//////////////////////////////////////////////////////////////////////////
-	// YOUR SHUTDOWN CODE HERE
-	//////////////////////////////////////////////////////////////////////////
+	m_pGrid->destroy();
 
 	// delete our camera and cleanup gizmos
 	delete m_camera;
@@ -70,10 +69,6 @@ bool TestApplication::update(float deltaTime) {
 	// clear the gizmos out for this frame
 	Gizmos::clear();
 
-	//////////////////////////////////////////////////////////////////////////
-	// YOUR UPDATE CODE HERE
-	//////////////////////////////////////////////////////////////////////////
-
 	// an example of mouse picking
 	if (glfwGetMouseButton(m_window, 0) == GLFW_PRESS) {
 		double x = 0, y = 0;
@@ -83,6 +78,7 @@ bool TestApplication::update(float deltaTime) {
 		glm::vec4 plane(0, 1, 0, 0);
 		m_pickPosition = m_camera->pickAgainstPlane((float)x, (float)y, plane);
 	}
+
 	Gizmos::addTransform(glm::translate(m_pickPosition));
 
 	// ...for now let's add a grid to the gizmos
@@ -103,9 +99,7 @@ void TestApplication::draw() {
 	// clear the screen for this frame
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//////////////////////////////////////////////////////////////////////////
-	// DRAW YOUR THINGS HERE
-	//////////////////////////////////////////////////////////////////////////
+	m_pGrid->draw(m_camera->getProjectionView());
 
 	// display the 3D gizmos
 	Gizmos::draw(m_camera->getProjectionView());

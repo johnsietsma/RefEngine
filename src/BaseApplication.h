@@ -2,6 +2,9 @@
 
 struct GLFWwindow;
 
+/*
+	Derive you application class from BaseApplication.
+*/
 class BaseApplication {
 public:
 
