@@ -5,8 +5,8 @@ struct GLFWwindow;
 class BaseApplication {
 public:
 
-	BaseApplication() {}
-	virtual ~BaseApplication() {}
+	BaseApplication() : m_window(nullptr) {}
+	virtual ~BaseApplication();
 
 	void run();
 	

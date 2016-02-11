@@ -1,0 +1,58 @@
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
+
+# Build results
+build/
+
+bin/
+
+[Dd]ebug/
+[Rr]elease/
+
+x64/[Dd]ebug/
+x64/[Rr]elease/
+x86/[Dd]ebug/
+x86/[Rr]elease/
+
+
+*.ilk
+*.meta
+*.obj
+*.pch
+*.pdb
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+*.VC.opendb
+
+# Visual C++ cache files
+ipch/
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
+*.vcxproj.filters
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+
+# NuGet Packages
+*.nupkg
+# The packages folder can be ignored because of Package Restore
+**/packages/*
+# except build/, which is used as an MSBuild target.
+!**/packages/build/
+# If using the old MSBuild-Integrated Package Restore, uncomment this:
+#!**/packages/repositories.config
+

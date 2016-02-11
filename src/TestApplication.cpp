@@ -23,14 +23,16 @@ TestApplication::~TestApplication() {
 
 bool TestApplication::startup() {
 
+
 	// create a basic window
-	createWindow("AIE OpenGL Application", 1280, 720);
+	const glm::ivec2 windowSize(1024, 768);
+	createWindow("AIE OpenGL Application", windowSize.x, windowSize.y);
 
 	// start the gizmo system that can draw basic shapes
 	Gizmos::create();
 
 	// create a camera
-	m_camera = new Camera(glm::pi<float>() * 0.25f, 16 / 9.f, 0.1f, 1000.f);
+	m_camera = new Camera(glm::radians(45.f), windowSize.x/(float)windowSize.y, 0.1f, 1000.f);
 	m_camera->setLookAtFrom(vec3(10, 10, 10), vec3(0));
 	
 	//////////////////////////////////////////////////////////////////////////

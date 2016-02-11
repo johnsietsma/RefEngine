@@ -20,7 +20,7 @@ Camera::~Camera()
 
 void Camera::setPerspective(float fovY, float aspectRatio, float near, float far)
 {
-	m_projection = glm::perspective(glm::pi<float>() * 0.25f, 16 / 9.f, 0.1f, 1000.0f);
+	m_projection = glm::perspective(fovY, aspectRatio, near, far);
 	m_projectionView = m_projection * m_view;
 }
 

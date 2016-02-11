@@ -1,10 +1,20 @@
 #include "BaseApplication.h"
 #include "gl_core_4_4.h"
+
+#include <assert.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <iostream>
 
+BaseApplication::~BaseApplication() 
+{
+	assert(m_window == nullptr && "destroyWindow has not been called.");
+}
+
+
 bool BaseApplication::createWindow(const char* title, int width, int height) {
+	assert(m_window == nullptr);
+
 
 	if (glfwInit() == GL_FALSE)
 		return false;
@@ -41,6 +51,7 @@ void BaseApplication::destroyWindow() {
 
 	glfwDestroyWindow(m_window);
 	glfwTerminate();
+	m_window = nullptr;
 }
 
 void BaseApplication::run() {
