@@ -12,7 +12,7 @@ class Program
 {
 public:
 	Program() : m_programID((GLuint)-1) {};
-	~Program();
+	~Program() = default;
 
 	bool isValid() { return m_programID != (GLuint)-1; }
 	GLuint getId() const { return m_programID;  }

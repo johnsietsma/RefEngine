@@ -4,14 +4,6 @@
 
 #include <assert.h>
 
-Mesh::~Mesh()
-{
-	assert(m_VAO == -1 && "Mesh has not been destroyed.");
-}
-
-
-
-
 void Mesh::destroy()
 {
 	glDeleteVertexArrays(1, &m_VAO);

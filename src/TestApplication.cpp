@@ -41,9 +41,9 @@ bool TestApplication::startup() {
 	
 	m_pickPosition = glm::vec3(0);
 
-	if (!m_pVertexColoredGrid->create( glm::vec3(2,0.001f,0), glm::ivec2(5,5)) ) return false;
+	if (!m_pVertexColoredGrid->create( glm::vec3(2,0.01f,0), glm::ivec2(5,5)) ) return false;
 
-	if (!m_pTexturedQuad->create(glm::vec3(-2, 0.0002f, 0))) return false;
+	if (!m_pTexturedQuad->create(glm::vec3(-2, 0.02f, 0))) return false;
 
 	return true;
 }

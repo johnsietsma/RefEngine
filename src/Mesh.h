@@ -14,9 +14,6 @@
 class Mesh
 {
 public:
-	Mesh() = default;
-	~Mesh();
-
 	bool isValid() { return m_indexCount > 0 && m_VAO != (GLuint)-1; }
 
 	GLuint getVAO() const { return m_VAO; }

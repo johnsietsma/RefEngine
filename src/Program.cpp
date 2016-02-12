@@ -7,12 +7,6 @@
 #include <iostream>
 
 
-Program::~Program()
-{
-	assert(m_programID == (GLuint)-1 && "Program has not been destroyed.");
-}
-
-
 bool Program::create(const char* pVertShaderSource, const char* pFragShaderSource)
 {
 	assert(pVertShaderSource != nullptr);
