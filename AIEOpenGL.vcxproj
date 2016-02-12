@@ -29,7 +29,10 @@
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Program.cpp" />
     <ClCompile Include="src\TestApplication.cpp" />
-    <ClCompile Include="src\Grid.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\TexturedQuad.cpp" />
+    <ClCompile Include="src\Transform.cpp" />
+    <ClCompile Include="src\VertexColoredGrid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BaseApplication.h" />
@@ -40,14 +43,21 @@
     <ClInclude Include="src\Helpers.h" />
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\Program.h" />
+    <ClInclude Include="src\stb_image.h" />
     <ClInclude Include="src\TestApplication.h" />
-    <ClInclude Include="src\Grid.h" />
+    <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\TexturedQuad.h" />
+    <ClInclude Include="src\Transform.h" />
+    <ClInclude Include="src\VertexColoredGrid.h" />
     <ClInclude Include="src\Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data\shaders\color.vert" />
     <None Include="data\shaders\default.vert" />
     <None Include="data\shaders\red.frag" />
+    <None Include="data\shaders\tex.frag" />
+    <None Include="data\shaders\tex.vert" />
+    <None Include="data\shaders\uv.frag" />
     <None Include="data\shaders\vertexColor.frag" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

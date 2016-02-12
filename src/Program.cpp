@@ -57,3 +57,10 @@ void Program::setUniform(const char* uniformName, const glm::mat4& value)
 	assert(loc != -1);
 	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
 }
+
+void Program::setUniform(const char* uniformName, const int value)
+{
+	GLuint loc = glGetUniformLocation(m_programID, uniformName);
+	assert(loc != -1);
+	glUniform1i(loc, value);
+}

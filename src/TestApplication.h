@@ -8,7 +8,8 @@
 #include <memory>
 
 class Camera;
-class Grid;
+class VertexColoredGrid;
+class TexturedQuad;
 
 class TestApplication : public BaseApplication {
 public:
@@ -29,6 +30,7 @@ private:
 	// this is an example position for camera picking
 	glm::vec3	m_pickPosition;
 
-	std::shared_ptr<Grid> m_pGrid;
+	std::shared_ptr<VertexColoredGrid> m_pVertexColoredGrid;
+	std::shared_ptr<TexturedQuad> m_pTexturedQuad;
 
 };

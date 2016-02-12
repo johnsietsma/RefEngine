@@ -6,7 +6,8 @@
 #include <glm/ext.hpp>
 
 #include "Camera.h"
-#include "Grid.h"
+#include "TexturedQuad.h"
+#include "VertexColoredGrid.h"
 #include "Gizmos.h"
 
 using glm::vec3;
@@ -15,7 +16,8 @@ using glm::mat4;
 
 TestApplication::TestApplication() : 
 	m_camera(nullptr) ,
-	m_pGrid( std::make_shared<Grid>() )
+	m_pVertexColoredGrid( std::make_shared<VertexColoredGrid>() ),
+	m_pTexturedQuad( std::make_shared<TexturedQuad>() )
 {
 
 }
@@ -35,18 +37,21 @@ bool TestApplication::startup() {
 
 	// create a camera
 	m_camera = new Camera(glm::radians(45.f), windowSize.x/(float)windowSize.y, 0.1f, 1000.f);
-	m_camera->setLookAtFrom(vec3(10, 10, 10), vec3(0));
+	m_camera->setLookAtFrom(vec3(0, 10, 10), vec3(0));
 	
 	m_pickPosition = glm::vec3(0);
 
-	if (!m_pGrid->create( glm::ivec2(10,10)) ) return false;
+	if (!m_pVertexColoredGrid->create( glm::vec3(2,0.001f,0), glm::ivec2(5,5)) ) return false;
+
+	if (!m_pTexturedQuad->create(glm::vec3(-2, 0.0002f, 0))) return false;
 
 	return true;
 }
 
 void TestApplication::shutdown() {
 
-	m_pGrid->destroy();
+	m_pVertexColoredGrid->destroy();
+	m_pTexturedQuad->destroy();
 
 	// delete our camera and cleanup gizmos
 	delete m_camera;
@@ -99,7 +104,9 @@ void TestApplication::draw() {
 	// clear the screen for this frame
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	m_pGrid->draw(m_camera->getProjectionView());
+	glm::mat4 projView = m_camera->getProjectionView();
+	m_pVertexColoredGrid->draw(projView);
+	m_pTexturedQuad->draw(projView);
 
 	// display the 3D gizmos
 	Gizmos::draw(m_camera->getProjectionView());

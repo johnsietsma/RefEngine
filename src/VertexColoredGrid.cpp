@@ -1,4 +1,4 @@
-#include "Grid.h"
+#include "VertexColoredGrid.h"
 
 #include "gl_core_4_4.h"
 #include "GeometryCreator.h"
@@ -10,8 +10,9 @@
 #include <assert.h>
 #include <string>
 
-bool Grid::create( const glm::ivec2& gridSize )
+bool VertexColoredGrid::create( const glm::vec3& pos, const glm::ivec2& gridSize )
 {
+	m_transform.Translate(pos);
 
 	std::string vertShader = ReadFile("./data/shaders/color.vert");
 	if (vertShader.length() == 0) return false;
@@ -38,18 +39,18 @@ bool Grid::create( const glm::ivec2& gridSize )
 }
 
 
-void Grid::destroy()
+void VertexColoredGrid::destroy()
 {
 	m_mesh.destroy();
 	m_program.destroy();
 }
 
 
-void Grid::draw( const glm::mat4& projectionViewMatrix )
+void VertexColoredGrid::draw( const glm::mat4& projectionViewMatrix )
 {
 	assert(m_program.isValid());
 	glUseProgram(m_program.getId());
-	m_program.setUniform("projectionView", projectionViewMatrix);
+	m_program.setUniform("projectionView", projectionViewMatrix * m_transform.GetMatrix());
 
 	assert(m_mesh.isValid());
 	glBindVertexArray(m_mesh.getVAO());

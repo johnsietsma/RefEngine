@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
 /*
@@ -13,4 +14,10 @@ struct Vertex_PositionColor
 {
 	glm::vec4 position;
 	glm::vec4 color;
+};
+
+struct Vertex_PositionTexCoord
+{
+	glm::vec4 position;
+	glm::vec2 uv;
 };

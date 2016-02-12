@@ -21,6 +21,7 @@ public:
 	void destroy();
 
 	void setUniform(const char* uniformName, const glm::mat4& value);
+	void setUniform(const char* uniformName, const int value);
 
 private:
 	GLuint m_programID;
