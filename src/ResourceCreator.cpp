@@ -3,7 +3,8 @@
 #include "GeometryCreator.h"
 #include "Helpers.h"
 
-#define STB_IMAGE_IMPLEMENTATION
+#include "FBXFile.h"
+
 #include "stb_image.h"
 
 #include <string>
@@ -61,5 +62,4 @@ Texture ResourceCreator::CreateTexture( const char* pTextureFilename )
 
 	return texture;
 }
-
 

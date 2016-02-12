@@ -20,7 +20,7 @@ public:
 	bool create(const char* pVertShaderSource, const char* pFragShaderSource);
 	void destroy();
 
-	void setUniform(const char* uniformName, const glm::mat4& value);
+	void setUniform(const char* uniformName, const glm::mat4& value, int count=1);
 	void setUniform(const char* uniformName, const int value);
 
 private:

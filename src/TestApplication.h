@@ -11,6 +11,7 @@ class Camera;
 class VertexColoredGrid;
 class TexturedQuad;
 class SpriteSheetQuad;
+class FBXMesh;
 
 class TestApplication : public BaseApplication {
 public:
@@ -33,5 +34,6 @@ private:
 
 	std::shared_ptr<VertexColoredGrid> m_pVertexColoredGrid;
 	std::shared_ptr<SpriteSheetQuad> m_pSpriteSheetQuad;
+	std::shared_ptr<FBXMesh> m_pFBXMesh;
 
 };

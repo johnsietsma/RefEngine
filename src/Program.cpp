@@ -48,16 +48,16 @@ void Program::destroy()
 	m_programID = (GLuint)-1;
 }
 
-void Program::setUniform(const char* uniformName, const glm::mat4& value)
+void Program::setUniform(const char* uniformName, const glm::mat4& value, int count)
 {
 	GLuint loc = glGetUniformLocation(m_programID, uniformName);
 	assert(loc != -1);
-	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
+	glUniformMatrix4fv(loc, count, GL_FALSE, glm::value_ptr(value));
 }
 
 void Program::setUniform(const char* uniformName, const int value)
 {
 	GLuint loc = glGetUniformLocation(m_programID, uniformName);
-	//assert(loc != -1);
+	assert(loc != -1);
 	glUniform1i(loc, value);
 }

@@ -14,5 +14,4 @@ public:
 	static Program CreateProgram(const char* pVertexShaderFilename, const char* pFragmentShaderFilename);
 
 	static Texture CreateTexture(const char* pTextureFilename);
-
 };

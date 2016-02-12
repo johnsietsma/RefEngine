@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gl_core_4_4.h"
+#include "FBXFile.h"
 #include "Vertex.h"
 
 #include <assert.h>
@@ -56,6 +57,34 @@ private:
 
 	}
 
+	template<>
+	void SetupVertexAttributes<FBXVertex>()
+	{
+		// Position vertex attribute
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, position)));
+
+		// Texcoord vertex attribute
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, texCoord1)));
+
+		// Normal vertex attribute
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, normal)));
+
+		// Tangent vertex attribute
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, tangent)));
+
+		// Weights vertex attribute
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, weights)));
+
+		// Indices vertex attribute
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, indices)));
+	}
+
 	unsigned int m_indexCount = 0;
 	GLuint m_VAO = (GLuint)-1;
 	GLuint m_VBO = (GLuint)-1;
@@ -78,7 +107,7 @@ bool Mesh::create(T* pVertices, unsigned int vertexCount, unsigned int* pIndices
 
 	glGenBuffers(1, &m_VBO); // Create the VBO
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO); // Make it active
-	glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(Vertex_PositionColor), pVertices, GL_STATIC_DRAW); // Upload data
+	glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(T), pVertices, GL_STATIC_DRAW); // Upload data
 
 	SetupVertexAttributes<T>();
 

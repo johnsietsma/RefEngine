@@ -6,6 +6,7 @@
 #include <glm/ext.hpp>
 
 #include "Camera.h"
+#include "FBXMesh.h"
 #include "TexturedQuad.h"
 #include "SpriteSheetQuad.h"
 #include "VertexColoredGrid.h"
@@ -18,7 +19,8 @@ using glm::mat4;
 TestApplication::TestApplication() : 
 	m_camera(nullptr) ,
 	m_pVertexColoredGrid( std::make_shared<VertexColoredGrid>() ),
-	m_pSpriteSheetQuad( std::make_shared<SpriteSheetQuad>() )
+	m_pSpriteSheetQuad( std::make_shared<SpriteSheetQuad>() ),
+	m_pFBXMesh( std::make_shared<FBXMesh>() )
 {
 
 }
@@ -45,6 +47,8 @@ bool TestApplication::startup() {
 	if (!m_pVertexColoredGrid->create( glm::vec3(2,0.01f,0), glm::ivec2(5,5)) ) return false;
 
 	if (!m_pSpriteSheetQuad->create(glm::vec3(-2, 0.02f, 0), "./data/textures/spritesheet.png", 4, 4)) return false;
+
+	if (!m_pFBXMesh->create(glm::vec3(0, 0, -2), "./data/models/Pyro/pyro.fbx") ) return false;
 
 	return true;
 }
@@ -73,6 +77,8 @@ bool TestApplication::update(float deltaTime) {
 	m_camera->update(deltaTime);
 
 	m_pSpriteSheetQuad->update(deltaTime);
+
+	m_pFBXMesh->update(deltaTime);
 
 	// clear the gizmos out for this frame
 	Gizmos::clear();
@@ -110,6 +116,7 @@ void TestApplication::draw() {
 	glm::mat4 projView = m_camera->getProjectionView();
 	m_pVertexColoredGrid->draw(projView);
 	m_pSpriteSheetQuad->draw(projView);
+	m_pFBXMesh->draw(projView);
 
 	// display the 3D gizmos
 	Gizmos::draw(m_camera->getProjectionView());

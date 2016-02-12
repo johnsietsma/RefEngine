@@ -17,6 +17,7 @@ bool SpriteSheetQuad::create(const glm::vec3& pos, const char* pSpriteSheetFilen
 	if (!m_program.isValid()) return false;
 
 	// Tell the sampler to look in texture unit 0
+	glUseProgram(m_program.getId());
 	m_program.setUniform("diffuseSampler", 0);
 
 	// ---- Create the quad geo ----
