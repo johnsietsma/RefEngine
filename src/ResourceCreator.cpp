@@ -31,10 +31,10 @@ Program ResourceCreator::CreateProgram(const char* pVertexShaderFilename, const 
 {
 	Program program;
 
-	std::string vertShader = ReadFile("./data/shaders/tex.vert");
+	std::string vertShader = ReadFile(pVertexShaderFilename);
 	if (vertShader.length() == 0) return program;
 
-	std::string fragShader = ReadFile("./data/shaders/tex.frag");
+	std::string fragShader = ReadFile(pFragmentShaderFilename);
 	if (fragShader.length() == 0) return program;
 
 	if (!program.create(vertShader.c_str(), fragShader.c_str())) return program;

@@ -15,18 +15,21 @@ bool Program::create(const char* pVertShaderSource, const char* pFragShaderSourc
 	GLuint vertShaderId = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertShaderId, 1, &pVertShaderSource, 0);
 	glCompileShader(vertShaderId);
-	if (!CheckCompileStatus(vertShaderId)) return false;
+	if (!CheckCompileStatus(vertShaderId)) 
+		return false;
 
 	GLuint fragShaderId = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragShaderId, 1, &pFragShaderSource, 0);
 	glCompileShader(fragShaderId);
-	if (!CheckCompileStatus(fragShaderId))  return false;
+	if (!CheckCompileStatus(fragShaderId))  
+		return false;
 
 	GLuint programId = glCreateProgram();
 	glAttachShader(programId, vertShaderId);
 	glAttachShader(programId, fragShaderId);
 	glLinkProgram(programId);
-	if (!CheckLinkStatus(programId)) return false;
+	if (!CheckLinkStatus(programId)) 
+		return false;
 	
 	// Sucessfully created the program, it's safe to store it now
 	m_programID = programId;
@@ -39,7 +42,7 @@ bool Program::create(const char* pVertShaderSource, const char* pFragShaderSourc
 
 void Program::destroy()
 {
-	assert(m_programID != (GLuint)-1 && "Program has not been created.");
+	if (m_programID == (GLuint)-1) return;
 
 	glDeleteProgram(m_programID);
 	m_programID = (GLuint)-1;
@@ -55,6 +58,6 @@ void Program::setUniform(const char* uniformName, const glm::mat4& value)
 void Program::setUniform(const char* uniformName, const int value)
 {
 	GLuint loc = glGetUniformLocation(m_programID, uniformName);
-	assert(loc != -1);
+	//assert(loc != -1);
 	glUniform1i(loc, value);
 }

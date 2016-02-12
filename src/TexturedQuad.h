@@ -13,7 +13,7 @@
 class TexturedQuad
 {
 public:
-	bool create( const glm::vec3& pos );
+	bool create( const glm::vec3& pos, const char* pTextureFilename );
 	void destroy();
 
 	void draw(const glm::mat4& projectionViewMatrix);

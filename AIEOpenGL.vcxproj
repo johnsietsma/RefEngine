@@ -29,6 +29,7 @@
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Program.cpp" />
     <ClCompile Include="src\ResourceCreator.cpp" />
+    <ClCompile Include="src\SpriteSheetQuad.cpp" />
     <ClCompile Include="src\TestApplication.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\TexturedQuad.cpp" />
@@ -45,6 +46,7 @@
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\Program.h" />
     <ClInclude Include="src\ResourceCreator.h" />
+    <ClInclude Include="src\SpriteSheetQuad.h" />
     <ClInclude Include="src\stb_image.h" />
     <ClInclude Include="src\TestApplication.h" />
     <ClInclude Include="src\Texture.h" />
@@ -57,6 +59,7 @@
     <None Include="data\shaders\color.vert" />
     <None Include="data\shaders\default.vert" />
     <None Include="data\shaders\red.frag" />
+    <None Include="data\shaders\spriteAnimation.frag" />
     <None Include="data\shaders\tex.frag" />
     <None Include="data\shaders\tex.vert" />
     <None Include="data\shaders\uvDebug.frag" />

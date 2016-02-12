@@ -7,6 +7,7 @@
 
 #include "Camera.h"
 #include "TexturedQuad.h"
+#include "SpriteSheetQuad.h"
 #include "VertexColoredGrid.h"
 #include "Gizmos.h"
 
@@ -17,7 +18,7 @@ using glm::mat4;
 TestApplication::TestApplication() : 
 	m_camera(nullptr) ,
 	m_pVertexColoredGrid( std::make_shared<VertexColoredGrid>() ),
-	m_pTexturedQuad( std::make_shared<TexturedQuad>() )
+	m_pSpriteSheetQuad( std::make_shared<SpriteSheetQuad>() )
 {
 
 }
@@ -43,7 +44,7 @@ bool TestApplication::startup() {
 
 	if (!m_pVertexColoredGrid->create( glm::vec3(2,0.01f,0), glm::ivec2(5,5)) ) return false;
 
-	if (!m_pTexturedQuad->create(glm::vec3(-2, 0.02f, 0))) return false;
+	if (!m_pSpriteSheetQuad->create(glm::vec3(-2, 0.02f, 0), "./data/textures/spritesheet.png", 4, 4)) return false;
 
 	return true;
 }
@@ -51,7 +52,7 @@ bool TestApplication::startup() {
 void TestApplication::shutdown() {
 
 	m_pVertexColoredGrid->destroy();
-	m_pTexturedQuad->destroy();
+	m_pSpriteSheetQuad->destroy();
 
 	// delete our camera and cleanup gizmos
 	delete m_camera;
@@ -70,6 +71,8 @@ bool TestApplication::update(float deltaTime) {
 
 	// update the camera's movement
 	m_camera->update(deltaTime);
+
+	m_pSpriteSheetQuad->update(deltaTime);
 
 	// clear the gizmos out for this frame
 	Gizmos::clear();
@@ -106,7 +109,7 @@ void TestApplication::draw() {
 
 	glm::mat4 projView = m_camera->getProjectionView();
 	m_pVertexColoredGrid->draw(projView);
-	m_pTexturedQuad->draw(projView);
+	m_pSpriteSheetQuad->draw(projView);
 
 	// display the 3D gizmos
 	Gizmos::draw(m_camera->getProjectionView());

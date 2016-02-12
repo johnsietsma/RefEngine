@@ -10,6 +10,7 @@
 class Camera;
 class VertexColoredGrid;
 class TexturedQuad;
+class SpriteSheetQuad;
 
 class TestApplication : public BaseApplication {
 public:
@@ -31,6 +32,6 @@ private:
 	glm::vec3	m_pickPosition;
 
 	std::shared_ptr<VertexColoredGrid> m_pVertexColoredGrid;
-	std::shared_ptr<TexturedQuad> m_pTexturedQuad;
+	std::shared_ptr<SpriteSheetQuad> m_pSpriteSheetQuad;
 
 };
