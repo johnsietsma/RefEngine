@@ -12,6 +12,7 @@ class VertexColoredGrid;
 class TexturedQuad;
 class SpriteSheetQuad;
 class FBXMesh;
+class ParticleEmitter;
 
 class TestApplication : public BaseApplication {
 public:
@@ -22,7 +23,7 @@ public:
 	virtual bool startup();
 	virtual void shutdown();
 
-	virtual bool update(float deltaTime);
+	virtual bool update(float deltaTime) override;
 	virtual void draw();
 
 private:
@@ -35,5 +36,6 @@ private:
 	std::shared_ptr<VertexColoredGrid> m_pVertexColoredGrid;
 	std::shared_ptr<SpriteSheetQuad> m_pSpriteSheetQuad;
 	std::shared_ptr<FBXMesh> m_pFBXMesh;
+	std::shared_ptr<ParticleEmitter> m_pParticleEmitter;
 
 };

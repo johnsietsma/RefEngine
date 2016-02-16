@@ -18,6 +18,7 @@ public:
 	bool isValid() { return m_indexCount > 0 && m_VAO != (GLuint)-1; }
 
 	GLuint getVAO() const { return m_VAO; }
+	GLuint getVBO() const { return m_VBO; }
 	GLuint getIndexCount() const { return m_indexCount; }
 
 	// Setup OpenGL buffers and vertex attributes to be able to render these vertices.

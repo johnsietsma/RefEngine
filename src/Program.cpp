@@ -9,6 +9,7 @@
 
 bool Program::create(const char* pVertShaderSource, const char* pFragShaderSource)
 {
+	assert(!isValid());
 	assert(pVertShaderSource != nullptr);
 	assert(pFragShaderSource != nullptr);
 
@@ -58,6 +59,8 @@ void Program::setUniform(const char* uniformName, const glm::mat4& value, int co
 void Program::setUniform(const char* uniformName, const int value)
 {
 	GLuint loc = glGetUniformLocation(m_programID, uniformName);
-	assert(loc != -1);
+	if (loc == -1) {
+		std::cerr << "Couldn't find uniform: " << uniformName << std::endl;
+	}
 	glUniform1i(loc, value);
 }

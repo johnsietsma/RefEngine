@@ -7,6 +7,7 @@
 
 #include "Camera.h"
 #include "FBXMesh.h"
+#include "ParticleEmitter.h"
 #include "TexturedQuad.h"
 #include "SpriteSheetQuad.h"
 #include "VertexColoredGrid.h"
@@ -20,7 +21,8 @@ TestApplication::TestApplication() :
 	m_camera(nullptr) ,
 	m_pVertexColoredGrid( std::make_shared<VertexColoredGrid>() ),
 	m_pSpriteSheetQuad( std::make_shared<SpriteSheetQuad>() ),
-	m_pFBXMesh( std::make_shared<FBXMesh>() )
+	m_pFBXMesh( std::make_shared<FBXMesh>() ),
+	m_pParticleEmitter( std::make_shared<ParticleEmitter>() )
 {
 
 }
@@ -44,19 +46,38 @@ bool TestApplication::startup() {
 	
 	m_pickPosition = glm::vec3(0);
 
-	if (!m_pVertexColoredGrid->create( glm::vec3(2,0.01f,0), glm::ivec2(5,5)) ) return false;
+	//if (!m_pVertexColoredGrid->create( glm::vec3(2,0.01f,0), glm::ivec2(5,5)) ) return false;
 
-	if (!m_pSpriteSheetQuad->create(glm::vec3(-2, 0.02f, 0), "./data/textures/spritesheet.png", 4, 4)) return false;
+	//if (!m_pSpriteSheetQuad->create(glm::vec3(-2, 0.02f, 0), "./data/textures/spritesheet.png", 4, 4)) return false;
 
-	if (!m_pFBXMesh->create(glm::vec3(0, 0, -2), "./data/models/Pyro/pyro.fbx") ) return false;
+	//if (!m_pFBXMesh->create(glm::vec3(0, 0, -2), "./data/models/Pyro/pyro.fbx") ) return false;
+
+	/*
+	(1000, 500, 0.1f, 1.0f, 1, 5, 1, 0.1f, glm::vec4(1, 0, 0, 1), glm::vec4(1, 1, 0, 1));
+	*/
+
+	ParticleEmitterConfig config;
+	config.emitRate = 500;
+	config.startColor = glm::vec4(1, 0, 0, 1);
+	config.endColor = glm::vec4(1, 1, 0, 1);
+	config.lifespanMin = 0.1f;
+	config.lifespanMax = 5;
+	config.particleCount = 1000;
+	config.startSize = 1.f;
+	config.endSize = 0.1f;
+	config.velocityMin = 0.1f;
+	config.velocityMax = 1.0f;
+
+	if (!m_pParticleEmitter->create(config)) return false;
 
 	return true;
 }
 
 void TestApplication::shutdown() {
 
-	m_pVertexColoredGrid->destroy();
-	m_pSpriteSheetQuad->destroy();
+	//m_pVertexColoredGrid->destroy();
+	//m_pSpriteSheetQuad->destroy();
+	m_pParticleEmitter->destroy();
 
 	// delete our camera and cleanup gizmos
 	delete m_camera;
@@ -76,9 +97,11 @@ bool TestApplication::update(float deltaTime) {
 	// update the camera's movement
 	m_camera->update(deltaTime);
 
-	m_pSpriteSheetQuad->update(deltaTime);
+	//m_pSpriteSheetQuad->update(deltaTime);
 
-	m_pFBXMesh->update(deltaTime);
+	//m_pFBXMesh->update(deltaTime);
+
+	m_pParticleEmitter->update(deltaTime, m_camera->getTransform());
 
 	// clear the gizmos out for this frame
 	Gizmos::clear();
@@ -114,9 +137,10 @@ void TestApplication::draw() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glm::mat4 projView = m_camera->getProjectionView();
-	m_pVertexColoredGrid->draw(projView);
-	m_pSpriteSheetQuad->draw(projView);
-	m_pFBXMesh->draw(projView);
+	//m_pVertexColoredGrid->draw(projView);
+	//m_pSpriteSheetQuad->draw(projView);
+	//m_pFBXMesh->draw(projView);
+	m_pParticleEmitter->draw(projView);
 
 	// display the 3D gizmos
 	Gizmos::draw(m_camera->getProjectionView());
