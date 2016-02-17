@@ -51,13 +51,15 @@ void Program::destroy()
 
 void Program::setUniform(const char* uniformName, const glm::mat4& value, int count)
 {
-	GLuint loc = glGetUniformLocation(m_programID, uniformName);
+    glUseProgram(m_programID);
+    GLuint loc = glGetUniformLocation(m_programID, uniformName);
 	assert(loc != -1);
 	glUniformMatrix4fv(loc, count, GL_FALSE, glm::value_ptr(value));
 }
 
 void Program::setUniform(const char* uniformName, const int value)
 {
+    glUseProgram(m_programID);
 	GLuint loc = glGetUniformLocation(m_programID, uniformName);
 	if (loc == -1) {
 		std::cerr << "Couldn't find uniform: " << uniformName << std::endl;

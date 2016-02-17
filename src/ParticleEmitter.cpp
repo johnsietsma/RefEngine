@@ -1,14 +1,19 @@
 #include "ParticleEmitter.h"
+
+#include "Camera.h"
 #include "Particle.h"
 #include "ResourceCreator.h"
 
 #include <assert.h>
 
 
-ParticleEmitter::ParticleEmitter() :
+ParticleEmitter::ParticleEmitter(const ParticleEmitterConfig& config, const Camera* pBillboardCamera) :
+    m_pBillboardCamera(pBillboardCamera),
+    m_config(config),
 	m_pParticles(nullptr),
 	m_pVertices(nullptr),
-	m_firstDeadIndex(-1)
+	m_firstDeadIndex(-1),
+    m_emitTimer(-1)
 {
 
 }
@@ -18,14 +23,13 @@ ParticleEmitter::~ParticleEmitter()
 
 }
 
-bool ParticleEmitter::create(ParticleEmitterConfig config)
+bool ParticleEmitter::create()
 {
 	assert(!isValid());
 
 	m_program = ResourceCreator::CreateProgram("./data/shaders/color.vert", "./data/shaders/vertexColor.frag");
 	if (!m_program.isValid()) return false;
 
-	m_config = config;
 	m_emitTimer = 0;
 
 	m_pParticles = new Particle[m_config.particleCount];
@@ -101,7 +105,7 @@ void ParticleEmitter::emit()
 
 }
 
-void ParticleEmitter::update(float deltaTime, const glm::mat4& camMatrix)
+void ParticleEmitter::update(float deltaTime)
 {
 	m_emitTimer += deltaTime;
 
@@ -147,6 +151,7 @@ void ParticleEmitter::update(float deltaTime, const glm::mat4& camMatrix)
 		m_pVertices[vertexIndex + 3].color = particle->color;
 
 		// create billboard
+        const glm::mat4 camMatrix = m_pBillboardCamera->getTransform();
 		glm::vec3 zAxis = glm::normalize(glm::vec3(camMatrix[3]) - particle->position);
 		glm::vec3 xAxis = glm::cross(glm::vec3(camMatrix[1]), zAxis);
 		glm::vec3 yAxis = glm::cross(zAxis, xAxis);
@@ -175,13 +180,13 @@ void ParticleEmitter::billboardParticle(unsigned int vertexIndex, const glm::mat
 		glm::vec4(particle->position, 0);
 }
 
-void ParticleEmitter::draw(const glm::mat4& projView)
+void ParticleEmitter::draw(const Camera& camera)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, m_mesh.getVBO());
 	glBufferSubData(GL_ARRAY_BUFFER, 0, m_firstDeadIndex * 4 * sizeof(Vertex_PositionColor), m_pVertices);
 
 	glUseProgram(m_program.getId());
-	m_program.setUniform("projectionView", projView);
+	m_program.setUniform("projectionView", camera.getProjectionView());
 	glBindVertexArray(m_mesh.getVAO());
 	glDrawElements(GL_TRIANGLES, m_firstDeadIndex * 6, GL_UNSIGNED_INT, 0);
 }

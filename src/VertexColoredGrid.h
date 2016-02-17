@@ -1,26 +1,33 @@
 #pragma once
 
+#include "GameObject.h"
 #include "Mesh.h"
 #include "Program.h"
-#include "Transform.h"
 
 #include <glm/vec2.hpp>
-#include <glm/mat4x4.hpp>
+
+class Camera;
 
 /*
 	A class that generates a simple grid.
 */
-class VertexColoredGrid
+class VertexColoredGrid : public GameObject
 {
 public:
-	bool create( const glm::vec3& pos, const glm::ivec2& gridSize );
-	void destroy();
+    VertexColoredGrid(const glm::vec3& pos, const glm::ivec2& gridSize) :
+        GameObject(pos),
+        m_gridSize(gridSize)
+    {}
 
-	void draw(const glm::mat4& projectionViewMatrix);
+	bool create() override;
+	void destroy() override;
+
+    void update(float deltaTime) {} // no-op
+	void draw( const Camera& camera );
 
 private:
 	Mesh m_mesh;
 	Program m_program;
-	Transform m_transform;
+    glm::ivec2 m_gridSize;
 };
 

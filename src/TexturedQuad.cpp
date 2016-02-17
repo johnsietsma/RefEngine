@@ -1,15 +1,13 @@
 #include "TexturedQuad.h"
 
+#include "Camera.h"
 #include "gl_core_4_4.h"
 #include "ResourceCreator.h"
 
 #include <assert.h>
 
-bool TexturedQuad::create(const glm::vec3& pos, const char* pTextureFilename)
+bool TexturedQuad::create()
 {
-	m_transform.Translate(pos);
-
-
 	m_program = ResourceCreator::CreateProgram("./data/shaders/tex.vert", "./data/shaders/tex.frag");
 	if (!m_program.isValid()) return false;
 
@@ -22,7 +20,7 @@ bool TexturedQuad::create(const glm::vec3& pos, const char* pTextureFilename)
 	if (!m_mesh.isValid()) return false;
 
 	// ---- Create the texture ----
-	m_texture = ResourceCreator::CreateTexture(pTextureFilename);
+	m_texture = ResourceCreator::CreateTexture(m_filename.c_str());
 	if (!m_texture.isValid()) return false;
 
 
@@ -38,12 +36,12 @@ void TexturedQuad::destroy()
 }
 
 
-void TexturedQuad::draw( const glm::mat4& projectionViewMatrix )
+void TexturedQuad::draw( const Camera& camera )
 {
 	// Use the program
 	assert(m_program.isValid());
 	glUseProgram(m_program.getId());
-	m_program.setUniform("projectionView", projectionViewMatrix * m_transform.GetMatrix());
+	m_program.setUniform("projectionView", camera.getProjectionView() * getTransform().GetMatrix());
 
 	// Bind the mesh
 	assert(m_mesh.isValid());

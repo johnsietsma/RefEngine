@@ -42,6 +42,7 @@
     <ClInclude Include="src\BaseApplication.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\FBXMesh.h" />
+    <ClInclude Include="src\GameObject.h" />
     <ClInclude Include="src\GeometryCreator.h" />
     <ClInclude Include="src\Gizmos.h" />
     <ClInclude Include="src\gl_core_4_4.h" />
@@ -70,6 +71,10 @@
     <None Include="data\shaders\tex.vert" />
     <None Include="data\shaders\uvDebug.frag" />
     <None Include="data\shaders\vertexColor.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="data\textures\crate.png" />
+    <Image Include="data\textures\spritesheet.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{63494F4E-79FA-48AD-AA6C-BDF1FF1619FD}</ProjectGuid>

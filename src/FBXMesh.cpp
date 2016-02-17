@@ -5,18 +5,20 @@
 
 #include <assert.h>
 
-bool FBXMesh::create(const glm::vec3& pos, const char* pMeshFilename)
+FBXMesh::FBXMesh(const Transform& transform, const char* pMeshFilename) :
+    GameObject(transform),
+    m_meshFileName(pMeshFilename)
+{}
+
+
+bool FBXMesh::create()
 {
-	m_transform.Translate(pos);
-	m_transform.SetScale(glm::vec3(0.001f, 0.001f, 0.001f));
-
-
 	m_program = ResourceCreator::CreateProgram("./data/shaders/skinning.vert", "./data/shaders/tex.frag");
 	if (!m_program.isValid()) return false;
 
 
 	// ---- Create the quad geo ----
-	if (!m_fbxFile.load(pMeshFilename)) return false;
+	if (!m_fbxFile.load(m_meshFileName.c_str())) return false;
 	m_fbxFile.initialiseOpenGLTextures();
 
 
@@ -49,6 +51,7 @@ bool FBXMesh::create(const glm::vec3& pos, const char* pMeshFilename)
 void FBXMesh::destroy()
 {
 	m_fbxFile.unload();
+
 	m_program.destroy();
 	for (auto& mesh : m_meshes) {
 		mesh.destroy();
@@ -77,12 +80,12 @@ void FBXMesh::update(float deltaTime)
 
 }
 
-void FBXMesh::draw( const glm::mat4& projectionViewMatrix )
+void FBXMesh::draw(const Camera& camera)
 {
 	// Use the program
 	assert(m_program.isValid());
 	glUseProgram(m_program.getId());
-	m_program.setUniform("projectionView", projectionViewMatrix * m_transform.GetMatrix());
+	m_program.setUniform("projectionView", camera.getProjectionView() * getTransform().GetMatrix());
 
 	// One diffuse texture for each mesh
 	assert(m_meshes.size() == m_diffuseTextureIds.size());

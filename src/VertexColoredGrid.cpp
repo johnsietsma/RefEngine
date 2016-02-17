@@ -1,5 +1,6 @@
 #include "VertexColoredGrid.h"
 
+#include "Camera.h"
 #include "gl_core_4_4.h"
 #include "GeometryCreator.h"
 #include "Helpers.h"
@@ -10,10 +11,8 @@
 #include <assert.h>
 #include <string>
 
-bool VertexColoredGrid::create( const glm::vec3& pos, const glm::ivec2& gridSize )
+bool VertexColoredGrid::create()
 {
-	m_transform.Translate(pos);
-
 	std::string vertShader = ReadFile("./data/shaders/color.vert");
 	if (vertShader.length() == 0) return false;
 
@@ -26,10 +25,10 @@ bool VertexColoredGrid::create( const glm::vec3& pos, const glm::ivec2& gridSize
 	Vertex_PositionColor* pGridVertices;
 	unsigned int* pIndices;
 
-	GeometryCreator::createGrid(gridSize.x, gridSize.y, &pGridVertices, &pIndices);
+	GeometryCreator::createGrid(m_gridSize.x, m_gridSize.y, &pGridVertices, &pIndices);
 
-	unsigned int vertexCount = gridSize.x * gridSize.y;
-	unsigned int indexCount = (gridSize.x - 1) * (gridSize.y - 1) * 6;
+	unsigned int vertexCount = m_gridSize.x * m_gridSize.y;
+	unsigned int indexCount = (m_gridSize.x - 1) * (m_gridSize.y - 1) * 6;
 	m_mesh.create(pGridVertices, vertexCount, pIndices, indexCount);
 
 	delete[] pGridVertices;
@@ -46,11 +45,11 @@ void VertexColoredGrid::destroy()
 }
 
 
-void VertexColoredGrid::draw( const glm::mat4& projectionViewMatrix )
+void VertexColoredGrid::draw( const Camera& camera )
 {
 	assert(m_program.isValid());
 	glUseProgram(m_program.getId());
-	m_program.setUniform("projectionView", projectionViewMatrix * m_transform.GetMatrix());
+	m_program.setUniform("projectionView", camera.getProjectionView() * getTransform().GetMatrix());
 
 	assert(m_mesh.isValid());
 	glBindVertexArray(m_mesh.getVAO());

@@ -1,8 +1,10 @@
 #pragma once
 
+#include "GameObject.h"
 #include "Mesh.h"
 #include "Program.h"
 
+class Camera;
 struct Particle;
 
 struct ParticleEmitterConfig
@@ -29,18 +31,18 @@ struct ParticleEmitterConfig
 /*
 	
 */
-class ParticleEmitter
+class ParticleEmitter : public GameObject
 {
 public:
-	ParticleEmitter();
+	ParticleEmitter(const ParticleEmitterConfig& config, const Camera* pBillboardCamera);
 	~ParticleEmitter();
 
-	bool isValid() { return m_config.particleCount != -1; }
-	bool create( ParticleEmitterConfig config );
-	void destroy();
+	bool isValid() { return m_firstDeadIndex != -1; }
 
-	void update(float deltaTime, const glm::mat4& camMatrix);
-	void draw(const glm::mat4& projView);
+	bool create() override;
+	void destroy() override;
+	void update(float deltaTime) override;
+	void draw(const Camera& camera) override;
 
 	ParticleEmitter(const ParticleEmitter& rhs) = delete;
 	void operator =(const ParticleEmitter& rhs) = delete;
@@ -49,14 +51,14 @@ private:
 	void emit();
 	void billboardParticle(unsigned int vertexIndex, const glm::mat4& billboardMat, const Particle* particle);
 
-	glm::vec3 m_position;
+    const ParticleEmitterConfig m_config;
+    const Camera* m_pBillboardCamera;
 
+    glm::vec3 m_position;
 	Particle* m_pParticles;
 	Vertex_PositionColor* m_pVertices;
 
 	unsigned int m_firstDeadIndex;
-
-	ParticleEmitterConfig m_config;
 	float m_emitTimer;
 
 	Mesh m_mesh;

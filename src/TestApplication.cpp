@@ -10,6 +10,7 @@
 #include "ParticleEmitter.h"
 #include "TexturedQuad.h"
 #include "SpriteSheetQuad.h"
+#include "TexturedQuad.h"
 #include "VertexColoredGrid.h"
 #include "Gizmos.h"
 
@@ -17,12 +18,7 @@ using glm::vec3;
 using glm::vec4;
 using glm::mat4;
 
-TestApplication::TestApplication() : 
-	m_camera(nullptr) ,
-	m_pVertexColoredGrid( std::make_shared<VertexColoredGrid>() ),
-	m_pSpriteSheetQuad( std::make_shared<SpriteSheetQuad>() ),
-	m_pFBXMesh( std::make_shared<FBXMesh>() ),
-	m_pParticleEmitter( std::make_shared<ParticleEmitter>() )
+TestApplication::TestApplication()
 {
 
 }
@@ -41,46 +37,53 @@ bool TestApplication::startup() {
 	Gizmos::create();
 
 	// create a camera
-	m_camera = new Camera(glm::radians(45.f), windowSize.x/(float)windowSize.y, 0.1f, 1000.f);
-	m_camera->setLookAtFrom(vec3(0, 10, 10), vec3(0));
-	
-	m_pickPosition = glm::vec3(0);
+	m_pCamera = std::make_shared<Camera>(glm::radians(45.f), windowSize.x/(float)windowSize.y, 0.1f, 1000.f);
+	m_pCamera->setLookAtFrom(vec3(0, 10, 10), vec3(0));
 
-	//if (!m_pVertexColoredGrid->create( glm::vec3(2,0.01f,0), glm::ivec2(5,5)) ) return false;
+    Transform fbxTransform = Transform(glm::vec3(0, 0, -2), glm::quat(), glm::vec3(0.01f));
 
-	//if (!m_pSpriteSheetQuad->create(glm::vec3(-2, 0.02f, 0), "./data/textures/spritesheet.png", 4, 4)) return false;
+    ParticleEmitterConfig config;
+    config.emitRate = 500;
+    config.startColor = glm::vec4(1, 0, 0, 1);
+    config.endColor = glm::vec4(1, 1, 0, 1);
+    config.lifespanMin = 0.1f;
+    config.lifespanMax = 5;
+    config.particleCount = 1000;
+    config.startSize = 1.f;
+    config.endSize = 0.1f;
+    config.velocityMin = 0.1f;
+    config.velocityMax = 1.0f;
 
-	//if (!m_pFBXMesh->create(glm::vec3(0, 0, -2), "./data/models/Pyro/pyro.fbx") ) return false;
+    m_gameObjects.emplace_back(std::make_shared<FBXMesh>(fbxTransform, "./data/models/Pyro/pyro.fbx"));
+    m_gameObjects.emplace_back(std::make_shared<ParticleEmitter>(config, m_pCamera.get()));
 
-	/*
-	(1000, 500, 0.1f, 1.0f, 1, 5, 1, 0.1f, glm::vec4(1, 0, 0, 1), glm::vec4(1, 1, 0, 1));
-	*/
+    m_gameObjects.emplace_back(std::make_shared<SpriteSheetQuad>(glm::vec3(-3, 0.02f, -3), "./data/textures/spritesheet.png", 4, 4));
+    m_gameObjects.emplace_back(std::make_shared<TexturedQuad>(glm::vec3(3, 0.02f, -3), "./data/textures/crate.png"));
+    m_gameObjects.emplace_back(std::make_shared<VertexColoredGrid>(glm::vec3(0, 0.01f, 2), glm::ivec2(5, 5)));
 
-	ParticleEmitterConfig config;
-	config.emitRate = 500;
-	config.startColor = glm::vec4(1, 0, 0, 1);
-	config.endColor = glm::vec4(1, 1, 0, 1);
-	config.lifespanMin = 0.1f;
-	config.lifespanMax = 5;
-	config.particleCount = 1000;
-	config.startSize = 1.f;
-	config.endSize = 0.1f;
-	config.velocityMin = 0.1f;
-	config.velocityMax = 1.0f;
 
-	if (!m_pParticleEmitter->create(config)) return false;
+    for (auto& gameObject : m_gameObjects)
+    {
+        gameObject->create();
+    }
 
 	return true;
 }
 
-void TestApplication::shutdown() {
+void TestApplication::shutdown() 
+{
+
+    for (auto& gameObject : m_gameObjects)
+    {
+        gameObject->destroy();
+    }
+    m_gameObjects.clear();
 
 	//m_pVertexColoredGrid->destroy();
 	//m_pSpriteSheetQuad->destroy();
-	m_pParticleEmitter->destroy();
+	//m_pParticleEmitter->destroy();
 
 	// delete our camera and cleanup gizmos
-	delete m_camera;
 	Gizmos::destroy();
 
 	// destroy our window properly
@@ -95,28 +98,23 @@ bool TestApplication::update(float deltaTime) {
 		return false;
 
 	// update the camera's movement
-	m_camera->update(deltaTime);
+	m_pCamera->update(deltaTime);
+
+    for (auto& gameObject : m_gameObjects)
+    {
+        gameObject->update(deltaTime);
+    }
 
 	//m_pSpriteSheetQuad->update(deltaTime);
 
 	//m_pFBXMesh->update(deltaTime);
 
-	m_pParticleEmitter->update(deltaTime, m_camera->getTransform());
+	//m_pParticleEmitter->update(deltaTime, m_camera->getTransform());
 
 	// clear the gizmos out for this frame
 	Gizmos::clear();
 
-	// an example of mouse picking
-	if (glfwGetMouseButton(m_window, 0) == GLFW_PRESS) {
-		double x = 0, y = 0;
-		glfwGetCursorPos(m_window, &x, &y);
-
-		// plane represents the ground, with a normal of (0,1,0) and a distance of 0 from (0,0,0)
-		glm::vec4 plane(0, 1, 0, 0);
-		m_pickPosition = m_camera->pickAgainstPlane((float)x, (float)y, plane);
-	}
-
-	Gizmos::addTransform(glm::translate(m_pickPosition));
+	Gizmos::addTransform(glm::mat4());
 
 	// ...for now let's add a grid to the gizmos
 	for (int i = 0; i < 21; ++i) {
@@ -136,19 +134,15 @@ void TestApplication::draw() {
 	// clear the screen for this frame
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glm::mat4 projView = m_camera->getProjectionView();
+    for (auto& gameObject : m_gameObjects)
+    {
+        gameObject->draw(*m_pCamera);
+    }
 	//m_pVertexColoredGrid->draw(projView);
 	//m_pSpriteSheetQuad->draw(projView);
 	//m_pFBXMesh->draw(projView);
-	m_pParticleEmitter->draw(projView);
+	//m_pParticleEmitter->draw(projView);
 
 	// display the 3D gizmos
-	Gizmos::draw(m_camera->getProjectionView());
-
-	// get a orthographic projection matrix and draw 2D gizmos
-	int width = 0, height = 0;
-	glfwGetWindowSize(m_window, &width, &height);
-	mat4 guiMatrix = glm::ortho<float>(0, 0, (float)width, (float)height);
-
-	Gizmos::draw2D(m_camera->getProjectionView());
+	Gizmos::draw(m_pCamera->getProjectionView());
 }

@@ -1,18 +1,23 @@
 #include "SpriteSheetQuad.h"
 
+#include "Camera.h"
 #include "gl_core_4_4.h"
 #include "ResourceCreator.h"
 
 #include <assert.h>
 
-bool SpriteSheetQuad::create(const glm::vec3& pos, const char* pSpriteSheetFilename, int cellCountX, int cellCountY)
+SpriteSheetQuad::SpriteSheetQuad(const glm::vec3& pos, const char* pSpriteSheetFilename, int cellCountX, int cellCountY) :
+    GameObject(Transform(pos)),
+    m_filename(pSpriteSheetFilename),
+    m_cellCountX(cellCountX),
+    m_cellCountY(cellCountY),
+    m_cellIndex(0),
+    m_elapsedTime(0)
+{}
+
+
+bool SpriteSheetQuad::create()
 {
-	m_cellCountX = cellCountX;
-	m_cellCountY = cellCountY;
-
-	m_transform.Translate(pos);
-
-
 	m_program = ResourceCreator::CreateProgram("./data/shaders/tex.vert", "./data/shaders/spriteAnimation.frag");
 	if (!m_program.isValid()) return false;
 
@@ -25,7 +30,7 @@ bool SpriteSheetQuad::create(const glm::vec3& pos, const char* pSpriteSheetFilen
 	if (!m_mesh.isValid()) return false;
 
 	// ---- Create the texture ----
-	m_texture = ResourceCreator::CreateTexture(pSpriteSheetFilename);
+	m_texture = ResourceCreator::CreateTexture(m_filename.c_str());
 	if (!m_texture.isValid()) return false;
 
 	return true;
@@ -39,13 +44,26 @@ void SpriteSheetQuad::destroy()
 	m_texture.destroy();
 }
 
+void SpriteSheetQuad::update(float deltaTime)
+{
+    m_elapsedTime += deltaTime;
 
-void SpriteSheetQuad::draw( const glm::mat4& projectionViewMatrix )
+
+    const int timeMultiplier = 10;
+    float strectchTime = m_elapsedTime * timeMultiplier;
+    if (strectchTime - ((int)strectchTime) < deltaTime * timeMultiplier) {
+        m_cellIndex++;
+        m_cellIndex %= m_cellCountX * m_cellCountY;
+    }
+}
+
+
+void SpriteSheetQuad::draw( const Camera& camera )
 {
 	// Use the program
 	assert(m_program.isValid());
 	glUseProgram(m_program.getId());
-	m_program.setUniform("projectionView", projectionViewMatrix * m_transform.GetMatrix());
+	m_program.setUniform("projectionView", camera.getProjectionView() * getTransform().GetMatrix());
 
 	// Set up the sprite sheet uniforms
 	m_program.setUniform("cellCountX", m_cellCountX);

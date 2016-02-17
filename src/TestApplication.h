@@ -1,18 +1,11 @@
 #pragma once
 
 #include "BaseApplication.h"
-
-// only needed for the camera picking
-#include "glm/vec3.hpp"
-
 #include <memory>
+#include <vector>
 
 class Camera;
-class VertexColoredGrid;
-class TexturedQuad;
-class SpriteSheetQuad;
-class FBXMesh;
-class ParticleEmitter;
+class GameObject;
 
 class TestApplication : public BaseApplication {
 public:
@@ -27,15 +20,13 @@ public:
 	virtual void draw();
 
 private:
+	std::shared_ptr<Camera> m_pCamera;
+    std::vector< std::shared_ptr<GameObject> > m_gameObjects;
 
-	Camera*		m_camera;
-
-	// this is an example position for camera picking
-	glm::vec3	m_pickPosition;
-
+    /*
 	std::shared_ptr<VertexColoredGrid> m_pVertexColoredGrid;
 	std::shared_ptr<SpriteSheetQuad> m_pSpriteSheetQuad;
 	std::shared_ptr<FBXMesh> m_pFBXMesh;
 	std::shared_ptr<ParticleEmitter> m_pParticleEmitter;
-
+    */
 };
