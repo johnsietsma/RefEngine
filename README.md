@@ -6,7 +6,7 @@ It purpose is to demonstrate OpenGL concepts and code layout. It is mostly based
 
 A 2015 Visual Studio solution is provided.
 
-## Dependancies
+## Dependencies
 * [FBX SDK](http://usa.autodesk.com/adsk/servlet/pc/item?id=24746731&siteID=123112)
 Download "FBX SDK 2016.1.2 VS2015" and install in the default location.
 
