@@ -1,17 +1,18 @@
-#include "VertexColoredGrid.h"
+#include "VertexColoredGridGameObject.h"
 
-#include "Camera.h"
+#include "Engine/Camera.h"
+#include "Engine/GeometryCreator.h"
+#include "Engine/Helpers.h"
+#include "Engine/Vertex.h"
+
 #include "gl_core_4_4.h"
-#include "GeometryCreator.h"
-#include "Helpers.h"
-#include "Vertex.h"
 
 #include <glm/vec2.hpp>
 
 #include <assert.h>
 #include <string>
 
-bool VertexColoredGrid::create()
+bool VertexColoredGridGameObject::create()
 {
 	std::string vertShader = ReadFile("./data/shaders/color.vert");
 	if (vertShader.length() == 0) return false;
@@ -38,14 +39,14 @@ bool VertexColoredGrid::create()
 }
 
 
-void VertexColoredGrid::destroy()
+void VertexColoredGridGameObject::destroy()
 {
 	m_mesh.destroy();
 	m_program.destroy();
 }
 
 
-void VertexColoredGrid::draw( const Camera& camera )
+void VertexColoredGridGameObject::draw( const Camera& camera )
 {
 	assert(m_program.isValid());
 	glUseProgram(m_program.getId());

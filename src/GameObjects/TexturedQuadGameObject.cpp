@@ -1,12 +1,13 @@
-#include "TexturedQuad.h"
+#include "TexturedQuadGameObject.h"
 
-#include "Camera.h"
+#include "Engine/Camera.h"
+#include "Engine/ResourceCreator.h"
+
 #include "gl_core_4_4.h"
-#include "ResourceCreator.h"
 
 #include <assert.h>
 
-bool TexturedQuad::create()
+bool TexturedQuadGameObject::create()
 {
 	m_program = ResourceCreator::CreateProgram("./data/shaders/tex.vert", "./data/shaders/tex.frag");
 	if (!m_program.isValid()) return false;
@@ -28,7 +29,7 @@ bool TexturedQuad::create()
 }
 
 
-void TexturedQuad::destroy()
+void TexturedQuadGameObject::destroy()
 {
 	m_mesh.destroy();
 	m_program.destroy();
@@ -36,7 +37,7 @@ void TexturedQuad::destroy()
 }
 
 
-void TexturedQuad::draw( const Camera& camera )
+void TexturedQuadGameObject::draw( const Camera& camera )
 {
 	// Use the program
 	assert(m_program.isValid());

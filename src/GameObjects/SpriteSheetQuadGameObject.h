@@ -1,9 +1,9 @@
 #pragma once
 
-#include "GameObject.h"
-#include "Mesh.h"
-#include "Program.h"
-#include "Texture.h"
+#include "Engine/GameObject.h"
+#include "Engine/Mesh.h"
+#include "Engine/Program.h"
+#include "Engine/Texture.h"
 
 #include <glm/mat4x4.hpp>
 #include <iostream>
@@ -14,10 +14,10 @@ class Camera;
 /*
 	A class that generates a simple quad with a shader that runs through frames of a sprite sheet.
 */
-class SpriteSheetQuad : public GameObject
+class SpriteSheetQuadGameObject : public GameObject
 {
 public:
-    SpriteSheetQuad(const glm::vec3& pos, const char* pSpriteSheetFilename, int cellCountX, int cellCountY);
+    SpriteSheetQuadGameObject(const glm::vec3& pos, const char* pSpriteSheetFilename, int cellCountX, int cellCountY);
 
 	bool create() override;
 	void destroy() override;

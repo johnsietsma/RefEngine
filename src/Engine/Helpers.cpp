@@ -61,6 +61,14 @@ void APIENTRY openglCallbackFunction(GLenum source,
 	const GLchar* message,
 	const void* userParam)
 {
+    if (severity == GL_DEBUG_SEVERITY_NOTIFICATION) 
+    {
+        // Severity is not low, medium or high.
+        // Skip these messages as they tend not to be helpful and drown out useful messages.
+        // glDebugMessageControl doesn't seem to be able to filter these out.
+        return;
+    }
+
 	std::cout << "---------------------opengl-callback-start------------" << std::endl;
 	std::cout << "message: " << message << std::endl;
 	std::cout << "type: ";
@@ -98,7 +106,9 @@ void APIENTRY openglCallbackFunction(GLenum source,
 	case GL_DEBUG_SEVERITY_HIGH:
 		std::cout << "HIGH";
 		break;
-	}
+    default:
+        std::cout << "Unkown severity: " << severity << std::endl;
+    }
 	std::cout << std::endl;
 	std::cout << "---------------------opengl-callback-end--------------" << std::endl;
 }
@@ -112,7 +122,7 @@ void TurnOnOpenGLDebugLogging()
 	glDebugMessageControl(
 		GL_DONT_CARE, // source
 		GL_DONT_CARE, // type
-		GL_DONT_CARE, // severity
+        GL_DONT_CARE, // severity
 		0,
 		&unusedIds,
 		true);

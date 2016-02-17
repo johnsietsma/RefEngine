@@ -1,13 +1,14 @@
-#include "ParticleEmitter.h"
+#include "ParticleEmitterGameObject.h"
 
-#include "Camera.h"
-#include "Particle.h"
-#include "ResourceCreator.h"
+#include "Engine/Camera.h"
+#include "Engine/ResourceCreator.h"
+
+#include "GameObjects/Particle.h"
 
 #include <assert.h>
 
 
-ParticleEmitter::ParticleEmitter(const ParticleEmitterConfig& config, const Camera* pBillboardCamera) :
+ParticleEmitterGameObject::ParticleEmitterGameObject(const ParticleEmitterConfig& config, const Camera* pBillboardCamera) :
     m_pBillboardCamera(pBillboardCamera),
     m_config(config),
 	m_pParticles(nullptr),
@@ -18,12 +19,12 @@ ParticleEmitter::ParticleEmitter(const ParticleEmitterConfig& config, const Came
 
 }
 
-ParticleEmitter::~ParticleEmitter()
+ParticleEmitterGameObject::~ParticleEmitterGameObject()
 {
 
 }
 
-bool ParticleEmitter::create()
+bool ParticleEmitterGameObject::create()
 {
 	assert(!isValid());
 
@@ -64,7 +65,7 @@ bool ParticleEmitter::create()
 }
 
 
-void ParticleEmitter::destroy()
+void ParticleEmitterGameObject::destroy()
 {
 	assert(isValid());
 
@@ -74,7 +75,7 @@ void ParticleEmitter::destroy()
 	m_mesh.destroy();
 }
 
-void ParticleEmitter::emit()
+void ParticleEmitterGameObject::emit()
 {
 	assert(isValid());
 
@@ -105,7 +106,7 @@ void ParticleEmitter::emit()
 
 }
 
-void ParticleEmitter::update(float deltaTime)
+void ParticleEmitterGameObject::update(float deltaTime)
 {
 	m_emitTimer += deltaTime;
 
@@ -172,7 +173,7 @@ void ParticleEmitter::update(float deltaTime)
 	}
 }
 
-void ParticleEmitter::billboardParticle(unsigned int vertexIndex, const glm::mat4& billboardMat, const Particle* particle)
+void ParticleEmitterGameObject::billboardParticle(unsigned int vertexIndex, const glm::mat4& billboardMat, const Particle* particle)
 {
 	m_pVertices[vertexIndex].position =
 		billboardMat *
@@ -180,7 +181,7 @@ void ParticleEmitter::billboardParticle(unsigned int vertexIndex, const glm::mat
 		glm::vec4(particle->position, 0);
 }
 
-void ParticleEmitter::draw(const Camera& camera)
+void ParticleEmitterGameObject::draw(const Camera& camera)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, m_mesh.getVBO());
 	glBufferSubData(GL_ARRAY_BUFFER, 0, m_firstDeadIndex * 4 * sizeof(Vertex_PositionColor), m_pVertices);

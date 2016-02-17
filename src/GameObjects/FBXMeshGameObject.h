@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Camera.h"
-#include "GameObject.h"
-#include "Mesh.h"
-#include "Program.h"
-#include "Transform.h"
-#include "Texture.h"
+#include "Engine/Camera.h"
+#include "Engine/GameObject.h"
+#include "Engine/Mesh.h"
+#include "Engine/Program.h"
+#include "Engine/Transform.h"
+#include "Engine/Texture.h"
 
 #include "FBXFile.h"
 
@@ -15,10 +15,10 @@
 /*
 	A class that loads and renders a FBX model.
 */
-class FBXMesh : public GameObject
+class FBXMeshGameObject : public GameObject
 {
 public:
-    FBXMesh(const Transform& transform, const char* pMeshFilename);
+    FBXMeshGameObject(const Transform& transform, const char* pMeshFilename);
 
 	bool create() override;
 	void destroy() override;

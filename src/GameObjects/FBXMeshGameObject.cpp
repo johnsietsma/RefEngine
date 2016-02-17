@@ -1,17 +1,18 @@
-#include "FBXmesh.h"
+#include "FBXMeshGameObject.h"
+
+#include "Engine\ResourceCreator.h"
 
 #include "gl_core_4_4.h"
-#include "ResourceCreator.h"
 
 #include <assert.h>
 
-FBXMesh::FBXMesh(const Transform& transform, const char* pMeshFilename) :
+FBXMeshGameObject::FBXMeshGameObject(const Transform& transform, const char* pMeshFilename) :
     GameObject(transform),
     m_meshFileName(pMeshFilename)
 {}
 
 
-bool FBXMesh::create()
+bool FBXMeshGameObject::create()
 {
 	m_program = ResourceCreator::CreateProgram("./data/shaders/skinning.vert", "./data/shaders/tex.frag");
 	if (!m_program.isValid()) return false;
@@ -30,25 +31,29 @@ bool FBXMesh::create()
 		auto& mesh = m_meshes.back();
 		mesh.create(pFbxMesh->m_vertices.data(), pFbxMesh->m_vertices.size(), pFbxMesh->m_indices.data(), pFbxMesh->m_indices.size());
 
-		auto& pFbxDiffuseTexture = pFbxMesh->m_material->textures[FBXMaterial::DiffuseTexture];
-		if (pFbxDiffuseTexture != nullptr) {
-			m_diffuseTextureIds.emplace_back(pFbxDiffuseTexture->handle);
+        GLuint diffuseTextureId = -1;
 
-			// Bind the texture to texture unit 0
-			glUseProgram(m_program.getId());
-			m_program.setUniform("diffuseSampler", 0);
+        // A mesh can have multiple materials. For simplicity we'll only use the first one
+		if (pFbxMesh->m_materials.size() > 0) {
 
+            // We're only using the diffuse texture right now.
+            auto& pFbxDiffuseTexture = pFbxMesh->m_materials[0]->textures[FBXMaterial::DiffuseTexture];
+            if (pFbxDiffuseTexture != nullptr) {
+                diffuseTextureId = pFbxDiffuseTexture->handle;
+
+                // Bind the texture to texture unit 0
+                m_program.setUniform("diffuseSampler", 0);
+            }
 		}
-		else {
-			m_diffuseTextureIds.emplace_back(-1);
-		}
+
+		m_diffuseTextureIds.emplace_back(diffuseTextureId);
 	}
 
 	return true;
 }
 
 
-void FBXMesh::destroy()
+void FBXMeshGameObject::destroy()
 {
 	m_fbxFile.unload();
 
@@ -61,7 +66,7 @@ void FBXMesh::destroy()
 }
 
 
-void FBXMesh::update(float deltaTime)
+void FBXMeshGameObject::update(float deltaTime)
 {
 	if (m_fbxFile.getSkeletonCount() == 0 || m_fbxFile.getAnimationCount() == 0) return;
 
@@ -80,7 +85,7 @@ void FBXMesh::update(float deltaTime)
 
 }
 
-void FBXMesh::draw(const Camera& camera)
+void FBXMeshGameObject::draw(const Camera& camera)
 {
 	// Use the program
 	assert(m_program.isValid());

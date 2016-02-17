@@ -5,13 +5,9 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
-#include "Camera.h"
-#include "FBXMesh.h"
-#include "ParticleEmitter.h"
-#include "TexturedQuad.h"
-#include "SpriteSheetQuad.h"
-#include "TexturedQuad.h"
-#include "VertexColoredGrid.h"
+#include "Engine/Camera.h"
+#include "GameObjects/GameObjects.h"
+
 #include "Gizmos.h"
 
 using glm::vec3;
@@ -54,12 +50,11 @@ bool TestApplication::startup() {
     config.velocityMin = 0.1f;
     config.velocityMax = 1.0f;
 
-    m_gameObjects.emplace_back(std::make_shared<FBXMesh>(fbxTransform, "./data/models/Pyro/pyro.fbx"));
-    m_gameObjects.emplace_back(std::make_shared<ParticleEmitter>(config, m_pCamera.get()));
-
-    m_gameObjects.emplace_back(std::make_shared<SpriteSheetQuad>(glm::vec3(-3, 0.02f, -3), "./data/textures/spritesheet.png", 4, 4));
-    m_gameObjects.emplace_back(std::make_shared<TexturedQuad>(glm::vec3(3, 0.02f, -3), "./data/textures/crate.png"));
-    m_gameObjects.emplace_back(std::make_shared<VertexColoredGrid>(glm::vec3(0, 0.01f, 2), glm::ivec2(5, 5)));
+    m_gameObjects.emplace_back(std::make_shared<FBXMeshGameObject>(fbxTransform, "./data/models/Pyro/pyro.fbx"));
+    m_gameObjects.emplace_back(std::make_shared<ParticleEmitterGameObject>(config, m_pCamera.get()));
+    m_gameObjects.emplace_back(std::make_shared<SpriteSheetQuadGameObject>(glm::vec3(-3, 0.02f, -3), "./data/textures/spritesheet.png", 4, 4));
+    m_gameObjects.emplace_back(std::make_shared<TexturedQuadGameObject>(glm::vec3(3, 0.02f, -3), "./data/textures/crate.png"));
+    m_gameObjects.emplace_back(std::make_shared<VertexColoredGridGameObject>(glm::vec3(0, 0.01f, 2), glm::ivec2(5, 5)));
 
 
     for (auto& gameObject : m_gameObjects)

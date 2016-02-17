@@ -1,10 +1,12 @@
 #include "BaseApplication.h"
-#include "gl_core_4_4.h"
-#include "Helpers.h"
+#include "Engine/Helpers.h"
 
-#include <assert.h>
+#include "gl_core_4_4.h"
+
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+
+#include <assert.h>
 #include <iostream>
 
 BaseApplication::~BaseApplication() 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "GameObject.h"
-#include "Mesh.h"
-#include "Program.h"
+#include "Engine/GameObject.h"
+#include "Engine/Mesh.h"
+#include "Engine/Program.h"
 
 class Camera;
 struct Particle;
@@ -31,11 +31,11 @@ struct ParticleEmitterConfig
 /*
 	
 */
-class ParticleEmitter : public GameObject
+class ParticleEmitterGameObject : public GameObject
 {
 public:
-	ParticleEmitter(const ParticleEmitterConfig& config, const Camera* pBillboardCamera);
-	~ParticleEmitter();
+	ParticleEmitterGameObject(const ParticleEmitterConfig& config, const Camera* pBillboardCamera);
+	~ParticleEmitterGameObject();
 
 	bool isValid() { return m_firstDeadIndex != -1; }
 
@@ -44,8 +44,8 @@ public:
 	void update(float deltaTime) override;
 	void draw(const Camera& camera) override;
 
-	ParticleEmitter(const ParticleEmitter& rhs) = delete;
-	void operator =(const ParticleEmitter& rhs) = delete;
+	ParticleEmitterGameObject(const ParticleEmitterGameObject& rhs) = delete;
+	void operator =(const ParticleEmitterGameObject& rhs) = delete;
 
 private:
 	void emit();

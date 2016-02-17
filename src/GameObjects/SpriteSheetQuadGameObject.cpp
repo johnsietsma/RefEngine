@@ -1,12 +1,13 @@
-#include "SpriteSheetQuad.h"
+#include "SpriteSheetQuadGameObject.h"
 
-#include "Camera.h"
+#include "Engine/Camera.h"
+#include "Engine/ResourceCreator.h"
+
 #include "gl_core_4_4.h"
-#include "ResourceCreator.h"
 
 #include <assert.h>
 
-SpriteSheetQuad::SpriteSheetQuad(const glm::vec3& pos, const char* pSpriteSheetFilename, int cellCountX, int cellCountY) :
+SpriteSheetQuadGameObject::SpriteSheetQuadGameObject(const glm::vec3& pos, const char* pSpriteSheetFilename, int cellCountX, int cellCountY) :
     GameObject(Transform(pos)),
     m_filename(pSpriteSheetFilename),
     m_cellCountX(cellCountX),
@@ -16,7 +17,7 @@ SpriteSheetQuad::SpriteSheetQuad(const glm::vec3& pos, const char* pSpriteSheetF
 {}
 
 
-bool SpriteSheetQuad::create()
+bool SpriteSheetQuadGameObject::create()
 {
 	m_program = ResourceCreator::CreateProgram("./data/shaders/tex.vert", "./data/shaders/spriteAnimation.frag");
 	if (!m_program.isValid()) return false;
@@ -37,14 +38,14 @@ bool SpriteSheetQuad::create()
 }
 
 
-void SpriteSheetQuad::destroy()
+void SpriteSheetQuadGameObject::destroy()
 {
 	m_mesh.destroy();
 	m_program.destroy();
 	m_texture.destroy();
 }
 
-void SpriteSheetQuad::update(float deltaTime)
+void SpriteSheetQuadGameObject::update(float deltaTime)
 {
     m_elapsedTime += deltaTime;
 
@@ -58,7 +59,7 @@ void SpriteSheetQuad::update(float deltaTime)
 }
 
 
-void SpriteSheetQuad::draw( const Camera& camera )
+void SpriteSheetQuadGameObject::draw( const Camera& camera )
 {
 	// Use the program
 	assert(m_program.isValid());

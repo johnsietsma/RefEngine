@@ -1,9 +1,9 @@
 #pragma once
 
-#include "GameObject.h"
-#include "Mesh.h"
-#include "Program.h"
-#include "Texture.h"
+#include "Engine/GameObject.h"
+#include "Engine/Mesh.h"
+#include "Engine/Program.h"
+#include "Engine/Texture.h"
 
 #include <glm/mat4x4.hpp>
 #include <string>
@@ -13,10 +13,10 @@ class Camera;
 /*
 	A class that generates a simple quad with a texture.
 */
-class TexturedQuad : public GameObject
+class TexturedQuadGameObject : public GameObject
 {
 public:
-    TexturedQuad(const glm::vec3& pos, const char* pTextureFilename) :
+    TexturedQuadGameObject(const glm::vec3& pos, const char* pTextureFilename) :
         GameObject(Transform(pos)),
         m_filename(pTextureFilename)
     {}

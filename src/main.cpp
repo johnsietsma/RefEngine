@@ -1,7 +1,5 @@
 #include <vld.h>
 
-#include "ParticleEmitter.h"
-
 #include "TestApplication.h"
 #include <GLFW/glfw3.h>
 
