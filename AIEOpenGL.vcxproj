@@ -21,7 +21,9 @@
   <ItemGroup>
     <None Include="data\shaders\color.vert" />
     <None Include="data\shaders\default.vert" />
+    <None Include="data\shaders\heightMap.vert" />
     <None Include="data\shaders\red.frag" />
+    <None Include="data\shaders\redChannel.frag" />
     <None Include="data\shaders\skinning.vert" />
     <None Include="data\shaders\spriteAnimation.frag" />
     <None Include="data\shaders\tex.frag" />
@@ -40,6 +42,7 @@
     <ClInclude Include="src\Engine\GeometryCreator.h" />
     <ClInclude Include="src\Engine\Helpers.h" />
     <ClInclude Include="src\Engine\Mesh.h" />
+    <ClInclude Include="src\Engine\MeshData.h" />
     <ClInclude Include="src\Engine\Program.h" />
     <ClInclude Include="src\Engine\ResourceCreator.h" />
     <ClInclude Include="src\Engine\Texture.h" />
@@ -50,6 +53,7 @@
     <ClInclude Include="src\GameObjects\GameObjects.h" />
     <ClInclude Include="src\GameObjects\Particle.h" />
     <ClInclude Include="src\GameObjects\ParticleEmitterGameObject.h" />
+    <ClInclude Include="src\GameObjects\ProceduralGenerationGameObject.h" />
     <ClInclude Include="src\GameObjects\SpriteSheetQuadGameObject.h" />
     <ClInclude Include="src\GameObjects\TexturedQuadGameObject.h" />
     <ClInclude Include="src\GameObjects\VertexColoredGridGameObject.h" />
@@ -71,6 +75,7 @@
     <ClCompile Include="src\FBXFile.cpp" />
     <ClCompile Include="src\GameObjects\FBXMeshGameObject.cpp" />
     <ClCompile Include="src\GameObjects\ParticleEmitterGameObject.cpp" />
+    <ClCompile Include="src\GameObjects\ProceduralGenerationGameObject.cpp" />
     <ClCompile Include="src\GameObjects\SpriteSheetQuadGameObject.cpp" />
     <ClCompile Include="src\GameObjects\TexturedQuadGameObject.cpp" />
     <ClCompile Include="src\GameObjects\VertexColoredGridGameObject.cpp" />

@@ -56,7 +56,7 @@ Texture ResourceCreator::CreateTexture( const char* pTextureFilename )
 	assert(imageWidth > 0);
 	assert(imageHeight > 0);
 
-	texture.create(data, imageWidth, imageHeight);
+	texture.create(data, imageWidth, imageHeight, Texture::TextureType::RGB);
 
 	stbi_image_free(data);
 

@@ -19,5 +19,5 @@ struct Vertex_PositionColor
 struct Vertex_PositionTexCoord
 {
 	glm::vec4 position;
-	glm::vec2 uv;
+	glm::vec2 texCoord;
 };

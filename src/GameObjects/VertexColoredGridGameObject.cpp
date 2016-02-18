@@ -3,6 +3,8 @@
 #include "Engine/Camera.h"
 #include "Engine/GeometryCreator.h"
 #include "Engine/Helpers.h"
+#include "Engine/MeshData.h"
+#include "Engine/ResourceCreator.h"
 #include "Engine/Vertex.h"
 
 #include "gl_core_4_4.h"
@@ -14,26 +16,24 @@
 
 bool VertexColoredGridGameObject::create()
 {
-	std::string vertShader = ReadFile("./data/shaders/color.vert");
-	if (vertShader.length() == 0) return false;
-
-	std::string fragShader = ReadFile("./data/shaders/vertexColor.frag");
-	if (fragShader.length() == 0) return false;
-
-	if (!m_program.create(vertShader.c_str(), fragShader.c_str())) return false;
+    m_program = ResourceCreator::CreateProgram( "./data/shaders/color.vert","./data/shaders/vertexColor.frag");
+	if (!m_program.isValid()) return false;
 
 
-	Vertex_PositionColor* pGridVertices;
-	unsigned int* pIndices;
+    MeshData meshData;
+    int rowCount = m_gridSize.x;
+    int columnCount = m_gridSize.y;
 
-	GeometryCreator::createGrid(m_gridSize.x, m_gridSize.y, &pGridVertices, &pIndices);
 
-	unsigned int vertexCount = m_gridSize.x * m_gridSize.y;
-	unsigned int indexCount = (m_gridSize.x - 1) * (m_gridSize.y - 1) * 6;
-	m_mesh.create(pGridVertices, vertexCount, pIndices, indexCount);
+    // Create and fill in the vertex and index buffers with grid data.
+	GeometryCreator::createGrid<Vertex_PositionColor>(&meshData, rowCount, columnCount);
 
-	delete[] pGridVertices;
-	delete[] pIndices;
+    // Create the OpenGL buffers and upload the vertex and index data.
+	m_mesh.create<Vertex_PositionColor>(meshData);
+
+    // Now we've given the buffers to OpenGL, we dont need them anymore.
+	delete[] meshData.pVertices;
+	delete[] meshData.pIndices;
 
 	return true;
 }

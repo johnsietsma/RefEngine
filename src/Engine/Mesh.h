@@ -1,7 +1,9 @@
 #pragma once
 
 #include "gl_core_4_4.h"
+
 #include "FBXFile.h"
+#include "MeshData.h"
 #include "Vertex.h"
 
 #include <assert.h>
@@ -22,6 +24,11 @@ public:
 	GLuint getIndexCount() const { return m_indexCount; }
 
 	// Setup OpenGL buffers and vertex attributes to be able to render these vertices.
+    template<typename T>
+    bool create(const MeshData& meshData) {
+        return create<T>(static_cast<T*>(meshData.pVertices), meshData.vertexCount, meshData.pIndices, meshData.indexCount);
+    }
+
 	template<typename T>
 	bool create(T* pVertices, unsigned int vertexCount, unsigned int* pInidices, unsigned int indexCount);
 
@@ -33,58 +40,13 @@ private:
 	void SetupVertexAttributes() { assert(false); }
 
 	template<>
-	void SetupVertexAttributes<Vertex_PositionColor>() 
-	{
-		// Position vertex attribute
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_PositionColor), (void*)(offsetof(Vertex_PositionColor, position)));
-
-		// Color vertex attribute
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_PositionColor), (void*)(offsetof(Vertex_PositionColor, color)));
-
-	}
+    void SetupVertexAttributes<Vertex_PositionColor>();
 
 	template<>
-	void SetupVertexAttributes<Vertex_PositionTexCoord>() 
-	{ 
-		// Position vertex attribute
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_PositionTexCoord), (void*)(offsetof(Vertex_PositionTexCoord, position)));
-
-		// Texcoord vertex attribute
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_PositionTexCoord), (void*)(offsetof(Vertex_PositionTexCoord, uv)));
-
-	}
+    void SetupVertexAttributes<Vertex_PositionTexCoord>();
 
 	template<>
-	void SetupVertexAttributes<FBXVertex>()
-	{
-		// Position vertex attribute
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, position)));
-
-		// Texcoord vertex attribute
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, texCoord1)));
-
-		// Normal vertex attribute
-		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, normal)));
-
-		// Tangent vertex attribute
-		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, tangent)));
-
-		// Weights vertex attribute
-		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, weights)));
-
-		// Indices vertex attribute
-		glEnableVertexAttribArray(5);
-		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, indices)));
-	}
+    void SetupVertexAttributes<FBXVertex>();
 
 	unsigned int m_indexCount = 0;
 	GLuint m_VAO = (GLuint)-1;
@@ -125,4 +87,58 @@ bool Mesh::create(T* pVertices, unsigned int vertexCount, unsigned int* pIndices
 	m_indexCount = indexCount;
 
 	return true;
+}
+
+template<>
+void Mesh::SetupVertexAttributes<Vertex_PositionColor>()
+{
+    // Position vertex attribute
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_PositionColor), (void*)(offsetof(Vertex_PositionColor, position)));
+
+    // Color vertex attribute
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_PositionColor), (void*)(offsetof(Vertex_PositionColor, color)));
+
+}
+
+template<>
+void Mesh::SetupVertexAttributes<Vertex_PositionTexCoord>()
+{
+    // Position vertex attribute
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_PositionTexCoord), (void*)(offsetof(Vertex_PositionTexCoord, position)));
+
+    // Texcoord vertex attribute
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_PositionTexCoord), (void*)(offsetof(Vertex_PositionTexCoord, texCoord)));
+
+}
+
+template<>
+void Mesh::SetupVertexAttributes<FBXVertex>()
+{
+    // Position vertex attribute
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, position)));
+
+    // Texcoord vertex attribute
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, texCoord1)));
+
+    // Normal vertex attribute
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, normal)));
+
+    // Tangent vertex attribute
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, tangent)));
+
+    // Weights vertex attribute
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, weights)));
+
+    // Indices vertex attribute
+    glEnableVertexAttribArray(5);
+    glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, indices)));
 }

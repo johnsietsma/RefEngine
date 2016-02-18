@@ -44,6 +44,8 @@ std::string ReadFile(const char* fileName)
 	if (!ifs.is_open()) return "";
 
 	std::ifstream::pos_type fileSize = ifs.tellg();
+    if ((unsigned int)fileSize == 0) return "";
+
 	ifs.seekg(0, std::ios::beg);
 
 	std::vector<char> bytes((unsigned int)fileSize);

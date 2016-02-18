@@ -16,14 +16,13 @@ bool TexturedQuadGameObject::create()
 	m_program.setUniform("diffuseSampler", 0);
 
 
-	// ---- Create the quad geo ----
+	//  Create the quad geo
 	m_mesh = ResourceCreator::CreateTexturedQuad();
 	if (!m_mesh.isValid()) return false;
 
-	// ---- Create the texture ----
+	// Create the texture
 	m_texture = ResourceCreator::CreateTexture(m_filename.c_str());
 	if (!m_texture.isValid()) return false;
-
 
 	return true;
 }

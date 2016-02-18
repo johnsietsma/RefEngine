@@ -13,7 +13,7 @@ struct ParticleEmitterConfig
 
 	unsigned int particleCount;
 
-	float emitRate;
+	float emitRate; // How many particles per second should we emit.
 
 	float lifespanMin;
 	float lifespanMax;
@@ -21,15 +21,16 @@ struct ParticleEmitterConfig
 	float velocityMin;
 	float velocityMax;
 
-	float startSize;
-	float endSize;
+	float startSize; // In world units
+	float endSize; // How big the particle will be just before it dies
 
 	glm::vec4 startColor;
 	glm::vec4 endColor;
 };
 
 /*
-	
+	A simple particle emitter that emits in random direcions from a single point.
+    Particles are update on the CPU.
 */
 class ParticleEmitterGameObject : public GameObject
 {
@@ -49,7 +50,7 @@ public:
 
 private:
 	void emit();
-	void billboardParticle(unsigned int vertexIndex, const glm::mat4& billboardMat, const Particle* particle);
+	void positionBillboardParticle(unsigned int vertexIndex, const glm::mat4& billboardMat, const Particle* particle);
 
     const ParticleEmitterConfig m_config;
     const Camera* m_pBillboardCamera;

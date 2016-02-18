@@ -19,18 +19,17 @@ SpriteSheetQuadGameObject::SpriteSheetQuadGameObject(const glm::vec3& pos, const
 
 bool SpriteSheetQuadGameObject::create()
 {
+    // Create a program using a vertex shader that will pass through the texture coords and a frag shader that wil do the animation.
 	m_program = ResourceCreator::CreateProgram("./data/shaders/tex.vert", "./data/shaders/spriteAnimation.frag");
 	if (!m_program.isValid()) return false;
 
-	// Tell the sampler to look in texture unit 0
+	// Tell the sampler in the fragment shader to look in texture unit 0
 	glUseProgram(m_program.getId());
 	m_program.setUniform("diffuseSampler", 0);
 
-	// ---- Create the quad geo ----
 	m_mesh = ResourceCreator::CreateTexturedQuad();
 	if (!m_mesh.isValid()) return false;
 
-	// ---- Create the texture ----
 	m_texture = ResourceCreator::CreateTexture(m_filename.c_str());
 	if (!m_texture.isValid()) return false;
 
@@ -49,9 +48,9 @@ void SpriteSheetQuadGameObject::update(float deltaTime)
 {
     m_elapsedTime += deltaTime;
 
-
     const int timeMultiplier = 10;
     float strectchTime = m_elapsedTime * timeMultiplier;
+
     if (strectchTime - ((int)strectchTime) < deltaTime * timeMultiplier) {
         m_cellIndex++;
         m_cellIndex %= m_cellCountX * m_cellCountY;

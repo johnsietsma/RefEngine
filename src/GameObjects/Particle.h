@@ -15,6 +15,6 @@ struct Particle
 	glm::vec4 color;
 
 	float size; // In world units
-	float lifetime; // In seconds
-	float lifespan;
+	float lifetime; // How long we've been alive for (sceonds)
+	float lifespan; // How long we should live for
 };

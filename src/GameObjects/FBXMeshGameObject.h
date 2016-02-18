@@ -28,13 +28,14 @@ public:
 	void draw(const Camera& camera) override;
 
 private:
-	FBXFile m_fbxFile;
+	FBXFile m_fbxFile; // Loads the FBX and stores the associated data.
 	Program m_program;
     std::string m_meshFileName;
 
-	std::vector<GLuint> m_diffuseTextureIds;
+    // These two vectors match. Use the same index to grab the mesh and its diffuse texture
+	std::vector<GLuint> m_diffuseTextureIds; // The OpenGL texture id
 	std::vector<Mesh> m_meshes;
 
-	float m_elapsedTime;
+	float m_elapsedTime; // Time passed since creation.
 };
 
