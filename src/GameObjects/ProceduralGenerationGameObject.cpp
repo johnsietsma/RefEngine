@@ -63,19 +63,21 @@ bool ProceduralGenerationGameObject::create()
                 const float freq = powf(2, static_cast<float>(o));
 
                 // Get a noise value, range is -1 to 1.
-                noiseValue += glm::perlin(glm::vec2(rowIndex, columnIndex) * scale * freq) * amplitude;
+                float octaveNoiseValue = glm::perlin(glm::vec2(rowIndex, columnIndex) * scale * freq);
+
+                // Rescale the range from 0 to 1
+                octaveNoiseValue = octaveNoiseValue * 0.5f + 0.5f;
+
+                noiseValue += octaveNoiseValue * amplitude;
 
                 amplitude *= persistence;
             }
-
-            // Rescale the range from 0 to 1
-            noiseValue = noiseValue * 0.5f + 0.5f;
 
             pPerlinData[columnIndex * rowCount + rowIndex] = noiseValue;
         }
     }
 
-    m_texture.create( pPerlinData, rowCount, columnCount );
+    m_heightMapTexture.create( pPerlinData, rowCount, columnCount );
 
     delete pPerlinData;
 
@@ -102,9 +104,9 @@ void ProceduralGenerationGameObject::draw(const Camera & camera)
     m_program.setUniform("projectionView", camera.getProjectionView() * getTransform().GetMatrix());
 
     // Bind the texture to texture unit 0
-    assert(m_texture.isValid());
+    assert(m_heightMapTexture.isValid());
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_texture.getId());
+    glBindTexture(GL_TEXTURE_2D, m_heightMapTexture.getId());
 
     glBindVertexArray(m_mesh.getVAO());
 

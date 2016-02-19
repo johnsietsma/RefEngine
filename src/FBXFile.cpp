@@ -746,7 +746,7 @@ void FBXFile::extractMeshes(void* a_object)
         meshNode.m_vertexAttributes |= FBXVertex::eTEXCOORD1;
     }
 
-    FbxGeometryElementUV* fbxTexCoord1 = pFbxMesh->GetElementUV(0);
+    FbxGeometryElementUV* fbxTexCoord1 = pFbxMesh->GetElementUV(1);
     if( fbxTexCoord1 )
     {
         LoadTexCoords( fbxTexCoord1,  pFbxMesh, m_importAssistor->flipTextureY, meshNode.m_vertices, 1);

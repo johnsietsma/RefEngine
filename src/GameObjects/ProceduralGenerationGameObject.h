@@ -22,6 +22,6 @@ public:
 private:
     Mesh m_mesh;
     Program m_program;
-    Texture m_texture;
+    Texture m_heightMapTexture;
 };
 
