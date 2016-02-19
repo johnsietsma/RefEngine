@@ -33,6 +33,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\textures\crate.png" />
+    <Image Include="data\textures\grass1.jpg" />
+    <Image Include="data\textures\grass1_NRM.jpg" />
     <Image Include="data\textures\spritesheet.png" />
   </ItemGroup>
   <ItemGroup>

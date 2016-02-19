@@ -23,5 +23,8 @@ private:
     Mesh m_mesh;
     Program m_program;
     Texture m_heightMapTexture;
+    const int m_heightMapTextureUnit = 0;
+    Texture m_diffuseTexture;
+    const int m_diffuseTextureUnit = 1;
 };
 

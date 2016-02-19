@@ -78,13 +78,14 @@ bool ProceduralGenerationGameObject::create()
     }
 
     m_heightMapTexture.create( pPerlinData, rowCount, columnCount );
+    m_program.setUniform("heightMapSampler", m_heightMapTextureUnit);
 
     delete pPerlinData;
-
-    // Tell the sampler to look in texture unit 0
-    m_program.setUniform("diffuseSampler", 0);
-    m_program.setUniform("heightMapSampler", 0);
-
+    
+    //m_diffuseTexture = ResourceCreator::CreateTexture("./data/textures/grass1.png");
+    //assert(m_diffuseTexture.isValid());
+    //m_program.setUniform("diffuseSampler", m_diffuseTextureUnit);
+    
     return true;
 }
 
@@ -105,8 +106,11 @@ void ProceduralGenerationGameObject::draw(const Camera & camera)
 
     // Bind the texture to texture unit 0
     assert(m_heightMapTexture.isValid());
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0 + m_heightMapTextureUnit);
     glBindTexture(GL_TEXTURE_2D, m_heightMapTexture.getId());
+
+    glActiveTexture(GL_TEXTURE0 + m_diffuseTextureUnit);
+    glBindTexture(GL_TEXTURE_2D, m_diffuseTexture.getId());
 
     glBindVertexArray(m_mesh.getVAO());
 
