@@ -50,12 +50,12 @@ bool TestApplication::startup() {
     config.velocityMin = 0.1f;
     config.velocityMax = 1.0f;
 
-    //m_gameObjects.emplace_back(std::make_shared<FBXMeshGameObject>(fbxTransform, "./data/models/Pyro/pyro.fbx"));
+    m_gameObjects.emplace_back(std::make_shared<FBXMeshGameObject>(fbxTransform, "./data/models/Pyro/pyro.fbx", nullptr));
     //m_gameObjects.emplace_back(std::make_shared<ParticleEmitterGameObject>(config, m_pCamera.get()));
     //m_gameObjects.emplace_back(std::make_shared<SpriteSheetQuadGameObject>(glm::vec3(-3, 0.02f, -3), "./data/textures/spritesheet.png", 4, 4));
     //m_gameObjects.emplace_back(std::make_shared<TexturedQuadGameObject>(glm::vec3(3, 0.02f, -3), "./data/textures/crate.png"));
     //m_gameObjects.emplace_back(std::make_shared<VertexColoredGridGameObject>(glm::vec3(0, 0.01f, 2), glm::ivec2(5, 5)));
-    m_gameObjects.emplace_back(std::make_shared<ProceduralGenerationGameObject>(glm::vec3(0)));
+    //m_gameObjects.emplace_back(std::make_shared<ProceduralGenerationGameObject>(glm::vec3(0)));
 
 
     for (auto& gameObject : m_gameObjects)

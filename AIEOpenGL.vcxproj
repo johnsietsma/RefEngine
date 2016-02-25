@@ -19,25 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <None Include="data\shaders\color.vert" />
-    <None Include="data\shaders\default.vert" />
-    <None Include="data\shaders\heightMap.vert" />
-    <None Include="data\shaders\red.frag" />
-    <None Include="data\shaders\redChannel.frag" />
-    <None Include="data\shaders\skinning.vert" />
-    <None Include="data\shaders\spriteAnimation.frag" />
-    <None Include="data\shaders\tex.frag" />
-    <None Include="data\shaders\tex.vert" />
-    <None Include="data\shaders\uvDebug.frag" />
-    <None Include="data\shaders\vertexColor.frag" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="data\textures\crate.png" />
-    <Image Include="data\textures\grass1.jpg" />
-    <Image Include="data\textures\grass1_NRM.jpg" />
-    <Image Include="data\textures\spritesheet.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="src\BaseApplication.h" />
     <ClInclude Include="src\Engine\Camera.h" />
     <ClInclude Include="src\Engine\GameObject.h" />
@@ -46,7 +27,9 @@
     <ClInclude Include="src\Engine\Mesh.h" />
     <ClInclude Include="src\Engine\MeshData.h" />
     <ClInclude Include="src\Engine\Program.h" />
+    <ClInclude Include="src\Engine\Renderable.h" />
     <ClInclude Include="src\Engine\ResourceCreator.h" />
+    <ClInclude Include="src\Engine\Sampler.h" />
     <ClInclude Include="src\Engine\Texture.h" />
     <ClInclude Include="src\Engine\Transform.h" />
     <ClInclude Include="src\Engine\Vertex.h" />
@@ -85,6 +68,19 @@
     <ClCompile Include="src\gl_core_4_4.c" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\TestApplication.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="data\shaders\color.vert" />
+    <None Include="data\shaders\default.vert" />
+    <None Include="data\shaders\heightMap.vert" />
+    <None Include="data\shaders\red.frag" />
+    <None Include="data\shaders\redChannel.frag" />
+    <None Include="data\shaders\skinning.vert" />
+    <None Include="data\shaders\spriteAnimation.frag" />
+    <None Include="data\shaders\tex.frag" />
+    <None Include="data\shaders\tex.vert" />
+    <None Include="data\shaders\uvDebug.frag" />
+    <None Include="data\shaders\vertexColor.frag" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{63494F4E-79FA-48AD-AA6C-BDF1FF1619FD}</ProjectGuid>

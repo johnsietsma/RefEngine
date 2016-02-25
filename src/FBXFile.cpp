@@ -357,8 +357,8 @@ void FBXFile::unload()
     delete m_root;
     m_root = nullptr;
 
-	for (auto m : m_meshes)
-		delete m;
+    for (auto m : m_meshes)
+        delete m;
     for (auto m : m_materials)
         delete m.second;
     for (auto s : m_skeletons)
@@ -546,12 +546,11 @@ bool FBXFile::load(
 
             skeleton->m_nodes = new FBXNode * [ skeleton->m_boneCount ];
 
-			// TODO cleanup properly
-			void* pBonesBuffer = malloc(sizeof(glm::mat4)*(skeleton->m_boneCount + 1));
-			skeleton->m_bones = new(pBonesBuffer) glm::mat4[ skeleton->m_boneCount ];
+            void* pBonesBuffer = malloc(sizeof(glm::mat4)*(skeleton->m_boneCount + 1));
+            skeleton->m_bones = new(pBonesBuffer) glm::mat4[ skeleton->m_boneCount ];
 
-			void* pBindPosesBuffer = malloc(sizeof(glm::mat4)*(skeleton->m_boneCount + 1));
-			skeleton->m_bindPoses = new(pBindPosesBuffer)glm::mat4[skeleton->m_boneCount];
+            void* pBindPosesBuffer = malloc(sizeof(glm::mat4)*(skeleton->m_boneCount + 1));
+            skeleton->m_bindPoses = new(pBindPosesBuffer)glm::mat4[skeleton->m_boneCount];
 
             skeleton->m_parentIndex = new int[ skeleton->m_boneCount ];
 
@@ -645,7 +644,11 @@ void FBXFile::extractObject(FBXNode* a_parent, void* a_object)
             {
                 if (m_importAssistor->loadMeshes)
                 {
-                    extractMeshes(fbxNode->GetMesh());
+                    m_meshes.push_back(new FBXMeshNode());
+                    FBXMeshNode& meshNode = *m_meshes.back();
+                    meshNode.m_name = fbxNode->GetName();
+
+                    extractMeshes(fbxNode->GetMesh(), meshNode);
                 }
             }
             break;
@@ -716,14 +719,12 @@ void FBXFile::extractObject(FBXNode* a_parent, void* a_object)
     }
 }
 
-void FBXFile::extractMeshes(void* a_object)
+void FBXFile::extractMeshes(void* a_object, FBXMeshNode& meshNode)
 {
     assert(a_object!=nullptr);
     FbxMesh* pFbxMesh = static_cast<FbxMesh*>(a_object);
     
-    m_meshes.push_back( new FBXMeshNode() );
-    FBXMeshNode& meshNode = *m_meshes.back();
-    
+
     FbxVector4* pVertexPositions = pFbxMesh->GetControlPoints();
     int vertexCount = pFbxMesh->GetControlPointsCount();
     
@@ -760,15 +761,15 @@ void FBXFile::extractMeshes(void* a_object)
         meshNode.m_vertexAttributes |= FBXVertex::eNORMAL;
 
     }
-
     
     // gather skinning info
     LoadSkinningData(pFbxMesh, meshNode.m_vertices, m_importAssistor->boneIndexList);
 
+
+
     // set mesh names, vertex attributes, extract material and add to mesh map
     for ( int i = 0 ; i < pFbxMesh->GetElementMaterialCount(); ++i )
     {
-        meshNode.m_name = pFbxMesh->GetName();
         meshNode.m_materials.push_back( extractMaterial(pFbxMesh,i) );
     }
 
@@ -1080,7 +1081,7 @@ void FBXFile::initialiseOpenGLTextures()
         switch (texture.second->format)
         {
         case STBI_grey: texture.second->format = GL_RED; break;
-		case STBI_grey_alpha: texture.second->format = GL_RG; break;
+        case STBI_grey_alpha: texture.second->format = GL_RG; break;
         case STBI_rgb: texture.second->format = GL_RGB; break;
         case STBI_rgb_alpha: texture.second->format = GL_RGBA; break;
         };
