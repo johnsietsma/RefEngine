@@ -5,6 +5,8 @@
 #include "Engine/BoundingVolume.h"
 #include "Engine/Transform.h"
 
+#include <memory>
+
 class Camera;
 
 class GameObject
@@ -17,8 +19,8 @@ public:
     virtual bool create() = 0;
     virtual void destroy() = 0;
 
-    virtual void update(float deltaTime) = 0;
-    virtual void draw(const Camera& camera) = 0;
+    virtual void update(float deltaTime) {};
+    virtual void draw(const Camera& camera);
 
 protected:
     GameObject() {}; // GameObject can only be inherited

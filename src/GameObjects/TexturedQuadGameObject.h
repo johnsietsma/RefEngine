@@ -11,26 +11,19 @@
 class Camera;
 
 /*
-	A class that generates a simple quad with a texture.
+    A class that generates a simple quad with a texture.
 */
 class TexturedQuadGameObject : public GameObject
 {
 public:
-    TexturedQuadGameObject(const glm::vec3& pos, const char* pTextureFilename) :
+    TexturedQuadGameObject(const glm::vec3& pos, Texture texture) :
         GameObject(Transform(pos)),
-        m_filename(pTextureFilename)
+        m_texture(texture)
     {}
 
-	bool create() override;
-	void destroy() override;
+    bool create() override;
+    void destroy() override;
 
-    void update(float deltaTime) override {} //no-op
-	void draw( const Camera& camera ) override;
-
-private:
-	Mesh m_mesh;
-	Program m_program;
-	Texture m_texture;
-    std::string m_filename;
+    Texture m_texture;
 };
 

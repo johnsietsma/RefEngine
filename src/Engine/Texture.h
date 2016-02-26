@@ -24,6 +24,8 @@ public:
     bool isValid() { return m_textureId != (GLuint)-1; }
     GLuint getId() const { return m_textureId; }
 
+    void setId(GLuint textureId) { m_textureId = textureId; }
+
     // Create and upload the OpenGL texture using the data provided.
     void create(const unsigned char* data, int imageWidth, int imageHeight, TextureType textureType);
 

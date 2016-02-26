@@ -6,6 +6,7 @@
 #include <glm/ext.hpp>
 
 #include "Engine/Camera.h"
+#include "Engine/ResourceCreator.h"
 #include "GameObjects/GameObjects.h"
 
 #include "Gizmos.h"
@@ -25,16 +26,31 @@ TestApplication::~TestApplication() {
 
 bool TestApplication::startup() {
 
-	// create a basic window
-	const glm::ivec2 windowSize(1024, 768);
-	createWindow("AIE OpenGL Application", windowSize.x, windowSize.y);
+    // create a basic window
+    const glm::ivec2 windowSize(1024, 768);
+    createWindow("AIE OpenGL Application", windowSize.x, windowSize.y);
 
-	// start the gizmo system that can draw basic shapes
-	Gizmos::create();
+    // start the gizmo system that can draw basic shapes
+    Gizmos::create();
 
-	// create a camera
-	m_pCamera = std::make_shared<Camera>(glm::radians(45.f), windowSize.x/(float)windowSize.y, 0.1f, 1000.f);
-	m_pCamera->setLookAtFrom(vec3(0, 10, 10), vec3(0));
+    // Setup a FBO camera and RenderPass
+    m_pFBOCamera = std::make_shared<Camera>(glm::radians(45.f), windowSize.x / (float)windowSize.y, 0.1f, 1000.f);
+    m_pFBOCamera->setLookAtFrom(vec3(0, 10, 10), vec3(0));
+
+    RenderPass fboRenderPass(m_pFBOCamera, glm::vec3(1));
+    if (!fboRenderPass.create()) {
+        return false;
+    }
+    m_renderPasses.push_back(fboRenderPass);
+
+    // create a camera
+    m_pCamera = std::make_shared<Camera>(glm::radians(45.f), windowSize.x / (float)windowSize.y, 0.1f, 1000.f);
+    m_pCamera->setLookAtFrom(vec3(2, 10, -10), vec3(0));
+
+
+    // Setup a default render pass
+    m_renderPasses.push_back(RenderPass(m_pCamera, glm::vec3(0.25f, 0.25f, 0.25f)));
+
 
     Transform pyroTransform = Transform(glm::vec3(0, 0, -2), glm::quat(), glm::vec3(0.01f));
 
@@ -54,7 +70,10 @@ bool TestApplication::startup() {
     //m_gameObjects.emplace_back(std::make_shared<FBXMeshGameObject>(pyroTransform, "./data/models/Pyro/pyro.fbx", nullptr));
     //m_gameObjects.emplace_back(std::make_shared<ParticleEmitterGameObject>(config, m_pCamera.get()));
     //m_gameObjects.emplace_back(std::make_shared<SpriteSheetQuadGameObject>(glm::vec3(-3, 0.02f, -3), "./data/textures/spritesheet.png", 4, 4));
-    //m_gameObjects.emplace_back(std::make_shared<TexturedQuadGameObject>(glm::vec3(3, 0.02f, -3), "./data/textures/crate.png"));
+
+    Texture quadTexture = ResourceCreator::CreateTexture("./data/textures/crate.png");
+    if (!quadTexture.isValid()) return false;
+    m_gameObjects.emplace_back(std::make_shared<TexturedQuadGameObject>(glm::vec3(3, 0.02f, -3), fboRenderPass.getTexture()));
     //m_gameObjects.emplace_back(std::make_shared<VertexColoredGridGameObject>(glm::vec3(0, 0.01f, 2), glm::ivec2(5, 5)));
     //m_gameObjects.emplace_back(std::make_shared<ProceduralGenerationGameObject>(glm::vec3(0)));
 
@@ -64,7 +83,7 @@ bool TestApplication::startup() {
         if (!gameObject->create()) return false;
     }
 
-	return true;
+    return true;
 }
 
 void TestApplication::shutdown() 
@@ -76,70 +95,63 @@ void TestApplication::shutdown()
     }
     m_gameObjects.clear();
 
-	//m_pVertexColoredGrid->destroy();
-	//m_pSpriteSheetQuad->destroy();
-	//m_pParticleEmitter->destroy();
+    // delete our camera and cleanup gizmos
+    Gizmos::destroy();
 
-	// delete our camera and cleanup gizmos
-	Gizmos::destroy();
-
-	// destroy our window properly
-	destroyWindow();
+    // destroy our window properly
+    destroyWindow();
 }
 
 bool TestApplication::update(float deltaTime) {
-	
-	// close the application if the window closes
-	if (glfwWindowShouldClose(m_window) ||
-		glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		return false;
+    
+    // close the application if the window closes
+    if (glfwWindowShouldClose(m_window) ||
+        glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        return false;
 
-	// update the camera's movement
-	m_pCamera->update(deltaTime);
+    // update the camera's movement
+    m_pCamera->update(deltaTime);
 
     for (auto& gameObject : m_gameObjects)
     {
         gameObject->update(deltaTime);
     }
 
-	//m_pSpriteSheetQuad->update(deltaTime);
+    Gizmos::clear();
 
-	//m_pFBXMesh->update(deltaTime);
+    Gizmos::addTransform(glm::mat4());
 
-	//m_pParticleEmitter->update(deltaTime, m_camera->getTransform());
+    // ...for now let's add a grid to the gizmos
+    for (int i = 0; i < 21; ++i) {
+        Gizmos::addLine(vec3(-10 + i, 0, 10), vec3(-10 + i, 0, -10),
+            i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
 
-	// clear the gizmos out for this frame
-	Gizmos::clear();
+        Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i),
+            i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
+    }
 
-	Gizmos::addTransform(glm::mat4());
-
-	// ...for now let's add a grid to the gizmos
-	for (int i = 0; i < 21; ++i) {
-		Gizmos::addLine(vec3(-10 + i, 0, 10), vec3(-10 + i, 0, -10),
-			i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
-
-		Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i),
-			i == 10 ? vec4(1, 1, 1, 1) : vec4(0, 0, 0, 1));
-	}
-
-	// return true, else the application closes
-	return true;
+    // return true, else the application closes
+    return true;
 }
 
-void TestApplication::draw() {
-
-	// clear the screen for this frame
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    for (auto& gameObject : m_gameObjects)
+void TestApplication::draw() 
+{
+    for (RenderPass& renderPass : m_renderPasses)
     {
-        gameObject->draw(*m_pCamera);
-    }
-	//m_pVertexColoredGrid->draw(projView);
-	//m_pSpriteSheetQuad->draw(projView);
-	//m_pFBXMesh->draw(projView);
-	//m_pParticleEmitter->draw(projView);
+        glBindFramebuffer(GL_FRAMEBUFFER, renderPass.getId()); // fboId may be 0
 
-	// display the 3D gizmos
-	Gizmos::draw(m_pCamera->getProjectionView());
+        // clear the screen for this frame
+        glm::vec3 clearColor = renderPass.getClearColor();
+        glClearColor(clearColor.r, clearColor.g, clearColor.b, 1);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+        for (auto& gameObject : m_gameObjects)
+        {
+            gameObject->draw(*(renderPass.getCamera().lock().get()));
+        }
+    }
+
+    // display the 3D gizmos
+    Gizmos::draw(m_pCamera->getProjectionView());
 }

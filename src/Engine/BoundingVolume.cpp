@@ -6,6 +6,9 @@
 
 bool BoundingVolume::isInsideFrustum(glm::vec3 center, glm::vec4* pPlanes)
 {
+    // If no shapes have been added always be visible
+    if (m_shapes.size() == 0) return true;
+
     int insideShapeCount = 0;
     for (auto pShape : m_shapes)
     {

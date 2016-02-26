@@ -3,7 +3,7 @@
 
 void Texture::create(const unsigned char* data, int imageWidth, int imageHeight, TextureType textureType)
 {
-	assert(m_textureId == (GLuint)-1);
+    assert(m_textureId == (GLuint)-1);
 
     GLuint internalFormat = -1; // How OpenGL will store it
     GLuint format = -1; // How the data given is arranged
@@ -57,8 +57,8 @@ void Texture::create_impl(const void* data, int imageWidth, int imageHeight, GLu
 
 void Texture::destroy()
 {
-	if (m_textureId != (GLuint)-1) {
-		glDeleteTextures(1, &m_textureId);
-		m_textureId = (GLuint)-1;
-	}
+    if (m_textureId != (GLuint)-1) {
+        glDeleteTextures(1, &m_textureId);
+        m_textureId = (GLuint)-1;
+    }
 }

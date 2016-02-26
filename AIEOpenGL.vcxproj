@@ -29,6 +29,7 @@
     <ClInclude Include="src\Engine\MeshData.h" />
     <ClInclude Include="src\Engine\Program.h" />
     <ClInclude Include="src\Engine\Renderable.h" />
+    <ClInclude Include="src\Engine\RenderPass.h" />
     <ClInclude Include="src\Engine\ResourceCreator.h" />
     <ClInclude Include="src\Engine\Sampler.h" />
     <ClInclude Include="src\Engine\Shape.h" />
@@ -58,6 +59,7 @@
     <ClCompile Include="src\Engine\Helpers.cpp" />
     <ClCompile Include="src\Engine\Mesh.cpp" />
     <ClCompile Include="src\Engine\Program.cpp" />
+    <ClCompile Include="src\Engine\RenderPass.cpp" />
     <ClCompile Include="src\Engine\ResourceCreator.cpp" />
     <ClCompile Include="src\Engine\Texture.cpp" />
     <ClCompile Include="src\Engine\Transform.cpp" />
