@@ -49,6 +49,8 @@ bool FBXMeshGameObject::create()
         // Grab the vertex and index data and upload it to OpenGL
         renderable.mesh.create(pFbxMesh->m_vertices.data(), pFbxMesh->m_vertices.size(), pFbxMesh->m_indices.data(), pFbxMesh->m_indices.size());
 
+        m_boundingVolume.addBoundingSphere(glm::vec3(pFbxMesh->m_globalTransform[3]), pFbxMesh->m_vertices);
+
         // Take a copy of the correct program.
         // This object still owns the resource and needs to clean it up.
         renderable.program = pFbxMesh->m_name == m_skinnedMeshName ? m_skinningProgram : m_defaultProgram;
@@ -76,6 +78,7 @@ bool FBXMeshGameObject::create()
             }
         }
     }
+
 
     return true;
 }
@@ -124,28 +127,11 @@ void FBXMeshGameObject::draw(const Camera& camera)
 
     for (unsigned int renderableIndex = 0; renderableIndex < m_renderables.size(); renderableIndex++ )
     {
-        // Get the mesh we're rendering
         auto& renderable = m_renderables[renderableIndex];
-        auto& mesh = renderable.mesh;
 
-        Program program = renderable.program;
+        Program& program = renderable.program;
         assert(program.isValid());
         glUseProgram(program.getId());
-
-        program.setUniform("projectionView", camera.getProjectionView() * getTransform().GetMatrix());
-
-        // Bind the mesh
-        glBindVertexArray(mesh.getVAO());
-
-        for (const auto& sampler : renderable.samplers)
-        {
-            GLuint textureId = sampler.texture.getId();
-            if ( textureId != (GLuint)-1) {
-                // Associate the diffuse texture id with the texture unit
-                glActiveTexture(GL_TEXTURE0 + sampler.textureUnit);
-                glBindTexture(GL_TEXTURE_2D, textureId);
-            }
-        }
 
         if (m_fbxFile.getSkeletonCount() > 0 && program.hasUniform("bones"))
         {
@@ -158,8 +144,8 @@ void FBXMeshGameObject::draw(const Camera& camera)
             program.setUniform("bones", *pSkeleton->m_bones, pSkeleton->m_boneCount);
 
         }
-
-        glDrawElements(GL_TRIANGLES, mesh.getIndexCount(), GL_UNSIGNED_INT, 0);
     }
+
+    GameObject::draw(camera);
 
 }

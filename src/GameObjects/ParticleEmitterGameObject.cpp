@@ -237,10 +237,8 @@ void ParticleEmitterGameObject::draw(const Camera& camera)
     // We've moved the particles, so we'll upload the new particle vertex data.
     glBufferSubData(GL_ARRAY_BUFFER, 0, m_firstDeadIndex * 4 * sizeof(Vertex_PositionColor), m_pVertices);
 
-    glUseProgram(renderable.program.getId());
-    renderable.program.setUniform("projectionView", camera.getProjectionView());
-    glBindVertexArray(renderable.mesh.getVAO());
+    // Make sure we only draw the alive particles
+    renderable.mesh.setIndexCount(m_firstDeadIndex * 6);
 
-    // Only draw the alive particles
-    glDrawElements(GL_TRIANGLES, m_firstDeadIndex * 6, GL_UNSIGNED_INT, 0);
+    GameObject::draw(camera);
 }

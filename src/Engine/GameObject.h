@@ -2,6 +2,7 @@
 
 #include "Engine/Program.h"
 #include "Engine/Renderable.h"
+#include "Engine/BoundingVolume.h"
 #include "Engine/Transform.h"
 
 class Camera;
@@ -28,6 +29,8 @@ protected:
     }
 
     std::vector<Renderable> m_renderables;
+    BoundingVolume m_boundingVolume;
+
 private:
     Transform m_transform;
 };

@@ -5,12 +5,12 @@
 
 
 int main() {
-	BaseApplication* app = new TestApplication();
-	if (app->startup())
-		app->run();
-	app->shutdown();
+    BaseApplication* app = new TestApplication();
+    if (app->startup())
+        app->run();
+    app->shutdown();
 
-	delete app;
+    delete app;
 
-	return 0;
+    return 0;
 }

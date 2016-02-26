@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BaseApplication.h" />
+    <ClInclude Include="src\Engine\BoundingVolume.h" />
     <ClInclude Include="src\Engine\Camera.h" />
     <ClInclude Include="src\Engine\GameObject.h" />
     <ClInclude Include="src\Engine\GeometryCreator.h" />
@@ -30,6 +31,7 @@
     <ClInclude Include="src\Engine\Renderable.h" />
     <ClInclude Include="src\Engine\ResourceCreator.h" />
     <ClInclude Include="src\Engine\Sampler.h" />
+    <ClInclude Include="src\Engine\Shape.h" />
     <ClInclude Include="src\Engine\Texture.h" />
     <ClInclude Include="src\Engine\Transform.h" />
     <ClInclude Include="src\Engine\Vertex.h" />
@@ -49,7 +51,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BaseApplication.cpp" />
+    <ClCompile Include="src\Engine\BoundingVolume.cpp" />
     <ClCompile Include="src\Engine\Camera.cpp" />
+    <ClCompile Include="src\Engine\GameObject.cpp" />
     <ClCompile Include="src\Engine\GeometryCreator.cpp" />
     <ClCompile Include="src\Engine\Helpers.cpp" />
     <ClCompile Include="src\Engine\Mesh.cpp" />

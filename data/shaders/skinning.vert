@@ -13,6 +13,7 @@ out vec3 vNormal;
 out vec3 vTangent;
 out vec3 vBiTangent;
 
+uniform mat4 model;
 uniform mat4 projectionView;
 
 const int MAX_BONES = 128;
@@ -20,18 +21,18 @@ uniform mat4 bones[MAX_BONES];
 
 void main()
 {
-	vPosition = position.xyz;
-	vNormal = normal.xyz;
-	vTangent = tangent.xyz;
-	vBiTangent = cross( normal.xyz, tangent.xyz );
-	vTexCoord = texCoord;
+    vPosition = position.xyz;
+    vNormal = normal.xyz;
+    vTangent = tangent.xyz;
+    vBiTangent = cross( normal.xyz, tangent.xyz );
+    vTexCoord = texCoord;
 
     ivec4 index = ivec4(indicies);
 
-	vec4 P =  bones[index.x] * position * weights.x;
-	     P += bones[index.y] * position * weights.y;
-	     P += bones[index.z] * position * weights.z;
-	     P += bones[index.w] * position * weights.w;
+    vec4 P =  bones[index.x] * position * weights.x;
+         P += bones[index.y] * position * weights.y;
+         P += bones[index.z] * position * weights.z;
+         P += bones[index.w] * position * weights.w;
 
-    gl_Position = projectionView * P;
+    gl_Position = projectionView * model * P;
 }

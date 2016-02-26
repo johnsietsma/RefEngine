@@ -36,7 +36,7 @@ bool TestApplication::startup() {
 	m_pCamera = std::make_shared<Camera>(glm::radians(45.f), windowSize.x/(float)windowSize.y, 0.1f, 1000.f);
 	m_pCamera->setLookAtFrom(vec3(0, 10, 10), vec3(0));
 
-    Transform fbxTransform = Transform(glm::vec3(0, 0, -2), glm::quat(), glm::vec3(0.01f));
+    Transform pyroTransform = Transform(glm::vec3(0, 0, -2), glm::quat(), glm::vec3(0.01f));
 
     ParticleEmitterConfig config;
     config.emitRate = 500;
@@ -50,8 +50,9 @@ bool TestApplication::startup() {
     config.velocityMin = 0.1f;
     config.velocityMax = 1.0f;
 
-    //m_gameObjects.emplace_back(std::make_shared<FBXMeshGameObject>(fbxTransform, "./data/models/Pyro/pyro.fbx", nullptr));
-    m_gameObjects.emplace_back(std::make_shared<ParticleEmitterGameObject>(config, m_pCamera.get()));
+    m_gameObjects.emplace_back(std::make_shared<FBXMeshGameObject>(Transform(), "./data/models/soulspear/soulspear.fbx", nullptr));
+    //m_gameObjects.emplace_back(std::make_shared<FBXMeshGameObject>(pyroTransform, "./data/models/Pyro/pyro.fbx", nullptr));
+    //m_gameObjects.emplace_back(std::make_shared<ParticleEmitterGameObject>(config, m_pCamera.get()));
     //m_gameObjects.emplace_back(std::make_shared<SpriteSheetQuadGameObject>(glm::vec3(-3, 0.02f, -3), "./data/textures/spritesheet.png", 4, 4));
     //m_gameObjects.emplace_back(std::make_shared<TexturedQuadGameObject>(glm::vec3(3, 0.02f, -3), "./data/textures/crate.png"));
     //m_gameObjects.emplace_back(std::make_shared<VertexColoredGridGameObject>(glm::vec3(0, 0.01f, 2), glm::ivec2(5, 5)));
