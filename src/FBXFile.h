@@ -117,7 +117,7 @@ struct FBXMaterial
         case SpecularTexture: return "specularSampler";
         case GlossTexture: return "glossSampler";
         case NormalTexture: return "normalSampler";
-        case AlphaTexture: return "alphaSaampler";
+        case AlphaTexture: return "alphaSampler";
         case DisplacementTexture: return "displacementSampler";
         default: assert(false); return nullptr;
         }

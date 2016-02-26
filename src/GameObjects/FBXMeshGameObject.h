@@ -2,7 +2,6 @@
 
 #include "Engine/GameObject.h"
 #include "Engine/Program.h"
-#include "Engine/Renderable.h"
 
 #include "FBXFile.h"
 
@@ -30,8 +29,6 @@ private:
     FBXFile m_fbxFile; // Loads the FBX and stores the associated data.
     std::string m_meshFileName;
     std::string m_skinnedMeshName;
-
-    std::vector<Renderable> m_renderables;
 
     Program m_defaultProgram;
     Program m_skinningProgram;

@@ -10,6 +10,5 @@ struct Renderable
 {
     Program program;
     Mesh mesh;
-    bool isSkinned;
     std::vector<Sampler> samplers;
 };

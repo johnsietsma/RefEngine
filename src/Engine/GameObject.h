@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/Program.h"
+#include "Engine/Renderable.h"
 #include "Engine/Transform.h"
 
 class Camera;
@@ -8,11 +9,7 @@ class Camera;
 class GameObject
 {
 public:
-    GameObject(const Transform& transform) : 
-        m_transform(transform)
-    {
-    }
-
+  
     const Transform& getTransform() const { return m_transform;  }
     void setTransform(const Transform& transform) { m_transform = transform; }
 
@@ -25,6 +22,12 @@ public:
 protected:
     GameObject() {}; // GameObject can only be inherited
 
+    GameObject(const Transform& transform) :
+        m_transform(transform)
+    {
+    }
+
+    std::vector<Renderable> m_renderables;
 private:
     Transform m_transform;
 };
