@@ -1,0 +1,84 @@
+#include "SpriteSheetQuadGameObject.h"
+
+#include "Engine/Camera.h"
+#include "Engine/ResourceCreator.h"
+
+#include "gl_core_4_4.h"
+
+#include <assert.h>
+
+SpriteSheetQuadGameObject::SpriteSheetQuadGameObject(const glm::vec3& pos, const char* pSpriteSheetFilename, int cellCountX, int cellCountY) :
+    GameObject(Transform(pos)),
+    m_cellCountX(cellCountX),
+    m_cellCountY(cellCountY),
+    m_cellIndex(0),
+    m_elapsedTime(0),
+    m_filename(pSpriteSheetFilename)
+{}
+
+
+bool SpriteSheetQuadGameObject::create()
+{
+    // Create a program using a vertex shader that will pass through the texture coords and a frag shader that wil do the animation.
+	m_program = ResourceCreator::CreateProgram("./data/shaders/tex.vert", "./data/shaders/spriteAnimation.frag");
+	if (!m_program.isValid()) return false;
+
+	// Tell the sampler in the fragment shader to look in texture unit 0
+	glUseProgram(m_program.getId());
+	m_program.setUniform("diffuseSampler", 0);
+
+	m_mesh = ResourceCreator::CreateTexturedQuad();
+	if (!m_mesh.isValid()) return false;
+
+	m_texture = ResourceCreator::CreateTexture(m_filename.c_str());
+	if (!m_texture.isValid()) return false;
+
+	return true;
+}
+
+
+void SpriteSheetQuadGameObject::destroy()
+{
+	m_mesh.destroy();
+	m_program.destroy();
+	m_texture.destroy();
+}
+
+void SpriteSheetQuadGameObject::update(float deltaTime)
+{
+    m_elapsedTime += deltaTime;
+
+    const int timeMultiplier = 10;
+    float strectchTime = m_elapsedTime * timeMultiplier;
+
+    if (strectchTime - ((int)strectchTime) < deltaTime * timeMultiplier) {
+        m_cellIndex++;
+        m_cellIndex %= m_cellCountX * m_cellCountY;
+    }
+}
+
+
+void SpriteSheetQuadGameObject::draw( const Camera& camera )
+{
+	// Use the program
+	assert(m_program.isValid());
+	glUseProgram(m_program.getId());
+	m_program.setUniform("projectionView", camera.getProjectionView() * getTransform().GetMatrix());
+
+	// Set up the sprite sheet uniforms
+	m_program.setUniform("cellCountX", m_cellCountX);
+	m_program.setUniform("cellCountY", m_cellCountY);
+	m_program.setUniform("cellIndex", m_cellIndex);
+
+	// Bind the mesh
+	assert(m_mesh.isValid());
+	glBindVertexArray(m_mesh.getVAO());
+
+	// Bind the texture to texture unit 0
+	assert(m_texture.isValid());
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_texture.getId());
+
+	glDrawElements(GL_TRIANGLES, m_mesh.getIndexCount(), GL_UNSIGNED_INT, 0);
+
+}

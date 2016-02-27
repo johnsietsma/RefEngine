@@ -1,0 +1,25 @@
+
+IF(APPLE)
+    # do nothing
+ELSEIF(CMAKE_COMPILER_IS_GNUCXX)
+    # do nothing
+ELSE()
+    SET( VLD_SEARCH_PATHS
+        $ENV{VLD_DIR}
+        "$ENV{ProgramW6432}/VLD"
+        "$ENV{PROGRAMFILES}/VLD"
+        "$ENV{ProgramW6432}/VLD"
+    )
+ENDIF()
+
+
+FIND_PATH(VLD_INCLUDE_DIR "vld.h"
+    PATHS ${VLD_SEARCH_PATHS}
+    PATH_SUFFIXES "include")
+
+
+IF(VLD_INCLUDE_DIR)
+    SET(VLD_FOUND "YES")
+ELSE()
+    SET(VLD_FOUND "NO")
+ENDIF()

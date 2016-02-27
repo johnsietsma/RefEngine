@@ -1,0 +1,59 @@
+#include "VertexAttributes.h"
+
+#include "gl_core_4_4.h"
+#include "FBXFile.h"
+
+template<>
+void VertexAttributes::Setup<Vertex_PositionColor>()
+{
+    // Position vertex attribute
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_PositionColor), (void*)(offsetof(Vertex_PositionColor, position)));
+
+    // Color vertex attribute
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_PositionColor), (void*)(offsetof(Vertex_PositionColor, color)));
+
+}
+
+template<>
+void VertexAttributes::Setup<Vertex_PositionTexCoord>()
+{
+    // Position vertex attribute
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_PositionTexCoord), (void*)(offsetof(Vertex_PositionTexCoord, position)));
+
+    // Texcoord vertex attribute
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_PositionTexCoord), (void*)(offsetof(Vertex_PositionTexCoord, texCoord)));
+
+}
+
+template<>
+void VertexAttributes::Setup<FBXVertex>()
+{
+    // Position vertex attribute
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, position)));
+
+    // Texcoord vertex attribute
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, texCoord1)));
+
+    // Normal vertex attribute
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, normal)));
+
+    // Tangent vertex attribute
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, tangent)));
+
+    // Weights vertex attribute
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, weights)));
+
+    // Indices vertex attribute
+    glEnableVertexAttribArray(5);
+    glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, indices)));
+}
+
