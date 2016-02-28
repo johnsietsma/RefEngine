@@ -191,13 +191,13 @@ void ParticleEmitterGameObject::update(float deltaTime)
         m_pVertices[startVertexIndex + 3].color = particle->color;
 
         // Create a billboard matrix that will transform verts to face towards the camera
-        const glm::mat4 camMatrix = m_pBillboardCamera->getTransform();
+        const Transform& camTransform = m_pBillboardCamera->getTransform();
 
         // z axis is the normalized vector that points towards the camera
-        glm::vec3 zAxis = glm::normalize(glm::vec3(camMatrix[3]) - particle->position);
+        glm::vec3 zAxis = glm::normalize(glm::vec3(camTransform.getPosition()) - particle->position);
 
         // Calculate the y axis using the cameras up axis and the particles new forward vector
-        glm::vec3 xAxis = glm::cross(glm::vec3(camMatrix[1]), zAxis);
+        glm::vec3 xAxis = glm::cross(camTransform.getUp(), zAxis);
 
         // Finally, find our y axis using the forward and left vectors
         glm::vec3 yAxis = glm::cross(zAxis, xAxis);

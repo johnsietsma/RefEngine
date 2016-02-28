@@ -14,27 +14,28 @@ public:
     Transform(glm::vec3 position, glm::quat rot);
     Transform(glm::vec3 position, glm::quat rot, glm::vec3 scale);
 
-	glm::vec3 GetPosition() const { return m_position;  }
-	glm::quat GetRotation() const { return m_rotation; }
-	glm::vec3 GetEulerAngles() const { return glm::eulerAngles(m_rotation); }
-	glm::vec3 GetScale() const { return m_scale;  }
+    Transform(glm::vec3 position, glm::vec3 lookPosition);
 
-	glm::vec3 GetForward() const { return glm::normalize(m_rotation * glm::vec3(0, 0, 1)); }
-	glm::vec3 GetRight() const { return glm::normalize(m_rotation * glm::vec3(1, 0, 0)); }
-	glm::vec3 GetUp() const { return glm::normalize(m_rotation * glm::vec3(0, 1, 0)); }
+	glm::vec3 getPosition() const { return m_position;  }
+	glm::quat getRotation() const { return m_rotation; }
+	glm::vec3 getEulerAngles() const { return glm::eulerAngles(m_rotation); }
+	glm::vec3 getScale() const { return m_scale;  }
 
-	glm::mat4 GetMatrix() const;
+	glm::vec3 getForward() const { return glm::normalize(m_rotation * glm::vec3(0, 0, 1)); }
+	glm::vec3 getRight() const { return glm::normalize(m_rotation * glm::vec3(1, 0, 0)); }
+	glm::vec3 getUp() const { return glm::normalize(m_rotation * glm::vec3(0, 1, 0)); }
 
-	void SetPosition(glm::vec3 position) { m_position = position; }
-	void SetRotation(glm::quat rotation) { m_rotation = rotation; }
-	void SetEulerAngles(glm::vec3 rotation) { m_rotation = glm::quat(rotation); }
-	void SetScale(glm::vec3 scale) { m_scale = scale; }
+	glm::mat4 getMatrix() const;
 
-	void LookAt(glm::vec3 lookTarget);
+	void setPosition(glm::vec3 position) { m_position = position; }
+	void setRotation(glm::quat rotation) { m_rotation = rotation; }
+	void setEulerAngles(glm::vec3 rotation) { m_rotation = glm::quat(rotation); }
+	void setScale(glm::vec3 scale) { m_scale = scale; }
 
-	void Translate(glm::vec3 positionDelta) { m_position += positionDelta; }
-	void Rotate(glm::quat rotation) { m_rotation = rotation * m_rotation; }
+	void lookAt(glm::vec3 lookTarget);
 
+	void translate(glm::vec3 positionDelta) { m_position += positionDelta; }
+	void rotate(glm::quat rotation) { m_rotation = rotation * m_rotation; }
 private:
 	glm::vec3 m_position;
 	glm::quat m_rotation;

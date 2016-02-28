@@ -13,7 +13,7 @@ void GameObject::draw(const Camera& camera, const Light& light)
     for (auto& renderable : m_renderables)
     {
         // TODO: Take scale into account
-        if (!m_boundingVolume.isInsideFrustum(getTransform().GetPosition(), frustum)) {
+        if (!m_boundingVolume.isInsideFrustum(getTransform().getPosition(), frustum)) {
             std::cout << "Not visible" << std::endl;
             continue;
         }
@@ -22,12 +22,12 @@ void GameObject::draw(const Camera& camera, const Light& light)
 
         // Just blindly go through and set well-known uniforms.
         // TODO: Only do this if needed.
-        renderable.program.setUniform("model",  m_transform.GetMatrix());
+        renderable.program.setUniform("model",  m_transform.getMatrix());
         renderable.program.setUniform("projectionView", camera.getProjectionView());
 
-        renderable.program.setUniform("lightDirection", light.getTransform().GetForward() );
+        renderable.program.setUniform("lightDirection", light.getTransform().getForward() );
         renderable.program.setUniform("lightColor", light.getColor());
-        renderable.program.setUniform("cameraPosition", camera.getTransform()[3] );
+        renderable.program.setUniform("cameraPosition", camera.getTransform().getPosition() );
         renderable.program.setUniform("specularPower", 5);
 
         glBindVertexArray(renderable.mesh.getVAO());

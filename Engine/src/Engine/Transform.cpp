@@ -1,4 +1,4 @@
-#include "Engine/Transform.h"
+#include "Transform.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
@@ -24,12 +24,19 @@ Transform::Transform(glm::vec3 position, glm::quat rot, glm::vec3 scale) :
 {
 }
 
- glm::mat4 Transform::GetMatrix() const
-{ 
+Transform::Transform(glm::vec3 position, glm::vec3 lookPosition) :
+    Transform(position)
+{
+    lookAt(lookPosition);
+}
+
+
+ glm::mat4 Transform::getMatrix() const
+{
 	return glm::translate(m_position) * glm::mat4_cast(m_rotation) * glm::scale(m_scale);
 }
 
- void Transform::LookAt(glm::vec3 lookTarget)
+ void Transform::lookAt(glm::vec3 lookTarget)
  {
 	 glm::mat4 viewMat = glm::lookAt(m_position, lookTarget, glm::vec3(0, 1, 0));
 	 glm::mat4 worldMat = glm::inverse(viewMat);

@@ -1,12 +1,15 @@
 #pragma once
 
+#include "Transform.h"
+
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 class Camera {
 public:
 
-    Camera(float fovY, float aspectRatio, float near, float far);
+    Camera(const Transform& transform, float fovY, float aspectRatio, float near, float far);
     virtual ~Camera();
 
     void    update(float deltaTime);
@@ -15,12 +18,10 @@ public:
 
     void    setPerspective(float fovY, float aspectRatio, float near, float far);
 
-    void    setLookAtFrom(const glm::vec3& from, const glm::vec3& to);
-
-    const glm::mat4&    getTransform() const { return m_transform; }
+    const Transform&    getTransform() const { return m_transform; }
     const glm::mat4&    getProjection() const { return m_projection; }
-    const glm::mat4&    getView() const { return m_view; }
-    const glm::mat4&    getProjectionView() const { return m_projectionView; }
+    glm::mat4           getView() const { return glm::inverse(m_transform.getMatrix());  }
+    glm::mat4           getProjectionView() const { return m_projection * getView(); }
     void                getFrustumPlanes( glm::vec4 (&pPlanes)[6] ) const;
 
     // returns a world-space normalized vector pointing away from the camera's world-space position
@@ -32,10 +33,7 @@ public:
 
 private:
 
+    Transform   m_transform;
     float       m_speed;
-    glm::vec3   m_up;
-    glm::mat4   m_transform; // TODO: Use the Transform class
     glm::mat4   m_projection;
-    glm::mat4   m_view;
-    glm::mat4   m_projectionView;
 };

@@ -63,7 +63,7 @@ void SpriteSheetQuadGameObject::draw( const Camera& camera, const Light& light )
 	// Use the program
 	assert(m_program.isValid());
 	glUseProgram(m_program.getId());
-	m_program.setUniform("projectionView", camera.getProjectionView() * getTransform().GetMatrix());
+	m_program.setUniform("projectionView", camera.getProjectionView());
 
 	// Set up the sprite sheet uniforms
 	m_program.setUniform("cellCountX", m_cellCountX);

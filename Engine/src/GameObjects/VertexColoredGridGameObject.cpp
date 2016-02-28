@@ -50,7 +50,7 @@ void VertexColoredGridGameObject::draw( const Camera& camera, const Light& light
 {
 	assert(m_program.isValid());
 	glUseProgram(m_program.getId());
-	m_program.setUniform("projectionView", camera.getProjectionView() * getTransform().GetMatrix());
+	m_program.setUniform("projectionView", camera.getProjectionView());
 
 	assert(m_mesh.isValid());
 	glBindVertexArray(m_mesh.getVAO());

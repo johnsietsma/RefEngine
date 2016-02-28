@@ -102,7 +102,7 @@ void ProceduralGenerationGameObject::update(float deltaTime)
 void ProceduralGenerationGameObject::draw(const Camera & camera, const Light& light)
 {
     glUseProgram(m_program.getId());
-    m_program.setUniform("projectionView", camera.getProjectionView() * getTransform().GetMatrix());
+    m_program.setUniform("projectionView", camera.getProjectionView());
 
     // Bind the texture to texture unit 0
     assert(m_heightMapTexture.isValid());
