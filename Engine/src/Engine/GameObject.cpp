@@ -3,7 +3,9 @@
 #include "Camera.h"
 #include "Light.h"
 
+#include <algorithm>
 #include <iostream>
+
 
 void GameObject::draw(const Camera& camera, const Light& light)
 {
@@ -19,6 +21,9 @@ void GameObject::draw(const Camera& camera, const Light& light)
         }
 
         glUseProgram(renderable.program.getId());
+
+        glPolygonMode(GL_FRONT_AND_BACK, renderable.renderMode);
+        std::cout << "Render mode: " << renderable.renderMode << std::endl;
 
         // Just blindly go through and set well-known uniforms.
         // TODO: Only do this if needed.
@@ -45,3 +50,4 @@ void GameObject::draw(const Camera& camera, const Light& light)
         glDrawElements(GL_TRIANGLES, renderable.mesh.getIndexCount(), GL_UNSIGNED_INT, 0);
     }
 }
+

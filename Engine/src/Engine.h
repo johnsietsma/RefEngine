@@ -1,13 +1,16 @@
 #pragma once
 
+#include "Engine/Visitor.h"
+#include "Engine/RenderPass.h"
+
 #include <assert.h>
 #include <memory>
 #include <vector>
 
 class Camera;
 class GameObject;
+class InputManager;
 class Light;
-class RenderPass;
 class Window;
 
 
@@ -36,16 +39,23 @@ public:
         // Leave the default RenderPass at the end, insert at 1 before the end
         m_renderPasses.insert(m_renderPasses.begin() + m_renderPasses.size() - 1, renderPass);
     }
+
     void addGameObject( std::shared_ptr<GameObject> pGameObject ) { m_gameObjects.push_back(pGameObject); }
+
+    template<typename... TArgs>
+    SharedPtrVisitor<GameObject,TArgs...> getGameObjectVisitor() { return {m_gameObjects}; }
 
 private:
     std::shared_ptr<Camera> m_pMainCamera;
 
     std::vector< std::shared_ptr<Camera>> m_cameras;
+
     std::vector< std::shared_ptr<GameObject> > m_gameObjects;
+
     std::vector<RenderPass> m_renderPasses;
 
     std::shared_ptr<Window> m_pWindow;
+    std::shared_ptr<InputManager> m_pInputManager;
 
     std::shared_ptr<Light> m_pLight;
 

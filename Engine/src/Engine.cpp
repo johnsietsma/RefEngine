@@ -3,6 +3,7 @@
 #include "Engine/Camera.h"
 #include "Engine/GameObject.h"
 #include "Engine/Helpers.h"
+#include "Engine/InputManager.h"
 #include "Engine/Light.h"
 #include "Engine/RenderPass.h"
 
@@ -22,9 +23,12 @@ using glm::vec4;
 
 Engine::Engine( const char* pWindowName ) :
     m_pWindow(std::make_shared<Window>(pWindowName, 1024, 768)),
+    m_pInputManager(std::make_shared<InputManager>(m_pWindow->getWindow(), this)),
     m_shouldDrawGrid(true)
 {
     if( !m_pWindow->isValid() ) return;
+
+
 
     auto major = ogl_GetMajorVersion();
     auto minor = ogl_GetMinorVersion();
