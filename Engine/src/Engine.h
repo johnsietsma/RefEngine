@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Engine/Visitor.h"
 #include "Engine/RenderPass.h"
 
 #include <assert.h>
@@ -14,9 +13,13 @@ class Light;
 class Window;
 
 
+template<typename T>
+using sp_vector = std::vector< std::shared_ptr<T> >;
+
 /*
 */
-class Engine {
+class Engine : public std::enable_shared_from_this<Engine>
+{
 public:
 
     Engine( const char* pWindowName );
@@ -42,16 +45,14 @@ public:
 
     void addGameObject( std::shared_ptr<GameObject> pGameObject ) { m_gameObjects.push_back(pGameObject); }
 
-    template<typename... TArgs>
-    SharedPtrVisitor<GameObject,TArgs...> getGameObjectVisitor() { return {m_gameObjects}; }
+    sp_vector<GameObject>& getGameObjects() { return m_gameObjects; }
+    const sp_vector<GameObject>& getGameObjects() const { return m_gameObjects; }
 
 private:
     std::shared_ptr<Camera> m_pMainCamera;
 
-    std::vector< std::shared_ptr<Camera>> m_cameras;
-
-    std::vector< std::shared_ptr<GameObject> > m_gameObjects;
-
+    sp_vector<Camera> m_cameras;
+    sp_vector<GameObject> m_gameObjects;
     std::vector<RenderPass> m_renderPasses;
 
     std::shared_ptr<Window> m_pWindow;

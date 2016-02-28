@@ -5,6 +5,7 @@
 #include "glm/gtx/matrix_decompose.hpp"
 #include "glm/gtx/transform.hpp"
 
+const glm::vec3 Transform::WORLD_UP = glm::vec3(0,1,0);
 
 Transform::Transform(glm::vec3 position)
 : Transform(position, glm::quat(), glm::vec3(1) )
@@ -31,7 +32,7 @@ Transform::Transform(glm::vec3 position, glm::vec3 lookPosition) :
 }
 
 
- glm::mat4 Transform::getMatrix() const
+glm::mat4 Transform::getMatrix() const
 {
 	return glm::translate(m_position) * glm::mat4_cast(m_rotation) * glm::scale(m_scale);
 }
@@ -44,3 +45,8 @@ Transform::Transform(glm::vec3 position, glm::vec3 lookPosition) :
 	 m_rotation = glm::quat_cast(worldMat);
  }
 
+void Transform::rotate(float degrees, glm::vec3 axis )
+{
+    auto rot = glm::angleAxis( glm::radians(degrees), axis);
+    rotate(rot);
+}

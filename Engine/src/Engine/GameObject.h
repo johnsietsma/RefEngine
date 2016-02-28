@@ -5,13 +5,16 @@
 #include "Engine/Renderable.h"
 #include "Engine/BoundingVolume.h"
 #include "Engine/Transform.h"
-#include "Engine/Visitor.h"
 
 #include <memory>
 
 class Camera;
 class Light;
 struct Renderable;
+
+template<typename T>
+using sp_vector = std::vector< std::shared_ptr<T> >;
+
 
 class GameObject
 {
@@ -26,13 +29,13 @@ public:
     virtual void update(float deltaTime) {}; //no-op
     virtual void draw(const Camera& camera, const Light& light);
 
-    template<typename... TArgs>
-    Visitor<Renderable,TArgs...> getRenderablesVisitor() { return {m_renderables}; }
-
     void addComponent( std::shared_ptr<Component> component ) { m_components.push_back(component); }
 
-    template<typename... TArgs>
-    SharedPtrVisitor<Component,TArgs...> getComponentVisitor() { return {m_components}; }
+    sp_vector<Component>& getComponents() { return m_components; }
+    const sp_vector<Component>& getComponents() const { return m_components; }
+
+    std::vector<Renderable>& getRenderables() { return m_renderables; }
+    const std::vector<Renderable>& getRenderables() const { return m_renderables; }
 
 protected:
     GameObject() : GameObject(Transform()) {}; // GameObject can only be inherited

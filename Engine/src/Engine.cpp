@@ -23,7 +23,6 @@ using glm::vec4;
 
 Engine::Engine( const char* pWindowName ) :
     m_pWindow(std::make_shared<Window>(pWindowName, 1024, 768)),
-    m_pInputManager(std::make_shared<InputManager>(m_pWindow->getWindow(), this)),
     m_shouldDrawGrid(true)
 {
     if( !m_pWindow->isValid() ) return;
@@ -67,6 +66,8 @@ bool Engine::startup()
 {
     if( !m_pWindow->isValid() ) return false;
 
+    m_pInputManager = std::make_shared<InputManager>(m_pWindow->getWindow(), shared_from_this());
+
     // start the gizmo system that can draw basic shapes
     Gizmos::create();
 
@@ -104,8 +105,7 @@ void Engine::run() {
     double prevTime = glfwGetTime();
     double currTime = 0;
 
-    while (currTime = glfwGetTime(),
-        update((float)(currTime - prevTime))) {
+    while ((currTime = glfwGetTime()) && update((float)(currTime - prevTime))) {
 
         glfwPollEvents();
         draw();
@@ -124,6 +124,9 @@ bool Engine::update(float deltaTime) {
 
     // update the camera's movement
     m_pMainCamera->update(deltaTime);
+
+    //TODO: Temp, make light's into components
+    m_pLight->getTransform().rotate(40*deltaTime);
 
     for (auto& gameObject : m_gameObjects)
     {

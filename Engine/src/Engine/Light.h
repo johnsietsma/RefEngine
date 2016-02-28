@@ -13,6 +13,8 @@ public:
     {}
 
     const Transform& getTransform() const { return m_transform; }
+    Transform& getTransform() { return m_transform; }
+
     const glm::vec3& getColor() const { return m_color; }
 
 private:

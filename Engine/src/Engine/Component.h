@@ -13,7 +13,9 @@ public:
         m_gameObject(gameObject)
     {}
 
-    virtual void OnKeyEvent( Input::Key key ) {};
+    virtual void onKeyEvent( Input::Key key ) {};
+
+    virtual void update( float deltaTime ) {};
 
 protected:
     std::weak_ptr<GameObject> getGameObject() { return m_gameObject; }

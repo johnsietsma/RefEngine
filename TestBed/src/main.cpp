@@ -19,7 +19,7 @@
 
 using glm::vec3;
 
-bool setup(Engine* pEngine)
+bool setup(std::shared_ptr<Engine> pEngine)
 {
     // Setup a FBO camera and RenderPass
     Transform camTransform(vec3(2, 10, -10), vec3(0));
@@ -48,8 +48,27 @@ bool setup(Engine* pEngine)
     config.velocityMin = 0.1f;
     config.velocityMax = 1.0f;*/
 
+
+    Program vertLitProgram = ResourceCreator::CreateProgram("./data/shaders/texNormal.vert", "./data/shaders/vertexLit.frag");
+    if( !vertLitProgram.isValid() )
+        return false;
+
+    Program texturedProgram = ResourceCreator::CreateProgram("./data/shaders/texNormal.vert", "./data/shaders/textured.frag");
+    if( !texturedProgram.isValid() )
+        return false;
+
+    Program fragLitProgram = ResourceCreator::CreateProgram("./data/shaders/fragLit.vert", "./data/shaders/texturedVertLit.frag");
+    if( !fragLitProgram.isValid() )
+        return false;
+
+    std::vector<Program> renderPrograms {
+        vertLitProgram,
+        texturedProgram,
+        fragLitProgram
+    };
+
     auto fbxGameObject = std::make_shared<FBXMeshGameObject>(Transform(), "./data/models/soulspear/soulspear.fbx", nullptr);
-    fbxGameObject->addComponent( std::make_shared<RenderModeComponent>( fbxGameObject ) );
+    fbxGameObject->addComponent( std::make_shared<RenderModeComponent>( fbxGameObject, renderPrograms ) );
     pEngine->addGameObject( fbxGameObject );
     //m_gameObjects.emplace_back(std::make_shared<FBXMeshGameObject>(pyroTransform, "./data/models/Pyro/pyro.fbx", nullptr));
     //m_gameObjects.emplace_back(std::make_shared<ParticleEmitterGameObject>(config, m_pCamera.get()));
@@ -66,7 +85,7 @@ bool setup(Engine* pEngine)
 }
 
 int main() {
-    Engine* pEng = new Engine("TestBed");
+    auto pEng = std::make_shared<Engine>("TestBed");
 
     if( !setup( pEng ) ) return 2;
 
@@ -75,8 +94,6 @@ int main() {
     pEng->run();
 
     pEng->shutdown();
-
-    delete pEng;
 
     return 0;
 }

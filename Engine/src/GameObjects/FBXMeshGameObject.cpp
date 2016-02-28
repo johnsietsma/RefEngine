@@ -27,7 +27,7 @@ bool FBXMeshGameObject::create()
     // Create the program for rendering this FBX.
     // Use a skinning vertex shader to support animation.
     // Use the default textured fragment shader.
-    m_skinningProgram = ResourceCreator::CreateProgram("./data/shaders/fragLit.vert", "./data/shaders/texturedVertLit.frag");
+    m_skinningProgram = ResourceCreator::CreateProgram("./data/shaders/skinningFragLit.vert", "./data/shaders/texturedVertLit.frag");
     if (!m_skinningProgram.isValid())
         return false;
 

@@ -6,6 +6,8 @@
 
 class Transform {
 public:
+    static const glm::vec3 WORLD_UP;
+
     Transform() :
 		Transform( glm::vec3(0), glm::quat(), glm::vec3(1) )
     {}
@@ -35,7 +37,8 @@ public:
 	void lookAt(glm::vec3 lookTarget);
 
 	void translate(glm::vec3 positionDelta) { m_position += positionDelta; }
-	void rotate(glm::quat rotation) { m_rotation = rotation * m_rotation; }
+    void rotate(glm::quat rotation) { m_rotation = rotation * m_rotation; }
+	void rotate(float degrees, glm::vec3 axis=WORLD_UP);
 private:
 	glm::vec3 m_position;
 	glm::quat m_rotation;

@@ -7,6 +7,7 @@
 
 #include "stb_image.h"
 
+#include <iostream>
 #include <string>
 
 
@@ -33,10 +34,18 @@ Program ResourceCreator::CreateProgram(const char* pVertexShaderFilename, const 
 	Program program;
 
 	std::string vertShader = ReadFile(pVertexShaderFilename);
-	if (vertShader.length() == 0) return program;
+	if (vertShader.length() == 0)
+	{
+		std::cerr << "Couldn't read file: " << pVertexShaderFilename << std::endl;
+		return program;
+	}
+
 
 	std::string fragShader = ReadFile(pFragmentShaderFilename);
-	if (fragShader.length() == 0) return program;
+	if (fragShader.length() == 0) {
+		std::cerr << "Couldn't read file: " << pFragmentShaderFilename << std::endl;
+		return program;
+	}
 
 	if (!program.create(vertShader.c_str(), fragShader.c_str())) return program;
 

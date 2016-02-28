@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Input.h"
-#include "Visitor.h"
 
 #include <memory>
 
@@ -9,14 +8,13 @@ class Engine;
 class GameObject;
 struct GLFWwindow;
 
-using KeyVisitor = Visitor<std::shared_ptr<GameObject>,Input::Key>;
-
 class InputManager
 {
 public:
-    InputManager( GLFWwindow* pWindow, Engine* pEngine );
+    InputManager( GLFWwindow* pWindow, std::shared_ptr<Engine> pEngine );
 
-    KeyVisitor getKeyVisitor() { return m_keyVisitor; }
+    void onKeyEvent( Input::Key key );
+
 private:
-    KeyVisitor m_keyVisitor;
+    std::weak_ptr<Engine> m_pEngine;
 };

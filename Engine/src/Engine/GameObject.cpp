@@ -21,9 +21,7 @@ void GameObject::draw(const Camera& camera, const Light& light)
         }
 
         glUseProgram(renderable.program.getId());
-
         glPolygonMode(GL_FRONT_AND_BACK, renderable.renderMode);
-        std::cout << "Render mode: " << renderable.renderMode << std::endl;
 
         // Just blindly go through and set well-known uniforms.
         // TODO: Only do this if needed.
