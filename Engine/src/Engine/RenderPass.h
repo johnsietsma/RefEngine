@@ -22,6 +22,7 @@ public:
     {}
 
     bool create();
+    void destroy();
 
     std::weak_ptr<Camera> getCamera() const { return m_pCamera; }
     GLuint getId() const { return m_fboId; }

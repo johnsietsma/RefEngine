@@ -79,6 +79,12 @@ void Engine::shutdown()
     }
     m_gameObjects.clear();
 
+    for (auto& renderPass : m_renderPasses)
+    {
+        renderPass.destroy();
+    }
+    m_renderPasses.clear();
+
     // delete our camera and cleanup gizmos
     Gizmos::destroy();
 
@@ -153,6 +159,9 @@ void Engine::draw()
             auto pCamera = pCameraWeakPtr.lock();
             if( pCamera!=nullptr ) {
                 gameObject->draw(*pCamera);
+            }
+            else {
+                std::cerr << "Missing for a render pass." << std::endl;
             }
         }
     }

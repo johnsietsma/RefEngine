@@ -34,3 +34,10 @@ bool RenderPass::create()
 
     return true;
 }
+
+void RenderPass::destroy()
+{
+    GLuint texId = m_fboTexture.getId();
+    glDeleteTextures(1, &texId);
+    glDeleteRenderbuffers(1, &m_fboDepth);
+}
