@@ -81,11 +81,11 @@ bool ProceduralGenerationGameObject::create()
     m_program.setUniform("heightMapSampler", m_heightMapTextureUnit);
 
     delete pPerlinData;
-    
+
     //m_diffuseTexture = ResourceCreator::CreateTexture("./data/textures/grass1.png");
     //assert(m_diffuseTexture.isValid());
     //m_program.setUniform("diffuseSampler", m_diffuseTextureUnit);
-    
+
     return true;
 }
 
@@ -99,7 +99,7 @@ void ProceduralGenerationGameObject::update(float deltaTime)
 {
 }
 
-void ProceduralGenerationGameObject::draw(const Camera & camera)
+void ProceduralGenerationGameObject::draw(const Camera & camera, const Light& light)
 {
     glUseProgram(m_program.getId());
     m_program.setUniform("projectionView", camera.getProjectionView() * getTransform().GetMatrix());

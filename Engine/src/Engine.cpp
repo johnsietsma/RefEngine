@@ -3,6 +3,7 @@
 #include "Engine/Camera.h"
 #include "Engine/GameObject.h"
 #include "Engine/Helpers.h"
+#include "Engine/Light.h"
 #include "Engine/RenderPass.h"
 
 #include "Gizmos.h"
@@ -10,6 +11,7 @@
 #include "Window.h"
 
 #include <glm/glm.hpp>
+#include <glm/geometric.hpp>
 #include <GLFW/glfw3.h>
 
 #include <assert.h>
@@ -28,7 +30,6 @@ Engine::Engine( const char* pWindowName ) :
     auto minor = ogl_GetMinorVersion();
     std::cout << "GL: " << major << "." << minor << std::endl;
 
-
     glClearColor(0.25f, 0.25f, 0.25f, 1);
 
     glEnable(GL_DEPTH_TEST);
@@ -45,6 +46,10 @@ Engine::Engine( const char* pWindowName ) :
 
     // Setup a default render pass that uses the main camera and renders to the backbuffer
     m_renderPasses.emplace_back(m_pMainCamera, glm::vec3(0.25f, 0.25f, 0.25f));
+
+    // Add a single, hard-coded light
+    Transform lightTransform( glm::vec3(0), glm::angleAxis(glm::radians(45.f), glm::vec3(1,0,0)) );
+    m_pLight = std::make_shared<Light>( lightTransform );
 }
 
 
@@ -158,7 +163,7 @@ void Engine::draw()
             auto pCameraWeakPtr = renderPass.getCamera();
             auto pCamera = pCameraWeakPtr.lock();
             if( pCamera!=nullptr ) {
-                gameObject->draw(*pCamera);
+                gameObject->draw(*pCamera, *m_pLight);
             }
             else {
                 std::cerr << "Missing for a render pass." << std::endl;

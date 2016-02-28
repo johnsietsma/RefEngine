@@ -58,7 +58,7 @@ void SpriteSheetQuadGameObject::update(float deltaTime)
 }
 
 
-void SpriteSheetQuadGameObject::draw( const Camera& camera )
+void SpriteSheetQuadGameObject::draw( const Camera& camera, const Light& light )
 {
 	// Use the program
 	assert(m_program.isValid());

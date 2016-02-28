@@ -6,6 +6,7 @@
 
 class Camera;
 class GameObject;
+class Light;
 class RenderPass;
 class Window;
 
@@ -45,6 +46,8 @@ private:
     std::vector<RenderPass> m_renderPasses;
 
     std::shared_ptr<Window> m_pWindow;
+
+    std::shared_ptr<Light> m_pLight;
 
     bool m_shouldDrawGrid;
 };

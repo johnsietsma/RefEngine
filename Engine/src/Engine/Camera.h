@@ -34,7 +34,7 @@ private:
 
     float       m_speed;
     glm::vec3   m_up;
-    glm::mat4   m_transform;
+    glm::mat4   m_transform; // TODO: Use the Transform class
     glm::mat4   m_projection;
     glm::mat4   m_view;
     glm::mat4   m_projectionView;

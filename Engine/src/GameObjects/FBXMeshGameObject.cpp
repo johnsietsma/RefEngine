@@ -20,14 +20,14 @@ FBXMeshGameObject::FBXMeshGameObject(const Transform& transform, const char* pMe
 bool FBXMeshGameObject::create()
 {
     // Create the program for rendering the non-skinned meshes.
-    m_defaultProgram = ResourceCreator::CreateProgram("./data/shaders/tex.vert", "./data/shaders/tex.frag");
+    m_defaultProgram = ResourceCreator::CreateProgram("./data/shaders/fragLit.vert", "./data/shaders/texturedVertLit.frag");
     if (!m_defaultProgram.isValid())
         return false;
 
     // Create the program for rendering this FBX.
     // Use a skinning vertex shader to support animation.
     // Use the default textured fragment shader.
-    m_skinningProgram = ResourceCreator::CreateProgram("./data/shaders/skinning.vert", "./data/shaders/tex.frag");
+    m_skinningProgram = ResourceCreator::CreateProgram("./data/shaders/fragLit.vert", "./data/shaders/texturedVertLit.frag");
     if (!m_skinningProgram.isValid())
         return false;
 
@@ -115,7 +115,7 @@ void FBXMeshGameObject::update(float deltaTime)
     // Interpolate between the two closest keyframes and set the local transform of animation nodes.
     pSkeleton->evaluate(pAnimation, m_elapsedTime);
 
-    for (unsigned int boneIndex = 0; boneIndex < pSkeleton->m_boneCount; boneIndex++) 
+    for (unsigned int boneIndex = 0; boneIndex < pSkeleton->m_boneCount; boneIndex++)
     {
         // Refresh the global transform now that we've updated the local transform
         pSkeleton->m_nodes[boneIndex]->updateGlobalTransform();
@@ -123,7 +123,7 @@ void FBXMeshGameObject::update(float deltaTime)
 
 }
 
-void FBXMeshGameObject::draw(const Camera& camera)
+void FBXMeshGameObject::draw(const Camera& camera, const Light& light)
 {
 
     for (unsigned int renderableIndex = 0; renderableIndex < m_renderables.size(); renderableIndex++ )
@@ -139,7 +139,7 @@ void FBXMeshGameObject::draw(const Camera& camera)
             FBXSkeleton* pSkeleton = m_fbxFile.getSkeletonByIndex(0);
 
             // Use the nodes we've evaluated above to update the bone positions and combine with the bind pose.
-            pSkeleton->updateBones(); 
+            pSkeleton->updateBones();
 
             // Set the bone data uniform in the vertex shader
             program.setUniform("bones", *pSkeleton->m_bones, pSkeleton->m_boneCount);
@@ -147,6 +147,6 @@ void FBXMeshGameObject::draw(const Camera& camera)
         }
     }
 
-    GameObject::draw(camera);
+    GameObject::draw(camera, light);
 
 }

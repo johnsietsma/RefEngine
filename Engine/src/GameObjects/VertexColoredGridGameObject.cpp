@@ -46,7 +46,7 @@ void VertexColoredGridGameObject::destroy()
 }
 
 
-void VertexColoredGridGameObject::draw( const Camera& camera )
+void VertexColoredGridGameObject::draw( const Camera& camera, const Light& light )
 {
 	assert(m_program.isValid());
 	glUseProgram(m_program.getId());

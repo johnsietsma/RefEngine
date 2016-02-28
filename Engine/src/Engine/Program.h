@@ -23,8 +23,10 @@ public:
 
     bool hasUniform(const char* pUniformName);
 
-    void setUniform(const char* uniformName, const glm::mat4& value, int count=1);
     void setUniform(const char* uniformName, const int value);
+    void setUniform(const char* uniformName, const glm::vec3& value, int count=1);
+    void setUniform(const char* uniformName, const glm::vec4& value, int count=1);
+    void setUniform(const char* uniformName, const glm::mat4& value, int count=1);
 
 private:
     GLuint getUniformLocation(const char* uniformName);

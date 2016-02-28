@@ -17,7 +17,7 @@ public:
     void destroy() override;
 
     void update(float deltaTime) override;
-    void draw(const Camera& camera) override;
+    void draw(const Camera& camera, const Light& light) override;
 
 private:
     Mesh m_mesh;

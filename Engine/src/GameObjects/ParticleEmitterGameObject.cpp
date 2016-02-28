@@ -225,7 +225,7 @@ void ParticleEmitterGameObject::positionBillboardParticle(unsigned int vertexInd
         + glm::vec4(particle->position, 0); // Move the vert to the particles position
 }
 
-void ParticleEmitterGameObject::draw(const Camera& camera)
+void ParticleEmitterGameObject::draw(const Camera& camera, const Light& light)
 {
     assert(m_renderables.size() > 0);
 
@@ -240,5 +240,5 @@ void ParticleEmitterGameObject::draw(const Camera& camera)
     // Make sure we only draw the alive particles
     renderable.mesh.setIndexCount(m_firstDeadIndex * 6);
 
-    GameObject::draw(camera);
+    GameObject::draw(camera, light);
 }

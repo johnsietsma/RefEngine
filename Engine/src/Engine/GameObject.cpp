@@ -1,17 +1,18 @@
 #include "GameObject.h"
 
 #include "Camera.h"
+#include "Light.h"
 
 #include <iostream>
 
-void GameObject::draw(const Camera& camera)
+void GameObject::draw(const Camera& camera, const Light& light)
 {
     glm::vec4 frustum[6];
     camera.getFrustumPlanes(frustum);
 
     for (auto& renderable : m_renderables)
     {
-        // TODO: Scale
+        // TODO: Take scale into account
         if (!m_boundingVolume.isInsideFrustum(getTransform().GetPosition(), frustum)) {
             std::cout << "Not visible" << std::endl;
             continue;
@@ -19,8 +20,15 @@ void GameObject::draw(const Camera& camera)
 
         glUseProgram(renderable.program.getId());
 
+        // Just blindly go through and set well-known uniforms.
+        // TODO: Only do this if needed.
         renderable.program.setUniform("model",  m_transform.GetMatrix());
         renderable.program.setUniform("projectionView", camera.getProjectionView());
+
+        renderable.program.setUniform("lightDirection", light.getTransform().GetForward() );
+        renderable.program.setUniform("lightColor", light.getColor());
+        renderable.program.setUniform("cameraPosition", camera.getTransform()[3] );
+        renderable.program.setUniform("specularPower", 5);
 
         glBindVertexArray(renderable.mesh.getVAO());
 

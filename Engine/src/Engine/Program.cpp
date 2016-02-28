@@ -19,22 +19,22 @@ bool Program::create(const char* pVertShaderSource, const char* pFragShaderSourc
     GLuint vertShaderId = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertShaderId, 1, &pVertShaderSource, 0);
     glCompileShader(vertShaderId);
-    if (!CheckCompileStatus(vertShaderId)) 
+    if (!CheckCompileStatus(vertShaderId))
         return false;
 
     GLuint fragShaderId = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragShaderId, 1, &pFragShaderSource, 0);
     glCompileShader(fragShaderId);
-    if (!CheckCompileStatus(fragShaderId))  
+    if (!CheckCompileStatus(fragShaderId))
         return false;
 
     GLuint programId = glCreateProgram();
     glAttachShader(programId, vertShaderId);
     glAttachShader(programId, fragShaderId);
     glLinkProgram(programId);
-    if (!CheckLinkStatus(programId)) 
+    if (!CheckLinkStatus(programId))
         return false;
-    
+
     // Sucessfully created the program, it's safe to store it now
     m_programID = programId;
 
@@ -57,17 +57,31 @@ bool Program::hasUniform(const char* pUniformName)
     return getUniformLocation(pUniformName) != -1;
 }
 
+void Program::setUniform(const char* uniformName, const int value)
+{
+    GLuint loc = getUniformLocation(uniformName);
+    if (loc != -1) glUniform1i(loc, value);
+}
+
+void Program::setUniform(const char* uniformName, const glm::vec3& value, int count)
+{
+    GLuint loc = getUniformLocation(uniformName);
+    if( loc!=-1 )  glUniform3fv(loc, count, glm::value_ptr(value));
+
+}
+
+void Program::setUniform(const char* uniformName, const glm::vec4& value, int count)
+{
+    GLuint loc = getUniformLocation(uniformName);
+    if( loc!=-1 )  glUniform2fv(loc, count, glm::value_ptr(value));
+}
+
 void Program::setUniform(const char* uniformName, const glm::mat4& value, int count)
 {
     GLuint loc = getUniformLocation(uniformName);
     if( loc!=-1 )  glUniformMatrix4fv(loc, count, GL_FALSE, glm::value_ptr(value));
 }
 
-void Program::setUniform(const char* uniformName, const int value)
-{
-    GLuint loc = getUniformLocation(uniformName);
-    if (loc != -1) glUniform1i(loc, value);
-}
 
 GLuint Program::getUniformLocation(const char* uniformName)
 {

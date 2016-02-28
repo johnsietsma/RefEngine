@@ -8,11 +8,12 @@
 #include <memory>
 
 class Camera;
+class Light;
 
 class GameObject
 {
 public:
-  
+
     const Transform& getTransform() const { return m_transform;  }
     void setTransform(const Transform& transform) { m_transform = transform; }
 
@@ -20,7 +21,7 @@ public:
     virtual void destroy() = 0;
 
     virtual void update(float deltaTime) {};
-    virtual void draw(const Camera& camera);
+    virtual void draw(const Camera& camera, const Light& light);
 
 protected:
     GameObject() {}; // GameObject can only be inherited

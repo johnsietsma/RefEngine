@@ -23,7 +23,7 @@ public:
 
     void update(float deltaTime) override;
 
-    void draw(const Camera& camera) override;
+    void draw(const Camera& camera, const Light& light) override;
 
 private:
     FBXFile m_fbxFile; // Loads the FBX and stores the associated data.
