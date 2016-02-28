@@ -4,17 +4,77 @@
 #include <vld.h>
 #endif
 
-#include "TestApplication.h"
+#include "Engine.h"
+#include "GameObjects.h"
+#include "Window.h"
 
+#include "Engine/Camera.h"
+#include "Engine/RenderPass.h"
+#include "Engine/ResourceCreator.h"
+
+#include <glm/vec3.hpp>
+#include <memory>
+
+using glm::vec3;
+
+bool setup(Engine* pEngine)
+{
+    // Setup a FBO camera and RenderPass
+    auto pFboCamera = std::make_shared<Camera>(glm::radians(45.f), 1, 0.1f, 1000.f);
+    pFboCamera->setLookAtFrom(vec3(0, 10, 10), vec3(0));
+    pEngine->addCamera(pFboCamera);
+
+    RenderPass fboRenderPass(pFboCamera, glm::vec3(1));
+    if (!fboRenderPass.create()) {
+        return false;
+    }
+    pEngine->addRenderPass(fboRenderPass);
+    
+    pEngine->addGameObject( std::make_shared<TexturedQuadGameObject>(glm::vec3(3, 0.02f, -3), fboRenderPass.getTexture()) );
+
+
+
+    Transform pyroTransform = Transform(glm::vec3(0, 0, -2), glm::quat(), glm::vec3(0.01f));
+
+    ParticleEmitterConfig config;
+    config.emitRate = 500;
+    config.startColor = glm::vec4(1, 0, 0, 1);
+    config.endColor = glm::vec4(1, 1, 0, 1);
+    config.lifespanMin = 0.1f;
+    config.lifespanMax = 5;
+    config.particleCount = 1000;
+    config.startSize = 1.f;
+    config.endSize = 0.1f;
+    config.velocityMin = 0.1f;
+    config.velocityMax = 1.0f;
+
+    pEngine->addGameObject( std::make_shared<FBXMeshGameObject>(Transform(), "./data/models/soulspear/soulspear.fbx", nullptr) );
+    //m_gameObjects.emplace_back(std::make_shared<FBXMeshGameObject>(pyroTransform, "./data/models/Pyro/pyro.fbx", nullptr));
+    //m_gameObjects.emplace_back(std::make_shared<ParticleEmitterGameObject>(config, m_pCamera.get()));
+    //m_gameObjects.emplace_back(std::make_shared<SpriteSheetQuadGameObject>(glm::vec3(-3, 0.02f, -3), "./data/textures/spritesheet.png", 4, 4));
+
+    Texture quadTexture = ResourceCreator::CreateTexture("./data/textures/crate.png");
+    if (!quadTexture.isValid())
+        return false;
+    pEngine->addGameObject( std::make_shared<TexturedQuadGameObject>(glm::vec3(3, 0.02f, -3), quadTexture) );
+    //m_gameObjects.emplace_back(std::make_shared<VertexColoredGridGameObject>(glm::vec3(0, 0.01f, 2), glm::ivec2(5, 5)));
+    //m_gameObjects.emplace_back(std::make_shared<ProceduralGenerationGameObject>(glm::vec3(0)));
+
+    return true;
+}
 
 int main() {
-    BaseApplication* app = new TestApplication();
-    if (!app->startup()) return 1;
+    Engine* pEng = new Engine("TestBed");
+    
+    if( !setup( pEng ) ) return 2;
 
-    app->run();
-    app->shutdown();
+    if (!pEng->startup()) return 1;
 
-    delete app;
+    pEng->run();
+
+    pEng->shutdown();
+
+    delete pEng;
 
     return 0;
 }
