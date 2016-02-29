@@ -154,7 +154,6 @@ void Engine::draw()
         }
     }
 
-
     for (RenderPass& renderPass : m_renderPasses)
     {
         glBindFramebuffer(GL_FRAMEBUFFER, renderPass.getId()); // fboId may be 0

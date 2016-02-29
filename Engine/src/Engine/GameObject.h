@@ -12,15 +12,14 @@ class Camera;
 class Light;
 struct Renderable;
 
-template<typename T>
-using sp_vector = std::vector< std::shared_ptr<T> >;
-
-
 class GameObject
 {
 public:
+    const Transform& getTransform() const 
+    { 
+        return m_transform;
+    }
 
-    const Transform& getTransform() const { return m_transform;  }
     void setTransform(const Transform& transform) { m_transform = transform; }
 
     virtual bool create() = 0;
@@ -31,8 +30,8 @@ public:
 
     void addComponent( std::shared_ptr<Component> component ) { m_components.push_back(component); }
 
-    sp_vector<Component>& getComponents() { return m_components; }
-    const sp_vector<Component>& getComponents() const { return m_components; }
+    std::vector<std::shared_ptr<Component>>& getComponents() { return m_components; }
+    const std::vector<std::shared_ptr<Component>>& getComponents() const { return m_components; }
 
     std::vector<Renderable>& getRenderables() { return m_renderables; }
     const std::vector<Renderable>& getRenderables() const { return m_renderables; }
@@ -51,5 +50,5 @@ protected:
 
 private:
     Transform m_transform;
-    std::vector< std::shared_ptr<Component> > m_components;
+    std::vector<std::shared_ptr<Component>> m_components;
 };

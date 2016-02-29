@@ -23,15 +23,17 @@ bool setup(std::shared_ptr<Engine> pEngine)
 {
     // Setup a FBO camera and RenderPass
     Transform camTransform(vec3(2, 10, -10), vec3(0));
-    auto pFboCamera = std::make_shared<Camera>(camTransform, glm::radians(45.f), 1, 0.1f, 1000.f);
+    auto pFboCamera = std::make_shared<Camera>(camTransform, glm::radians(45.f), 1.f, 0.1f, 1000.f);
     pEngine->addCamera(pFboCamera);
 
     RenderPass fboRenderPass(pFboCamera, glm::vec3(0.6f,0,0));
     if (!fboRenderPass.create()) {
         return false;
     }
-    //pEngine->addRenderPass(fboRenderPass);
-    //pEngine->addGameObject( std::make_shared<TexturedQuadGameObject>(glm::vec3(3, 0.02f, -3), fboRenderPass.getTexture()) );
+
+    pEngine->addRenderPass(fboRenderPass);
+
+    pEngine->addGameObject( std::make_shared<TexturedQuadGameObject>(glm::vec3(3, 0.02f, -3), fboRenderPass.getTexture()) );
 
 
     //Transform pyroTransform = Transform(glm::vec3(0, 0, -2), glm::quat(), glm::vec3(0.01f));
@@ -72,6 +74,7 @@ bool setup(std::shared_ptr<Engine> pEngine)
     pEngine->addGameObject( fbxGameObject );
     //m_gameObjects.emplace_back(std::make_shared<FBXMeshGameObject>(pyroTransform, "./data/models/Pyro/pyro.fbx", nullptr));
     //m_gameObjects.emplace_back(std::make_shared<ParticleEmitterGameObject>(config, m_pCamera.get()));
+
     //m_gameObjects.emplace_back(std::make_shared<SpriteSheetQuadGameObject>(glm::vec3(-3, 0.02f, -3), "./data/textures/spritesheet.png", 4, 4));
 
     //Texture quadTexture = ResourceCreator::CreateTexture("./data/textures/crate.png");
