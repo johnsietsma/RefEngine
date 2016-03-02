@@ -25,6 +25,7 @@ void GameObject::draw(const Camera& camera, const Light& light)
 
         // Just blindly go through and set well-known uniforms.
         // TODO: Only do this if needed.
+
         renderable.program.setUniform("model",  m_transform.getMatrix());
         renderable.program.setUniform("projectionView", camera.getProjectionView());
 

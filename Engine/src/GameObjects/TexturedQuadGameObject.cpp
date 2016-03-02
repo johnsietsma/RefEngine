@@ -15,6 +15,7 @@ bool TexturedQuadGameObject::create()
     if (!renderable.program.isValid()) return false;
 
     // Tell the sampler to look in texture unit 0
+    glUseProgram(renderable.program.getId());
     renderable.program.setUniform("diffuseSampler", 0);
 
     //  Create the quad geo

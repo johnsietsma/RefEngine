@@ -50,7 +50,7 @@ bool FBXMeshGameObject::create()
         auto& renderable = m_renderables.back(); // Get a reference to the new mesh.
 
         // Grab the vertex and index data and upload it to OpenGL
-        renderable.mesh.create(pFbxMesh->m_vertices.data(), pFbxMesh->m_vertices.size(), pFbxMesh->m_indices.data(), pFbxMesh->m_indices.size());
+        renderable.mesh.create(pFbxMesh->m_vertices.data(), (GLsizei)pFbxMesh->m_vertices.size(), pFbxMesh->m_indices.data(), (GLsizei)pFbxMesh->m_indices.size());
 
         m_boundingVolume.addBoundingSphere(glm::vec3(pFbxMesh->m_globalTransform[3]), pFbxMesh->m_vertices);
 

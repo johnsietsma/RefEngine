@@ -44,11 +44,12 @@ Engine::Engine( const char* pWindowName ) :
 
     // create a default camera
     Transform camTransform(vec3(2, 10, -10), vec3(0));
-    m_pMainCamera = std::make_shared<Camera>(camTransform, glm::radians(45.f), 1024 / 768.f, 0.1f, 1000.f);
+    glm::ivec2 size(1024, 768);
+    m_pMainCamera = std::make_shared<Camera>(camTransform, glm::radians(45.f), size.x/(float)size.y, 0.1f, 1000.f);
     m_cameras.push_back( m_pMainCamera );
 
     // Setup a default render pass that uses the main camera and renders to the backbuffer
-    m_renderPasses.emplace_back(m_pMainCamera, glm::vec3(0.25f, 0.25f, 0.25f));
+    m_renderPasses.emplace_back(m_pMainCamera, glm::vec3(0.25f, 0.25f, 0.25f), size);
 
     // Add a single, hard-coded light
     Transform lightTransform( glm::vec3(0), glm::angleAxis(glm::radians(185.f), glm::vec3(0,1,0 )) );
@@ -156,7 +157,9 @@ void Engine::draw()
 
     for (RenderPass& renderPass : m_renderPasses)
     {
+        glm::ivec2 fboSize = renderPass.getSize();
         glBindFramebuffer(GL_FRAMEBUFFER, renderPass.getId()); // fboId may be 0
+        glViewport(0, 0, fboSize.x, fboSize.y);
 
         // clear the screen for this frame
         glm::vec3 clearColor = renderPass.getClearColor();

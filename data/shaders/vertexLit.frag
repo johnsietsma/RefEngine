@@ -8,7 +8,7 @@ out vec4 outputColor;
 uniform vec3 lightDirection;
 uniform vec3 lightColor;
 uniform vec3 cameraPosition;
-uniform float specularPower = 1;
+uniform int specularPower = 1;
 
 void main()
 {

@@ -20,9 +20,9 @@ public:
 
     GLuint getVAO() const { return m_VAO; }
     GLuint getVBO() const { return m_VBO; }
-    GLuint getIndexCount() const { return m_indexCount; }
+    GLsizei getIndexCount() const { return m_indexCount; }
 
-    void setIndexCount(unsigned int indexCount) { m_indexCount = indexCount; }
+    void setIndexCount(GLsizei indexCount) { m_indexCount = indexCount; }
 
     // Setup OpenGL buffers and vertex attributes to be able to render these vertices.
     template<typename T>
@@ -31,12 +31,12 @@ public:
     }
 
     template<typename T>
-    bool create(T* pVertices, unsigned int vertexCount, unsigned int* pInidices, unsigned int indexCount);
+    bool create(T* pVertices, GLsizei vertexCount, unsigned int* pInidices, GLsizei indexCount);
 
     void destroy();
 
 private:
-    unsigned int m_indexCount = 0;
+    GLuint m_indexCount = 0;
     GLuint m_VAO = (GLuint)-1;
     GLuint m_VBO = (GLuint)-1;
     GLuint m_IBO = (GLuint)-1;
@@ -44,7 +44,7 @@ private:
 
 
 template<typename T>
-bool Mesh::create(T* pVertices, unsigned int vertexCount, unsigned int* pIndices, unsigned int indexCount)
+bool Mesh::create(T* pVertices, GLsizei vertexCount, unsigned int* pIndices, GLsizei indexCount)
 {
     assert(m_VAO == -1 && "Mesh has already been created.");
     assert(pVertices != nullptr);

@@ -67,7 +67,6 @@ void Program::setUniform(const char* uniformName, const glm::vec3& value, int co
 {
     GLuint loc = getUniformLocation(uniformName);
     if( loc!=-1 )  glUniform3fv(loc, count, glm::value_ptr(value));
-
 }
 
 void Program::setUniform(const char* uniformName, const glm::vec4& value, int count)

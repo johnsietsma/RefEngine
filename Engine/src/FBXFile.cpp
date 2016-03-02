@@ -483,11 +483,11 @@ bool FBXFile::load(
         m_path = a_filename;
         size_t iLastForward = m_path.find_last_of('/');
         size_t iLastBackward = m_path.find_last_of('\\');
-        if (iLastForward > iLastBackward)
+        if (iLastForward != std::string::npos)
         {
             m_path.resize(iLastForward + 1);
         }
-        else if (iLastBackward != 0)
+        else if (iLastBackward != std::string::npos)
         {
             m_path.resize(iLastBackward + 1);
         }
@@ -532,13 +532,6 @@ bool FBXFile::load(
         {
             extractObject(m_root, (void*)lNode->GetChild(i));
         }
-
-        // ensure all threads are finished
-        for (auto t : m_threads) {
-            t->join();
-            delete t;
-        }
-        m_threads.clear();
 
         // build skeleton and extract animation keyframes
         if (a_loadAnimations == true &&
@@ -591,24 +584,15 @@ bool FBXFile::load(
     lSdkManager->Destroy();
 
     // load textures!
-    for (auto texture : m_textures)
-        m_threads.push_back( new std::thread( [](FBXTexture* t){
-
-        t->data = stbi_load(t->path.c_str(), &t->width, &t->height, &t->format, STBI_default);
-        //  t->data = SOIL_load_image(t->path.c_str(), &t->width, &t->height, &t->channels, SOIL_LOAD_AUTO);
-            if (t->data == nullptr)
-            {
-                printf("Failed to load texture: %s\n", t->path.c_str());
-            }
-    }, texture.second));
-
-    for (auto t : m_threads) {
-        t->join();
-        delete t;
+    for (auto texturePair : m_textures)
+    {
+        FBXTexture* pTexture = texturePair.second;
+        pTexture->data = stbi_load(pTexture->path.c_str(), &pTexture->width, &pTexture->height, &pTexture->format, STBI_default);
+        if (pTexture->data == nullptr)
+        {
+            printf("Failed to load texture: %s\n", pTexture->path.c_str());
+        }
     }
-    m_threads.clear();
-
-
 
     return true;
 }
@@ -924,11 +908,9 @@ FBXMaterial* FBXFile::extractMaterial(void* a_mesh, int a_materialIndex)
     FbxSurfaceMaterial *lMaterial = lNode->GetMaterial(a_materialIndex);
 
     // check if material already loaded, else create new material
-    m_materialMutex.lock();
     auto oIter = m_materials.find( lMaterial->GetName() );
     if (oIter != m_materials.end())
     {
-        m_materialMutex.unlock();
         return oIter->second;
     }
     else
@@ -1066,11 +1048,9 @@ FBXMaterial* FBXFile::extractMaterial(void* a_mesh, int a_materialIndex)
         }
 
         m_materials[material->name] = material;
-        m_materialMutex.unlock();
         return material;
     }
 
-    m_materialMutex.unlock();
     return nullptr;
 }
 

@@ -26,7 +26,8 @@ bool setup(std::shared_ptr<Engine> pEngine)
     auto pFboCamera = std::make_shared<Camera>(camTransform, glm::radians(45.f), 1.f, 0.1f, 1000.f);
     pEngine->addCamera(pFboCamera);
 
-    RenderPass fboRenderPass(pFboCamera, glm::vec3(0.6f,0,0));
+    int fboDims = 512;
+    RenderPass fboRenderPass(pFboCamera, glm::vec3(0.6f,0,0), glm::ivec2(fboDims, fboDims));
     if (!fboRenderPass.create()) {
         return false;
     }

@@ -417,14 +417,6 @@ private:
     std::map<std::string, FBXAnimation*>    m_animations;
 
     ImportAssistor*                         m_importAssistor;
-
-    // threads used during loading
-    std::vector<std::thread*>               m_threads;
-    std::mutex                              m_textureMutex;
-    std::mutex                              m_materialMutex;
-    std::mutex                              m_meshesMutex;
-
-    std::mutex m_testMutex;
 };
 
 //////////////////////////////////////////////////////////////////////////
