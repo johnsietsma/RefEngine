@@ -23,10 +23,11 @@ Download and install in the default location.
 ### OpenGL Resource Creation and Lifetime
 
 OpenGL resource classes such as ```Texture``` and ```Program``` always provide a create and destroy functions. This is so:
+
 1. Lifetime can be explicitly managed outside of the lifetime of the variable. There are order dependant steps to create and destroy resources, so we want to control when things happen.
-2. Resource classes can be copyable. OpenGL handles are simple integers, if we don't use the constructor to create and destroy OpenGL resources we can copy Resources objects without
+1. Resource classes can be copyable. OpenGL handles are simple integers, if we don't use the constructor to create and destroy OpenGL resources we can copy Resources objects without
  having to implement move or copy constructors. The burden is on the creator to make sure resources are cleaned up explicitly.
-3. We can verify that creation succeeded by return true of false from the create function.
+1. We can verify that creation succeeded by return true of false from the create function.
 
 
 ### Supporting New Vertex Types
