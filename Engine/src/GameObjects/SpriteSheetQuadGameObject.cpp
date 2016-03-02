@@ -20,7 +20,7 @@ SpriteSheetQuadGameObject::SpriteSheetQuadGameObject(const glm::vec3& pos, const
 bool SpriteSheetQuadGameObject::create()
 {
     // Create a program using a vertex shader that will pass through the texture coords and a frag shader that wil do the animation.
-	m_program = ResourceCreator::CreateProgram("./data/shaders/tex.vert", "./data/shaders/spriteAnimation.frag");
+	m_program = ResourceCreator::CreateProgram("./data/shaders/texured.vert", "./data/shaders/spriteAnimation.frag");
 	if (!m_program.isValid()) return false;
 
 	// Tell the sampler in the fragment shader to look in texture unit 0

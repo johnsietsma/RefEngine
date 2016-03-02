@@ -11,7 +11,7 @@ bool TexturedQuadGameObject::create()
 {
     Renderable renderable;
 
-    renderable.program = ResourceCreator::CreateProgram("./data/shaders/tex.vert", "./data/shaders/tex.frag");
+    renderable.program = ResourceCreator::CreateProgram("./data/shaders/textured.vert", "./data/shaders/textured.frag");
     if (!renderable.program.isValid()) return false;
 
     // Tell the sampler to look in texture unit 0

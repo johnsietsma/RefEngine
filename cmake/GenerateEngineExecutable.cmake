@@ -19,7 +19,7 @@ function (GenerateEngineExecutable PROJECT_NAME)
 
     # Group the files in Visual Studio
     source_group(TestBed FILES ${HEADERS} ${SOURCES})
-    source_group(Assets FILES ${ASSET_FILES})
+    source_group(Shaders ${ASSETS_DIR})
 
     # Add the engine ilbrary as a dependency
     target_link_libraries (${PROJECT_NAME} Engine)

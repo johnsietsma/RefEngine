@@ -59,7 +59,7 @@ bool setup(std::shared_ptr<Engine> pEngine)
     if( !texturedProgram.isValid() )
         return false;
 
-    Program fragLitProgram = ResourceCreator::CreateProgram("./data/shaders/fragLit.vert", "./data/shaders/texturedVertLit.frag");
+    Program fragLitProgram = ResourceCreator::CreateProgram("./data/shaders/normal.vert", "./data/shaders/texturedVertLit.frag");
     if( !fragLitProgram.isValid() )
         return false;
 
@@ -90,9 +90,11 @@ bool setup(std::shared_ptr<Engine> pEngine)
 int main() {
     auto pEng = std::make_shared<Engine>("TestBed");
 
-    if( !setup( pEng ) ) return 2;
+    if( !setup( pEng ) ) 
+        return 2;
 
-    if (!pEng->startup()) return 1;
+    if (!pEng->startup()) 
+        return 1;
 
     pEng->run();
 

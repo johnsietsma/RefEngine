@@ -20,14 +20,14 @@ FBXMeshGameObject::FBXMeshGameObject(const Transform& transform, const char* pMe
 bool FBXMeshGameObject::create()
 {
     // Create the program for rendering the non-skinned meshes.
-    m_defaultProgram = ResourceCreator::CreateProgram("./data/shaders/fragLit.vert", "./data/shaders/texturedVertLit.frag");
+    m_defaultProgram = ResourceCreator::CreateProgram("./data/shaders/normal.vert", "./data/shaders/texturedVertLit.frag");
     if (!m_defaultProgram.isValid())
         return false;
 
     // Create the program for rendering this FBX.
     // Use a skinning vertex shader to support animation.
     // Use the default textured fragment shader.
-    m_skinningProgram = ResourceCreator::CreateProgram("./data/shaders/skinningFragLit.vert", "./data/shaders/texturedVertLit.frag");
+    m_skinningProgram = ResourceCreator::CreateProgram("./data/shaders/skinning.vert", "./data/shaders/texturedVertLit.frag");
     if (!m_skinningProgram.isValid())
         return false;
 
