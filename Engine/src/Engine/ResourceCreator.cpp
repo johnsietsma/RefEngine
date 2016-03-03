@@ -15,7 +15,7 @@ Mesh ResourceCreator::CreateTexturedQuad()
 {
 	Mesh mesh;
 
-	Vertex_PositionTexCoord* pVertices;
+	Vertex_PositionNormalTexCoord* pVertices;
 	unsigned int* pIndices;
 
 	GeometryCreator::createTexuredQuad(&pVertices, &pIndices);
@@ -29,25 +29,33 @@ Mesh ResourceCreator::CreateTexturedQuad()
 }
 
 
-Program ResourceCreator::CreateProgram(const char* pVertexShaderFilename, const char* pFragmentShaderFilename)
+Program ResourceCreator::CreateProgram(const char* pVertexShaderName, const char* pFragmentShaderName)
 {
 	Program program;
 
-	std::string vertShader = ReadFile(pVertexShaderFilename);
-	if (vertShader.length() == 0)
+    std::string vertexShaderFilename = std::string("./data/shaders/") + pVertexShaderName + ".vert";
+    std::string fragmentShaderFilename = std::string("./data/shaders/") + pFragmentShaderName + ".frag";
+
+
+	std::string vertShaderSource = ReadFile(vertexShaderFilename.c_str());
+	if (vertShaderSource.length() == 0)
 	{
-		std::cerr << "Couldn't read file: " << pVertexShaderFilename << std::endl;
+		std::cerr << "Couldn't read file: " << vertexShaderFilename << std::endl;
 		return program;
 	}
 
 
-	std::string fragShader = ReadFile(pFragmentShaderFilename);
-	if (fragShader.length() == 0) {
-		std::cerr << "Couldn't read file: " << pFragmentShaderFilename << std::endl;
+	std::string fragShaderSource = ReadFile(fragmentShaderFilename.c_str());
+	if (fragShaderSource.length() == 0) {
+		std::cerr << "Couldn't read file: " << fragmentShaderFilename << std::endl;
 		return program;
 	}
 
-	if (!program.create(vertShader.c_str(), fragShader.c_str())) return program;
+    if (!program.create(vertShaderSource.c_str(), fragShaderSource.c_str()))
+    {
+        std::cerr << "Failed to make program with vertex shader " << vertexShaderFilename << " and fragment shader " << fragmentShaderFilename << "." << std::endl;
+        return program;
+    }
 
 	return program;
 }

@@ -22,7 +22,7 @@ ProceduralGenerationGameObject::~ProceduralGenerationGameObject()
 
 bool ProceduralGenerationGameObject::create()
 {
-    auto program = ResourceCreator::CreateProgram("./data/shaders/heightMap.vert", "./data/shaders/textured.frag");
+    auto program = ResourceCreator::CreateProgram("heightMap", "textured");
     if (!program.isValid())
         return false;
 

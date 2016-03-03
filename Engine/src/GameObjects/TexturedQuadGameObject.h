@@ -16,16 +16,18 @@ class Camera;
 class TexturedQuadGameObject : public GameObject
 {
 public:
-    TexturedQuadGameObject(const Transform& trans, Texture texture, const char* pFragShaderName="textured") :
-        GameObject(trans),
+    TexturedQuadGameObject(const Transform& trans, Texture texture, const char* samplerName="diffuseSampler", const char* pVertShaderName = "textured", const char* pFragShaderName="textured") :
+        GameObject(trans, 1),
         m_texture(texture),
-        m_fragShaderName( pFragShaderName )
+        m_vertShaderName(pVertShaderName),
+        m_fragShaderName(pFragShaderName)
     {}
 
     bool create() override;
 
 private:
     Texture m_texture;
+    std::string m_vertShaderName;
     std::string m_fragShaderName;
 };
 

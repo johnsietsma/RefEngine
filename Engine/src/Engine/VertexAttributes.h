@@ -23,4 +23,7 @@ template<>
 void VertexAttributes::Setup<Vertex_PositionTexCoord>();
 
 template<>
+void VertexAttributes::Setup<Vertex_PositionNormalTexCoord>();
+
+template<>
 void VertexAttributes::Setup<FBXVertex>();

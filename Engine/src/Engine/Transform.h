@@ -1,6 +1,8 @@
 #pragma once
 
 #include "glm/vec3.hpp"
+#include "glm/mat4x4.hpp"
+#include "glm/gtc/matrix_inverse.hpp"
 #include "glm/gtc/quaternion.hpp"
 
 
@@ -29,7 +31,8 @@ public:
 	glm::vec3 getRight() const { return glm::normalize(m_rotation * glm::vec3(1, 0, 0)); }
 	glm::vec3 getUp() const { return glm::normalize(m_rotation * glm::vec3(0, 1, 0)); }
 
-	glm::mat4 getMatrix() const;
+    glm::mat4 getMatrix() const;
+    glm::mat4 getInverseMatrix() const { return glm::inverse(getMatrix()); }
 
 	void setPosition(glm::vec3 position) { m_position = position; }
 	void setRotation(glm::quat rotation) { m_rotation = rotation; }

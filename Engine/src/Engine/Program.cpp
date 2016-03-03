@@ -63,6 +63,18 @@ void Program::setUniform(const char* uniformName, const int value)
     if (loc != -1) glUniform1i(loc, value);
 }
 
+void Program::setUniform(const char* uniformName, const unsigned int value)
+{
+    GLuint loc = getUniformLocation(uniformName);
+    if (loc != -1) glUniform1ui(loc, value);
+}
+
+void Program::setUniform(const char* uniformName, const float value)
+{
+    GLuint loc = getUniformLocation(uniformName);
+    if (loc != -1) glUniform1f(loc, value);
+}
+
 void Program::setUniform(const char* uniformName, const glm::vec3& value, int count)
 {
     GLuint loc = getUniformLocation(uniformName);

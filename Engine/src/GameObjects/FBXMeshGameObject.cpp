@@ -19,14 +19,14 @@ FBXMeshGameObject::FBXMeshGameObject(const Transform& transform, const char* pMe
 bool FBXMeshGameObject::create()
 {
     // Create the program for rendering the non-skinned meshes.
-    m_defaultProgram = ResourceCreator::CreateProgram("./data/shaders/texNormal.vert", "./data/shaders/texturedVertLit.frag");
+    m_defaultProgram = ResourceCreator::CreateProgram("texNormal", "texturedVertLit");
     if (!m_defaultProgram.isValid())
         return false;
 
     // Create the program for rendering this FBX.
     // Use a skinning vertex shader to support animation.
     // Use the default textured fragment shader.
-    m_skinningProgram = ResourceCreator::CreateProgram("./data/shaders/skinning.vert", "./data/shaders/texturedVertLit.frag");
+    m_skinningProgram = ResourceCreator::CreateProgram("skinning", "texturedVertLit");
     if (!m_skinningProgram.isValid())
         return false;
 
@@ -119,7 +119,7 @@ void FBXMeshGameObject::update(float deltaTime)
 
 }
 
-void FBXMeshGameObject::draw(const Camera& camera, const Light& light)
+void FBXMeshGameObject::preDraw(const Camera& camera, const Light& light)
 {
     for( auto& renderable : m_renderables )
     {
@@ -139,7 +139,5 @@ void FBXMeshGameObject::draw(const Camera& camera, const Light& light)
 
         }
     }
-
-    GameObject::draw(camera, light);
 }
 

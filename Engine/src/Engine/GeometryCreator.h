@@ -21,6 +21,7 @@ public:
 
 	// Create the vertices and indices for a quad.
 	static void createTexuredQuad(Vertex_PositionTexCoord** ppVertexPositionBuffer, unsigned int** ppIndicesBuffer);
+    static void createTexuredQuad(Vertex_PositionNormalTexCoord** ppVertexPositionBuffer, unsigned int** ppIndicesBuffer);
 
 	// Create the vertices and indices for a grid.
     template<typename T>

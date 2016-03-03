@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "Sampler.h"
 
+#include <bitset>
 #include <vector>
 
 struct Renderable

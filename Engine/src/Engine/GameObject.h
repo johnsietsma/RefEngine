@@ -26,7 +26,8 @@ public:
     virtual void destroy();
 
     virtual void update(float deltaTime) {}; //no-op
-    virtual void draw(const Camera& camera, const Light& light);
+
+    void draw(const Camera& camera, const Light& light, Program overrideProgram);
 
     void addComponent( std::shared_ptr<Component> component ) { m_components.push_back(component); }
 
@@ -36,13 +37,19 @@ public:
     std::vector<Renderable>& getRenderables() { return m_renderables; }
     const std::vector<Renderable>& getRenderables() const { return m_renderables; }
 
+    size_t getLayer() const { return m_layer; }
+
 protected:
     GameObject() : GameObject(Transform()) {}; // GameObject can only be inherited
 
-    GameObject(const Transform& transform) :
-        m_transform(transform)
+    GameObject(const Transform& transform, size_t layer = 0) :
+        m_transform(transform),
+        m_layer(layer)
     {
     }
+
+    // Enables child classes to update render state before drawing.
+    virtual void preDraw(const Camera& camera, const Light& light) {}; // no-op
 
     std::vector<Renderable> m_renderables;
 
@@ -51,4 +58,5 @@ protected:
 private:
     Transform m_transform;
     std::vector<std::shared_ptr<Component>> m_components;
+    size_t m_layer = 0;
 };

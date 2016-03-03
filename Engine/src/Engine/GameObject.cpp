@@ -7,32 +7,44 @@
 #include <iostream>
 
 
-void GameObject::draw(const Camera& camera, const Light& light)
+void GameObject::draw(const Camera& camera, const Light& light, Program overrideProgram)
 {
     glm::vec4 frustum[6];
     camera.getFrustumPlanes(frustum);
 
+    // TODO: Take scale into account
+    if (!m_boundingVolume.isInsideFrustum(getTransform().getPosition(), frustum)) {
+        std::cout << "Not visible" << std::endl;
+        return;
+    }
+
+    glm::mat4 lightProjection = glm::ortho<float>(-10, 10, -10, 10, -10, 10);
+    glm::mat4 lightView = light.getTransform().getInverseMatrix();
+    glm::mat4 textureSpaceOffset(0.5f);
+    textureSpaceOffset[3] = glm::vec4(0.5f, 0.5f, 0.5f, 1.f);
+    glm::mat4 lightProjectionViewNDC = lightProjection * lightView;
+    glm::mat4 lightProjectionView = textureSpaceOffset * lightProjectionViewNDC;
+
     for (auto& renderable : m_renderables)
     {
-        // TODO: Take scale into account
-        if (!m_boundingVolume.isInsideFrustum(getTransform().getPosition(), frustum)) {
-            std::cout << "Not visible" << std::endl;
-            continue;
-        }
+        preDraw(camera, light);
 
-        glUseProgram(renderable.program.getId());
+        Program program = overrideProgram.isValid() ? overrideProgram : renderable.program;
+
+        glUseProgram(program.getId());
         glPolygonMode(GL_FRONT_AND_BACK, renderable.renderMode);
 
         // Just blindly go through and set well-known uniforms.
         // TODO: Only do this if needed.
 
-        renderable.program.setUniform("model",  m_transform.getMatrix());
-        renderable.program.setUniform("projectionView", camera.getProjectionView());
-
-        renderable.program.setUniform("lightDirection", light.getTransform().getForward() );
-        renderable.program.setUniform("lightColor", light.getColor());
-        renderable.program.setUniform("cameraPosition", camera.getTransform().getPosition() );
-        renderable.program.setUniform("specularPower", 5);
+        program.setUniform("model",  m_transform.getMatrix());
+        program.setUniform("projectionView", camera.getProjectionView());
+        program.setUniform("lightDirection", light.getTransform().getForward() );
+        program.setUniform("lightColor", light.getColor());
+        program.setUniform("lightProjectionViewNDC", lightProjectionViewNDC);
+        program.setUniform("lightProjectionView", lightProjectionView);
+        program.setUniform("cameraPosition", camera.getTransform().getPosition() );
+        program.setUniform("specularPower", 5);
 
         glBindVertexArray(renderable.mesh.getVAO());
 

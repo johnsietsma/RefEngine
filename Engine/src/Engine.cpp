@@ -52,7 +52,7 @@ Engine::Engine( const char* pWindowName ) :
     m_renderPasses.emplace_back(m_pMainCamera, glm::vec3(0.25f, 0.25f, 0.25f), size);
 
     // Add a single, hard-coded light
-    Transform lightTransform( glm::vec3(0), glm::angleAxis(glm::radians(185.f), glm::vec3(0,1,0 )) );
+    Transform lightTransform( glm::vec3(1,1,0), glm::vec3(0) );
     m_pLight = std::make_shared<Light>( lightTransform );
 }
 
@@ -127,7 +127,8 @@ bool Engine::update(float deltaTime) {
     m_pMainCamera->update(deltaTime);
 
     //TODO: Temp, make light's into components
-    m_pLight->getTransform().rotate(40*deltaTime);
+    glm::quat rot = glm::angleAxis(1 * deltaTime, Transform::WORLD_UP);
+    m_pLight->getTransform().rotate(rot);
 
     for (auto& gameObject : m_gameObjects)
     {
@@ -155,8 +156,18 @@ void Engine::draw()
         }
     }
 
+
     for (RenderPass& renderPass : m_renderPasses)
     {
+        // Get the camera to render from
+        auto pCameraWeakPtr = renderPass.getCamera();
+        auto pCamera = pCameraWeakPtr.lock();
+        if (pCamera == nullptr)
+        {
+            std::cerr << "Missing camera for a render pass." << std::endl;
+            continue;
+        }
+
         glm::ivec2 fboSize = renderPass.getSize();
         glBindFramebuffer(GL_FRAMEBUFFER, renderPass.getId()); // fboId may be 0
         glViewport(0, 0, fboSize.x, fboSize.y);
@@ -169,14 +180,9 @@ void Engine::draw()
 
         for (auto& gameObject : m_gameObjects)
         {
-            auto pCameraWeakPtr = renderPass.getCamera();
-            auto pCamera = pCameraWeakPtr.lock();
-            if( pCamera!=nullptr ) {
-                gameObject->draw(*pCamera, *m_pLight);
-            }
-            else {
-                std::cerr << "Missing for a render pass." << std::endl;
-            }
+            const size_t layer = gameObject->getLayer();
+            if( layer==0 || renderPass.getLayers()[layer] )
+                gameObject->draw(*pCamera, *m_pLight, renderPass.getProgram());
         }
     }
 

@@ -10,9 +10,7 @@
 bool TexturedQuadGameObject::create()
 {
     Renderable renderable;
-
-    std::string fragFilename = "./data/shaders/" + m_fragShaderName + ".frag";
-    renderable.program = ResourceCreator::CreateProgram("./data/shaders/textured.vert", fragFilename.c_str());
+    renderable.program = ResourceCreator::CreateProgram(m_vertShaderName.c_str(), m_fragShaderName.c_str());
     if (!renderable.program.isValid()) return false;
 
     // Tell the sampler to look in texture unit 0

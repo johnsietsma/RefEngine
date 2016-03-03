@@ -30,7 +30,7 @@ bool ParticleEmitterGameObject::create()
 
     Renderable renderable;
 
-    renderable.program = ResourceCreator::CreateProgram("./data/shaders/color.vert", "./data/shaders/vertexColor.frag");
+    renderable.program = ResourceCreator::CreateProgram("color", "vertexColor");
     if (!renderable.program.isValid()) return false;
 
     m_emitTimer = 0;
@@ -230,7 +230,7 @@ void ParticleEmitterGameObject::positionBillboardParticle(unsigned int vertexInd
         + glm::vec4(particle->position, 0); // Move the vert to the particles position
 }
 
-void ParticleEmitterGameObject::draw(const Camera& camera, const Light& light)
+void ParticleEmitterGameObject::preDraw(const Camera& camera, const Light& light)
 {
     assert(m_renderables.size() > 0);
 
@@ -244,6 +244,4 @@ void ParticleEmitterGameObject::draw(const Camera& camera, const Light& light)
 
     // Make sure we only draw the alive particles
     renderable.mesh.setIndexCount(m_firstDeadIndex * 6);
-
-    GameObject::draw(camera, light);
 }

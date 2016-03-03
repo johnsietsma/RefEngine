@@ -20,7 +20,7 @@ SpriteSheetQuadGameObject::SpriteSheetQuadGameObject(const Transform& trans, con
 bool SpriteSheetQuadGameObject::create()
 {
     // Create a program using a vertex shader that will pass through the texture coords and a frag shader that wil do the animation.
-	auto program = ResourceCreator::CreateProgram("./data/shaders/texturedFlipped.vert", "./data/shaders/spriteAnimation.frag");
+	auto program = ResourceCreator::CreateProgram("texturedFlipped", "spriteAnimation");
 	if (!program.isValid()) return false;
 
     // Set up the sprite sheet uniforms
@@ -58,7 +58,7 @@ void SpriteSheetQuadGameObject::update(float deltaTime)
 }
 
 
-void SpriteSheetQuadGameObject::draw( const Camera& camera, const Light& light )
+void SpriteSheetQuadGameObject::preDraw( const Camera& camera, const Light& light )
 {
     Program program = m_renderables[0].program;
 
@@ -67,6 +67,4 @@ void SpriteSheetQuadGameObject::draw( const Camera& camera, const Light& light )
 	glUseProgram(program.getId());
 
 	program.setUniform("cellIndex", m_cellIndex);
-
-    GameObject::draw(camera, light);
 }

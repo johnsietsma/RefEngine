@@ -30,6 +30,22 @@ void VertexAttributes::Setup<Vertex_PositionTexCoord>()
 }
 
 template<>
+void VertexAttributes::Setup<Vertex_PositionNormalTexCoord>()
+{
+    // Position vertex attribute
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_PositionNormalTexCoord), (void*)(offsetof(Vertex_PositionNormalTexCoord, position)));
+
+    // Texcoord vertex attribute
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_PositionNormalTexCoord), (void*)(offsetof(Vertex_PositionNormalTexCoord, texCoord)));
+
+    // Normal vertex attribute
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_PositionNormalTexCoord), (void*)(offsetof(Vertex_PositionNormalTexCoord, normal)));
+}
+
+template<>
 void VertexAttributes::Setup<FBXVertex>()
 {
     // Position vertex attribute

@@ -16,14 +16,14 @@ class Transform;
 class FBXMeshGameObject : public GameObject
 {
 public:
-    FBXMeshGameObject(const Transform& transform, const char* pMeshFilename, const char* pSkinnedMeshName);
+    FBXMeshGameObject(const Transform& transform, const char* pMeshFilename, const char* pSkinnedMeshName=nullptr);
 
     bool create() override;
     void destroy() override;
 
     void update(float deltaTime) override;
+    void preDraw(const Camera& camera, const Light& light) override;
 
-    void draw(const Camera& camera, const Light& light) override;
 
 private:
     FBXFile m_fbxFile; // Loads the FBX and stores the associated data.

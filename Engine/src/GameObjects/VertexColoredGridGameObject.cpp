@@ -16,7 +16,7 @@
 
 bool VertexColoredGridGameObject::create()
 {
-    auto program = ResourceCreator::CreateProgram( "./data/shaders/color.vert","./data/shaders/vertexColor.frag");
+    auto program = ResourceCreator::CreateProgram( "color","vertexColor");
 	if (!program.isValid()) return false;
 
     MeshData meshData;
