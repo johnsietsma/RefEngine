@@ -63,16 +63,16 @@ bool FBXMeshGameObject::create()
 
             glUseProgram(renderable.program.getId());
 
-            for (unsigned int textureIndex = 0; textureIndex < FBXMaterial::TextureTypes_Count; textureIndex++) {
+            for (int textureIndex = 0; textureIndex < FBXMaterial::TextureTypes_Count; textureIndex++) {
                 auto& pTexture = pMaterial->textures[textureIndex];
 
                 if (pTexture != nullptr) {
-                    // Bind the texture to a texture unit
+                    // Bind the texture to a texture unit. textureIndex _must_ be an int.
                     renderable.program.setUniform(FBXMaterial::getTextureName(textureIndex), textureIndex);
 
                     renderable.samplers.emplace_back(
                             Texture(pTexture->handle),
-                            textureIndex // Use the indx as the texture unit
+                            textureIndex // Use the index as the texture unit
                         );
                 }
             }
