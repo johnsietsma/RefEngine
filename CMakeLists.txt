@@ -32,7 +32,6 @@ set(SHADERS_DIR "${ASSETS_DIR}/shaders" CACHE STRING "Path to the shaders.")
 
 file(GLOB SHADER_FILES ${SHADERS_DIR}/*.*)
 
-
 # --- Deps ---
 include_directories(dep/glm)
 add_definitions(-DGLM_SWIZZLE)

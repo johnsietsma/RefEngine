@@ -15,11 +15,13 @@ function (GenerateEngineExecutable PROJECT_NAME)
     file(GLOB_RECURSE SOURCES "src/*.cpp")
     file(GLOB_RECURSE HEADERS "src/*.h")
 
-    add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${ASSET_FILES})
+    add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${SHADER_FILES})
 
     # Group the files in Visual Studio
-    source_group(TestBed FILES ${HEADERS} ${SOURCES})
-    source_group(Shaders ${ASSETS_DIR})
+    source_group(Headers FILES ${HEADERS})
+    source_group(Source FILES ${SOURCES})
+    source_group(Assets ${ASSETS_DIR})
+    source_group(Shaders FILES ${SHADER_FILES})
 
     # Add the engine ilbrary as a dependency
     target_link_libraries (${PROJECT_NAME} Engine)

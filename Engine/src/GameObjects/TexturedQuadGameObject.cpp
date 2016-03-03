@@ -11,7 +11,8 @@ bool TexturedQuadGameObject::create()
 {
     Renderable renderable;
 
-    renderable.program = ResourceCreator::CreateProgram("./data/shaders/textured.vert", "./data/shaders/textured.frag");
+    std::string fragFilename = "./data/shaders/" + m_fragShaderName + ".frag";
+    renderable.program = ResourceCreator::CreateProgram("./data/shaders/textured.vert", fragFilename.c_str());
     if (!renderable.program.isValid()) return false;
 
     // Tell the sampler to look in texture unit 0
@@ -27,10 +28,4 @@ bool TexturedQuadGameObject::create()
     m_renderables.push_back(renderable);
 
     return true;
-}
-
-
-void TexturedQuadGameObject::destroy()
-{
-
 }

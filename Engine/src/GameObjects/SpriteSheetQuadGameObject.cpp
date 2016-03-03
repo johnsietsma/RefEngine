@@ -7,8 +7,8 @@
 
 #include <assert.h>
 
-SpriteSheetQuadGameObject::SpriteSheetQuadGameObject(const glm::vec3& pos, const char* pSpriteSheetFilename, int cellCountX, int cellCountY) :
-    GameObject(Transform(pos)),
+SpriteSheetQuadGameObject::SpriteSheetQuadGameObject(const Transform& trans, const char* pSpriteSheetFilename, int cellCountX, int cellCountY) :
+    GameObject(trans),
     m_cellCountX(cellCountX),
     m_cellCountY(cellCountY),
     m_cellIndex(0),
@@ -20,28 +20,28 @@ SpriteSheetQuadGameObject::SpriteSheetQuadGameObject(const glm::vec3& pos, const
 bool SpriteSheetQuadGameObject::create()
 {
     // Create a program using a vertex shader that will pass through the texture coords and a frag shader that wil do the animation.
-	m_program = ResourceCreator::CreateProgram("./data/shaders/texured.vert", "./data/shaders/spriteAnimation.frag");
-	if (!m_program.isValid()) return false;
+	auto program = ResourceCreator::CreateProgram("./data/shaders/texturedFlipped.vert", "./data/shaders/spriteAnimation.frag");
+	if (!program.isValid()) return false;
+
+    // Set up the sprite sheet uniforms
+    glUseProgram(program.getId());
+    program.setUniform("cellCountX", m_cellCountX);
+    program.setUniform("cellCountY", m_cellCountY);
 
 	// Tell the sampler in the fragment shader to look in texture unit 0
-	glUseProgram(m_program.getId());
-	m_program.setUniform("diffuseSampler", 0);
+	glUseProgram(program.getId());
+	program.setUniform("diffuseSampler", 0);
 
-	m_mesh = ResourceCreator::CreateTexturedQuad();
-	if (!m_mesh.isValid()) return false;
+	auto mesh = ResourceCreator::CreateTexturedQuad();
+	if (!mesh.isValid()) return false;
 
-	m_texture = ResourceCreator::CreateTexture(m_filename.c_str());
-	if (!m_texture.isValid()) return false;
+	auto texture = ResourceCreator::CreateTexture(m_filename.c_str());
+	if (!texture.isValid()) return false;
+
+    Renderable rend(program, mesh, { Sampler(texture,0) });
+    m_renderables.emplace_back(rend);
 
 	return true;
-}
-
-
-void SpriteSheetQuadGameObject::destroy()
-{
-	m_mesh.destroy();
-	m_program.destroy();
-	m_texture.destroy();
 }
 
 void SpriteSheetQuadGameObject::update(float deltaTime)
@@ -60,25 +60,13 @@ void SpriteSheetQuadGameObject::update(float deltaTime)
 
 void SpriteSheetQuadGameObject::draw( const Camera& camera, const Light& light )
 {
+    Program program = m_renderables[0].program;
+
 	// Use the program
-	assert(m_program.isValid());
-	glUseProgram(m_program.getId());
-	m_program.setUniform("projectionView", camera.getProjectionView());
+	assert(program.isValid());
+	glUseProgram(program.getId());
 
-	// Set up the sprite sheet uniforms
-	m_program.setUniform("cellCountX", m_cellCountX);
-	m_program.setUniform("cellCountY", m_cellCountY);
-	m_program.setUniform("cellIndex", m_cellIndex);
+	program.setUniform("cellIndex", m_cellIndex);
 
-	// Bind the mesh
-	assert(m_mesh.isValid());
-	glBindVertexArray(m_mesh.getVAO());
-
-	// Bind the texture to texture unit 0
-	assert(m_texture.isValid());
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_texture.getId());
-
-	glDrawElements(GL_TRIANGLES, m_mesh.getIndexCount(), GL_UNSIGNED_INT, 0);
-
+    GameObject::draw(camera, light);
 }

@@ -33,6 +33,6 @@ private:
     Program m_defaultProgram;
     Program m_skinningProgram;
 
-    float m_elapsedTime; // Time passed since creation.
+    float m_elapsedTime = 0; // Time passed since creation.
 };
 

@@ -56,4 +56,3 @@ void VertexAttributes::Setup<FBXVertex>()
     glEnableVertexAttribArray(5);
     glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, indices)));
 }
-

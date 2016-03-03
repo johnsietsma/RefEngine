@@ -14,20 +14,15 @@ class Camera;
 class VertexColoredGridGameObject : public GameObject
 {
 public:
-    VertexColoredGridGameObject(const glm::vec3& pos, const glm::ivec2& gridSize) :
-        GameObject(pos),
+    VertexColoredGridGameObject(const Transform& trans, const glm::ivec2& gridSize) :
+        GameObject(trans),
         m_gridSize(gridSize)
     {}
 
 	bool create() override;
-	void destroy() override;
-
     void update(float deltaTime) override {} // no-op
-	void draw( const Camera& camera, const Light& light ) override;
 
 private:
-	Mesh m_mesh;
-	Program m_program;
     glm::ivec2 m_gridSize;
 };
 

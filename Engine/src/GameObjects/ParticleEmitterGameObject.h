@@ -35,7 +35,7 @@ struct ParticleEmitterConfig
 class ParticleEmitterGameObject : public GameObject
 {
 public:
-    ParticleEmitterGameObject(const ParticleEmitterConfig& config, const Camera* pBillboardCamera);
+    ParticleEmitterGameObject(const ParticleEmitterConfig& config, const std::weak_ptr<Camera> pBillboardCamera);
     ~ParticleEmitterGameObject();
 
     bool isValid() { return m_firstDeadIndex != -1; }
@@ -53,7 +53,7 @@ private:
     void positionBillboardParticle(unsigned int vertexIndex, const glm::mat4& billboardMat, const Particle* particle);
 
     const ParticleEmitterConfig m_config;
-    const Camera* m_pBillboardCamera;
+    const std::weak_ptr<Camera> m_pBillboardCamera;
 
     glm::vec3 m_position;
     Particle* m_pParticles;

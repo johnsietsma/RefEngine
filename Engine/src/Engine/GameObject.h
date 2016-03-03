@@ -23,7 +23,7 @@ public:
     void setTransform(const Transform& transform) { m_transform = transform; }
 
     virtual bool create() = 0;
-    virtual void destroy() = 0;
+    virtual void destroy();
 
     virtual void update(float deltaTime) {}; //no-op
     virtual void draw(const Camera& camera, const Light& light);

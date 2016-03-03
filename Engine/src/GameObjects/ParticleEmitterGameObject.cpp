@@ -8,7 +8,7 @@
 #include <assert.h>
 
 
-ParticleEmitterGameObject::ParticleEmitterGameObject(const ParticleEmitterConfig& config, const Camera* pBillboardCamera) :
+ParticleEmitterGameObject::ParticleEmitterGameObject(const ParticleEmitterConfig& config, const std::weak_ptr<Camera> pBillboardCamera) :
     m_config(config),
     m_pBillboardCamera(pBillboardCamera),
     m_pParticles(nullptr),
@@ -84,6 +84,8 @@ void ParticleEmitterGameObject::destroy()
 {
     assert(isValid());
 
+    GameObject::destroy();
+
     delete[] m_pParticles;
     delete[] m_pVertices;
 }
@@ -142,6 +144,10 @@ void ParticleEmitterGameObject::update(float deltaTime)
         m_emitTimer -= timePerParticle;
     }
 
+    std::shared_ptr<Camera> pBillboardCamera = m_pBillboardCamera.lock();
+    if (pBillboardCamera == nullptr) return;
+    const Transform& camTransform = pBillboardCamera->getTransform();
+
 
     for (unsigned int particleIndex = 0; particleIndex < m_firstDeadIndex; particleIndex++)
     {
@@ -191,7 +197,6 @@ void ParticleEmitterGameObject::update(float deltaTime)
         m_pVertices[startVertexIndex + 3].color = particle->color;
 
         // Create a billboard matrix that will transform verts to face towards the camera
-        const Transform& camTransform = m_pBillboardCamera->getTransform();
 
         // z axis is the normalized vector that points towards the camera
         glm::vec3 zAxis = glm::normalize(glm::vec3(camTransform.getPosition()) - particle->position);

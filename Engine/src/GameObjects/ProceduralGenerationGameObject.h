@@ -14,14 +14,8 @@ public:
     ~ProceduralGenerationGameObject();
 
     bool create() override;
-    void destroy() override;
-
-    void update(float deltaTime) override;
-    void draw(const Camera& camera, const Light& light) override;
 
 private:
-    Mesh m_mesh;
-    Program m_program;
     Texture m_heightMapTexture;
     const int m_heightMapTextureUnit = 0;
     Texture m_diffuseTexture;

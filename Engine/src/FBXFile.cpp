@@ -17,6 +17,8 @@
 
 #include <algorithm>
 #include <assert.h>
+#include <fstream>
+#include <iostream>
 #include <set>
 
 struct ImportAssistor
@@ -394,6 +396,12 @@ bool FBXFile::load(
     if (m_root != nullptr)
     {
         printf("Scene already loaded!\n");
+        return false;
+    }
+
+    std::ifstream ifs(a_filename, std::ios::in | std::ios::binary | std::ios::ate);
+    if (!ifs.is_open()) {
+        std::cerr << "File not found: " << a_filename << std::endl;
         return false;
     }
 

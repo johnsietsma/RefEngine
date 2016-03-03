@@ -17,19 +17,13 @@ class Camera;
 class SpriteSheetQuadGameObject : public GameObject
 {
 public:
-    SpriteSheetQuadGameObject(const glm::vec3& pos, const char* pSpriteSheetFilename, int cellCountX, int cellCountY);
+    SpriteSheetQuadGameObject(const Transform& trans, const char* pSpriteSheetFilename, int cellCountX, int cellCountY);
 
 	bool create() override;
-	void destroy() override;
-
     void update(float deltaTime) override;
 	void draw(const Camera& camera, const Light& light) override;
 
 private:
-	Mesh m_mesh;
-	Program m_program;
-	Texture m_texture;
-
 	int m_cellCountX;
 	int m_cellCountY;
 	int m_cellIndex = 0;

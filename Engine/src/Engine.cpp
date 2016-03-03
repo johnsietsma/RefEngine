@@ -43,7 +43,7 @@ Engine::Engine( const char* pWindowName ) :
 #endif
 
     // create a default camera
-    Transform camTransform(vec3(2, 10, -10), vec3(0));
+    Transform camTransform(vec3(2, 6, 13), vec3(0));
     glm::ivec2 size(1024, 768);
     m_pMainCamera = std::make_shared<Camera>(camTransform, glm::radians(45.f), size.x/(float)size.y, 0.1f, 1000.f);
     m_cameras.push_back( m_pMainCamera );
@@ -184,4 +184,11 @@ void Engine::draw()
         // display the 3D gizmos
         Gizmos::draw(m_pMainCamera->getProjectionView());
     }
+}
+
+void Engine::addRenderPass(const RenderPass& renderPass)
+{
+    assert(m_renderPasses.size() > 0);
+    // Leave the default RenderPass at the end, insert at 1 before the end
+    m_renderPasses.insert(m_renderPasses.begin() + m_renderPasses.size() - 1, renderPass);
 }

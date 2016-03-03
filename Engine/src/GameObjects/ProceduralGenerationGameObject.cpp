@@ -22,8 +22,8 @@ ProceduralGenerationGameObject::~ProceduralGenerationGameObject()
 
 bool ProceduralGenerationGameObject::create()
 {
-    m_program = ResourceCreator::CreateProgram("./data/shaders/heightMap.vert", "./data/shaders/redChannel.frag");
-    if (!m_program.isValid())
+    auto program = ResourceCreator::CreateProgram("./data/shaders/heightMap.vert", "./data/shaders/textured.frag");
+    if (!program.isValid())
         return false;
 
     // Create the grid data
@@ -31,10 +31,11 @@ bool ProceduralGenerationGameObject::create()
     GeometryCreator::createGrid<Vertex_PositionTexCoord>(&meshData, 100, 100, 0.1f);
 
     // Create the OpenGL mesh from that data
-    m_mesh.create<Vertex_PositionTexCoord>(meshData);
+    Mesh mesh;
+    mesh.create<Vertex_PositionTexCoord>(meshData);
 
     // Now we've given the buffers to OpenGL, we dont need them anymore.
-    delete[] (Vertex_PositionColor*)meshData.pVertices;
+    delete[] (Vertex_PositionTexCoord*)meshData.pVertices;
     delete[] meshData.pIndices;
 
     // ---- Create the noise texture ----
@@ -43,7 +44,7 @@ bool ProceduralGenerationGameObject::create()
     float* pPerlinData = new float[rowCount * columnCount];
 
     // glm::perlin() will always be 1 when we give it whole numbers. So we scale it down to avoid crossing integer boundaries.
-    const int scaleFactor = 3; // How much to strech the coords we give the perlin algorithm.
+    const int scaleFactor = 6; // How much to strech the coords we give the perlin algorithm.
     const float widthNorm = (1.f / rowCount); // Between 0-1
     const float scale = widthNorm * scaleFactor;
 
@@ -55,7 +56,7 @@ bool ProceduralGenerationGameObject::create()
         for (int columnIndex = 0; columnIndex < columnCount; columnIndex++)
         {
             const float persistence = 0.3f;
-            float amplitude = 1.f;
+            float amplitude = 0.2f;
             float noiseValue = 0;
 
             for (int o = 0; o < octaves; o++)
@@ -78,41 +79,18 @@ bool ProceduralGenerationGameObject::create()
     }
 
     m_heightMapTexture.create( pPerlinData, rowCount, columnCount );
-    m_program.setUniform("heightMapSampler", m_heightMapTextureUnit);
+
+    glUseProgram(program.getId());
+    program.setUniform("heightMapSampler", m_heightMapTextureUnit);
 
     delete pPerlinData;
 
-    //m_diffuseTexture = ResourceCreator::CreateTexture("./data/textures/grass1.png");
-    //assert(m_diffuseTexture.isValid());
-    //m_program.setUniform("diffuseSampler", m_diffuseTextureUnit);
+    m_diffuseTexture = ResourceCreator::CreateTexture("./data/textures/Bowling_grass_pxr128.png");
+    assert(m_diffuseTexture.isValid());
+    program.setUniform("diffuseSampler", m_diffuseTextureUnit);
+
+    std::vector<Sampler> samplers{ Sampler(m_heightMapTexture, 0), Sampler(m_diffuseTexture, 1) };
+    m_renderables.emplace_back(program, mesh, samplers);
 
     return true;
-}
-
-void ProceduralGenerationGameObject::destroy()
-{
-    m_mesh.destroy();
-    m_program.destroy();
-}
-
-void ProceduralGenerationGameObject::update(float deltaTime)
-{
-}
-
-void ProceduralGenerationGameObject::draw(const Camera & camera, const Light& light)
-{
-    glUseProgram(m_program.getId());
-    m_program.setUniform("projectionView", camera.getProjectionView());
-
-    // Bind the texture to texture unit 0
-    assert(m_heightMapTexture.isValid());
-    glActiveTexture(GL_TEXTURE0 + m_heightMapTextureUnit);
-    glBindTexture(GL_TEXTURE_2D, m_heightMapTexture.getId());
-
-    glActiveTexture(GL_TEXTURE0 + m_diffuseTextureUnit);
-    glBindTexture(GL_TEXTURE_2D, m_diffuseTexture.getId());
-
-    glBindVertexArray(m_mesh.getVAO());
-
-    glDrawElements(GL_TRIANGLES, m_mesh.getIndexCount(), GL_UNSIGNED_INT, 0);
 }

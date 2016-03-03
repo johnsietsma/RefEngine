@@ -50,3 +50,14 @@ void GameObject::draw(const Camera& camera, const Light& light)
     }
 }
 
+void GameObject::destroy()
+{
+    for (auto& renderable : m_renderables) {
+        renderable.program.destroy();
+        renderable.mesh.destroy();
+        for (auto& sampler : renderable.samplers) {
+            sampler.texture.destroy();
+        }
+    }
+    m_renderables.clear();
+}

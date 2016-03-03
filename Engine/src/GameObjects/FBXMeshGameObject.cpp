@@ -16,11 +16,10 @@ FBXMeshGameObject::FBXMeshGameObject(const Transform& transform, const char* pMe
     m_skinnedMeshName(pSkinnedMeshName ? pSkinnedMeshName : "")
 {}
 
-
 bool FBXMeshGameObject::create()
 {
     // Create the program for rendering the non-skinned meshes.
-    m_defaultProgram = ResourceCreator::CreateProgram("./data/shaders/normal.vert", "./data/shaders/texturedVertLit.frag");
+    m_defaultProgram = ResourceCreator::CreateProgram("./data/shaders/texNormal.vert", "./data/shaders/texturedVertLit.frag");
     if (!m_defaultProgram.isValid())
         return false;
 
@@ -89,13 +88,10 @@ void FBXMeshGameObject::destroy()
 {
     m_fbxFile.unload(); // Clean up texture resources.
 
-    m_defaultProgram.destroy();
-    m_skinningProgram.destroy();
+    //m_defaultProgram.destroy();
+    //m_skinningProgram.destroy();
 
-    for (auto& renderable : m_renderables) {
-        renderable.mesh.destroy();
-    }
-    m_renderables.clear();
+    GameObject::destroy();
 }
 
 
@@ -125,11 +121,8 @@ void FBXMeshGameObject::update(float deltaTime)
 
 void FBXMeshGameObject::draw(const Camera& camera, const Light& light)
 {
-
-    for (unsigned int renderableIndex = 0; renderableIndex < m_renderables.size(); renderableIndex++ )
+    for( auto& renderable : m_renderables )
     {
-        auto& renderable = m_renderables[renderableIndex];
-
         Program& program = renderable.program;
         assert(program.isValid());
         glUseProgram(program.getId());
@@ -148,5 +141,5 @@ void FBXMeshGameObject::draw(const Camera& camera, const Light& light)
     }
 
     GameObject::draw(camera, light);
-
 }
+

@@ -11,6 +11,7 @@ out vec3 vNormal;
 out vec3 vTangent;
 out vec3 vBiTangent;
 
+uniform mat4 model;
 uniform mat4 projectionView;
 
 void main()
@@ -21,5 +22,5 @@ void main()
     vTangent = tangent.xyz;
     vBiTangent = cross( vNormal, vTangent ).xyz;
 
-    gl_Position = projectionView * position;
+    gl_Position = projectionView * model * position;
 }

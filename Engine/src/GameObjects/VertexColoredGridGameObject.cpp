@@ -16,9 +16,8 @@
 
 bool VertexColoredGridGameObject::create()
 {
-    m_program = ResourceCreator::CreateProgram( "./data/shaders/color.vert","./data/shaders/vertexColor.frag");
-	if (!m_program.isValid()) return false;
-
+    auto program = ResourceCreator::CreateProgram( "./data/shaders/color.vert","./data/shaders/vertexColor.frag");
+	if (!program.isValid()) return false;
 
     MeshData meshData;
     int rowCount = m_gridSize.x;
@@ -29,32 +28,14 @@ bool VertexColoredGridGameObject::create()
 	GeometryCreator::createGrid<Vertex_PositionColor>(&meshData, rowCount, columnCount);
 
     // Create the OpenGL buffers and upload the vertex and index data.
-	m_mesh.create<Vertex_PositionColor>(meshData);
+    Mesh mesh;
+    if (!mesh.create<Vertex_PositionColor>(meshData)) return false;
 
     // Now we've given the buffers to OpenGL, we dont need them anymore.
 	delete[] (Vertex_PositionColor*)meshData.pVertices;
 	delete[] meshData.pIndices;
 
+    m_renderables.emplace_back(program, mesh);
+
 	return true;
-}
-
-
-void VertexColoredGridGameObject::destroy()
-{
-	m_mesh.destroy();
-	m_program.destroy();
-}
-
-
-void VertexColoredGridGameObject::draw( const Camera& camera, const Light& light )
-{
-	assert(m_program.isValid());
-	glUseProgram(m_program.getId());
-	m_program.setUniform("projectionView", camera.getProjectionView());
-
-	assert(m_mesh.isValid());
-	glBindVertexArray(m_mesh.getVAO());
-
-	glDrawElements(GL_TRIANGLES, m_mesh.getIndexCount(), GL_UNSIGNED_INT, 0);
-
 }

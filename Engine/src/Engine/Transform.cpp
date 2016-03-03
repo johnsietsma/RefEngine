@@ -5,7 +5,9 @@
 #include "glm/gtx/matrix_decompose.hpp"
 #include "glm/gtx/transform.hpp"
 
-const glm::vec3 Transform::WORLD_UP = glm::vec3(0,1,0);
+const glm::vec3 Transform::WORLD_RIGHT = glm::vec3(1, 0, 0);
+const glm::vec3 Transform::WORLD_UP = glm::vec3(0, 1, 0);
+const glm::vec3 Transform::WORLD_FORWARD = glm::vec3(0,0,1);
 
 Transform::Transform(glm::vec3 position)
 : Transform(position, glm::quat(), glm::vec3(1) )

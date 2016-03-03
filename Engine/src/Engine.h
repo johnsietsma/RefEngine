@@ -21,7 +21,6 @@ using sp_vector = std::vector< std::shared_ptr<T> >;
 class Engine : public std::enable_shared_from_this<Engine>
 {
 public:
-
     Engine( const char* pWindowName );
     ~Engine();
 
@@ -33,20 +32,15 @@ public:
     bool update(float deltaTime);
     void draw();
 
+    std::weak_ptr<Camera> getMainCamera() const { return m_pMainCamera;  }
     std::weak_ptr<Window> getWindow() const { return m_pWindow; }
-
-    void addCamera( std::shared_ptr<Camera> pCamera ) { m_cameras.push_back( pCamera); }
-    void addRenderPass( const RenderPass& renderPass )
-    {
-        assert( m_renderPasses.size() > 0 );
-        // Leave the default RenderPass at the end, insert at 1 before the end
-        m_renderPasses.insert(m_renderPasses.begin() + m_renderPasses.size() - 1, renderPass);
-    }
-
-    void addGameObject( std::shared_ptr<GameObject> pGameObject ) { m_gameObjects.push_back(pGameObject); }
-
     sp_vector<GameObject>& getGameObjects() { return m_gameObjects; }
     const sp_vector<GameObject>& getGameObjects() const { return m_gameObjects; }
+
+    void addCamera( std::shared_ptr<Camera> pCamera ) { m_cameras.push_back( pCamera); }
+    void addRenderPass(const RenderPass& renderPass);
+    void addGameObject( std::shared_ptr<GameObject> pGameObject ) { m_gameObjects.push_back(pGameObject); }
+
 
 private:
     std::shared_ptr<Camera> m_pMainCamera;

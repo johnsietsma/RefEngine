@@ -6,7 +6,9 @@
 
 class Transform {
 public:
+    static const glm::vec3 WORLD_RIGHT;
     static const glm::vec3 WORLD_UP;
+    static const glm::vec3 WORLD_FORWARD;
 
     Transform() :
 		Transform( glm::vec3(0), glm::quat(), glm::vec3(1) )

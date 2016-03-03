@@ -16,14 +16,16 @@ class Camera;
 class TexturedQuadGameObject : public GameObject
 {
 public:
-    TexturedQuadGameObject(const glm::vec3& pos, Texture texture) :
-        GameObject(Transform(pos)),
-        m_texture(texture)
+    TexturedQuadGameObject(const Transform& trans, Texture texture, const char* pFragShaderName="textured") :
+        GameObject(trans),
+        m_texture(texture),
+        m_fragShaderName( pFragShaderName )
     {}
 
     bool create() override;
-    void destroy() override;
 
+private:
     Texture m_texture;
+    std::string m_fragShaderName;
 };
 
