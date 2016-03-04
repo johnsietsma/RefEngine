@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FBXFile.h"
+#include "File/FBXVertex.h"
 
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>

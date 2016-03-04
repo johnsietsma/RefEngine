@@ -1,7 +1,10 @@
 #include "Texture.h"
 
 
-void Texture::create(const unsigned char* data, int imageWidth, int imageHeight, TextureType textureType)
+const Texture Texture::Invalid = Texture();
+
+
+void Texture::create(const unsigned char* data, int imageWidth, int imageHeight, TextureType textureType, bool generateMipmaps)
 {
     assert(m_textureId == (GLuint)-1);
 
@@ -22,7 +25,29 @@ void Texture::create(const unsigned char* data, int imageWidth, int imageHeight,
         return;
     }
 
-    create_impl(data, imageWidth, imageHeight, internalFormat, format, GL_UNSIGNED_BYTE);
+    create_impl(data, imageWidth, imageHeight, internalFormat, format, GL_UNSIGNED_BYTE, generateMipmaps);
+}
+
+void Texture::create(const unsigned char* data, int imageWidth, int imageHeight, int componenCount, bool generateMipmaps)
+{
+    GLuint internalFormat = -1; // How OpenGL will store it
+    GLuint format = -1; // How the data given is arranged
+
+    switch (componenCount) {
+    case 3:
+        internalFormat = GL_RGB;
+        format = GL_RGB;
+        break;
+    case 4:
+        internalFormat = GL_RGBA;
+        format = GL_RGBA;
+        break;
+    default:
+        assert(false && "Unsupported texture component count.");
+        return;
+    }
+
+    create_impl(data, imageWidth, imageHeight, format, internalFormat, GL_UNSIGNED_BYTE, generateMipmaps);
 }
 
 void Texture::create(const float* data, int imageWidth, int imageHeight) 
@@ -32,11 +57,12 @@ void Texture::create(const float* data, int imageWidth, int imageHeight)
         imageWidth, imageHeight, 
         GL_R32F,  // We're giving OpenGL a 32bit float
         GL_RED,   // OpenGL should store it in the red channel
-        GL_FLOAT  // The data we're providing is floats
+        GL_FLOAT, // The data we're providing is floats
+        false     // No mips
         );
 }
 
-void Texture::create_impl(const void* data, int imageWidth, int imageHeight, GLuint internalFormat, GLuint format, GLuint dataType)
+void Texture::create_impl(const void* data, int imageWidth, int imageHeight, GLuint internalFormat, GLuint format, GLuint dataType, bool generateMipmaps)
 {
     assert(m_textureId == (GLuint)-1);
 
@@ -45,9 +71,16 @@ void Texture::create_impl(const void* data, int imageWidth, int imageHeight, GLu
 
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, imageWidth, imageHeight, 0, format, dataType, data);
 
-    // Use a linear filter.
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    if (generateMipmaps)
+    {
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        // Use a linear filter.
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    }
 
     // Clamp rather then wrap
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

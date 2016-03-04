@@ -2,7 +2,7 @@
 
 #include "Vertex.h"
 
-#include "FBXFile.h"
+#include "File/FBXVertex.h"
 
 #include <assert.h>
 

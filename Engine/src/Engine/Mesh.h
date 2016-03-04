@@ -2,7 +2,6 @@
 
 #include "gl_core_4_4.h"
 
-#include "FBXFile.h"
 #include "MeshData.h"
 #include "Vertex.h"
 #include "VertexAttributes.h"

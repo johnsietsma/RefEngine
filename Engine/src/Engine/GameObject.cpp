@@ -18,8 +18,8 @@ void GameObject::draw(const Camera& camera, const Light& light, Program override
         return;
     }
 
-    const int lightOrthoSize = 15;
-    glm::mat4 lightProjection = glm::ortho<float>(-lightOrthoSize, lightOrthoSize, -lightOrthoSize, lightOrthoSize, -lightOrthoSize, lightOrthoSize);
+    const float lightOrthoSize = 15;
+    glm::mat4 lightProjection = glm::ortho(-lightOrthoSize, lightOrthoSize, -lightOrthoSize, lightOrthoSize, -lightOrthoSize, lightOrthoSize);
     glm::mat4 lightView = light.getTransform().getInverseMatrix();
     glm::mat4 textureSpaceOffset(0.5f);
     textureSpaceOffset[3] = glm::vec4(0.5f, 0.5f, 0.5f, 1.f);

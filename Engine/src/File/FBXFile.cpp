@@ -1,5 +1,7 @@
 #include "FBXFile.h"
 
+#include "FBXVertex.h"
+
 #include "gl_core_4_4.h"
 
 #include <fbxsdk.h>
@@ -350,13 +352,6 @@ void LoadSkinningData( FbxMesh* pFbxMesh, std::vector<FBXVertex>& vertices, std:
 // ---------------- Class impl ----------------------
 
 
-FBXTexture::~FBXTexture()
-{
-    delete[] data;
-    if( handle != (unsigned int)-1 ) glDeleteTextures(1, &handle);
-}
-
-
 void FBXFile::unload()
 {
     delete m_root;
@@ -370,8 +365,9 @@ void FBXFile::unload()
         delete s;
     for (auto a : m_animations)
         delete a.second;
-    for (auto t : m_textures)
-        delete t.second;
+    for (auto tex : m_textures)
+        tex.second.destroy();
+
 
     m_meshes.clear();
     m_lights.clear();
@@ -521,19 +517,11 @@ bool FBXFile::load(
         m_root->m_globalTransform = m_root->m_localTransform = glm::mat4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
 
         // grab the ambient light data from the scene
-        m_ambientLight.x = (float)lScene->GetGlobalSettings().GetAmbientColor().mRed;
-        m_ambientLight.y = (float)lScene->GetGlobalSettings().GetAmbientColor().mGreen;
-        m_ambientLight.z = (float)lScene->GetGlobalSettings().GetAmbientColor().mBlue;
-        m_ambientLight.w = (float)lScene->GetGlobalSettings().GetAmbientColor().mAlpha;
-
-        // gather bones to create indices for them in a skeleton
-        if (a_loadAnimations == true)
-        {
-            for (i = 0; i < (unsigned int)lNode->GetChildCount(); ++i)
-            {
-                gatherBones((void*)lNode->GetChild(i));
-            }
-        }
+        FbxColor ambientColor = lScene->GetGlobalSettings().GetAmbientColor();
+        m_ambientLight.x = (float)ambientColor.mRed;
+        m_ambientLight.y = (float)ambientColor.mGreen;
+        m_ambientLight.z = (float)ambientColor.mBlue;
+        m_ambientLight.w = (float)ambientColor.mAlpha;
 
         // extract scene (meshes, lights, cameras)
         for (i = 0; i < (unsigned int)lNode->GetChildCount(); ++i)
@@ -541,66 +529,41 @@ bool FBXFile::load(
             extractObject(m_root, (void*)lNode->GetChild(i));
         }
 
-        // build skeleton and extract animation keyframes
-        if (a_loadAnimations == true &&
-            m_importAssistor->bones.size() > 0)
-        {
-            FBXSkeleton* skeleton = new FBXSkeleton();
-            skeleton->m_boneCount = (unsigned int)m_importAssistor->bones.size();
-
-            skeleton->m_nodes = new FBXNode * [ skeleton->m_boneCount ];
-
-            void* pBonesBuffer = malloc(sizeof(glm::mat4)*(skeleton->m_boneCount + 1));
-            skeleton->m_bones = new(pBonesBuffer) glm::mat4[ skeleton->m_boneCount ];
-
-            void* pBindPosesBuffer = malloc(sizeof(glm::mat4)*(skeleton->m_boneCount + 1));
-            skeleton->m_bindPoses = new(pBindPosesBuffer)glm::mat4[skeleton->m_boneCount];
-
-            skeleton->m_parentIndex = new int[ skeleton->m_boneCount ];
-
-            for ( i = 0 ; i < skeleton->m_boneCount ; ++i )
-            {
-                skeleton->m_nodes[ i ] = m_importAssistor->bones[ i ];
-                skeleton->m_bones[ i ] = skeleton->m_nodes[ i ]->m_localTransform;
-            }
-            for ( i = 0 ; i < skeleton->m_boneCount ; ++i )
-            {
-                skeleton->m_parentIndex[i] = -1;
-                for ( int j = 0 ; j < (int)skeleton->m_boneCount ; ++j )
-                {
-                    if (skeleton->m_nodes[i]->m_parent == skeleton->m_nodes[j])
-                    {
-                        skeleton->m_parentIndex[i] = j;
-                        break;
-                    }
-                }
-            }
-
-            extractSkeleton(skeleton, lScene);
-
-            m_skeletons.push_back(skeleton);
-
-            extractAnimation(lScene);
+        if (m_importAssistor->loadAnimations) {
+            extractBonesAndAnimations(lNode, lScene);
         }
 
         m_root->updateGlobalTransform();
+
+        // load textures!
+        if (m_importAssistor->loadTextures)
+        {
+            for (const auto& material : m_materials)
+            {
+                for (auto texturePath : material.second->texturePaths)
+                {
+                    if (texturePath.size() == 0) continue; // No texture path
+                    if (getTextureByName(texturePath.c_str()).isValid()) continue; // Already been created
+
+                    int width, height, format;
+                    unsigned char* data = stbi_load(texturePath.c_str(), &width, &height, &format, STBI_default);
+                    if (data == nullptr)
+                    {
+                        printf("Failed to load texture: %s\n", texturePath.c_str());
+                    }
+                    else
+                    {
+                        m_textures[texturePath].create(data, width, height, format);
+                    }
+                }
+            }
+        }
 
         delete m_importAssistor;
         m_importAssistor = nullptr;
     }
 
     lSdkManager->Destroy();
-
-    // load textures!
-    for (auto texturePair : m_textures)
-    {
-        FBXTexture* pTexture = texturePair.second;
-        pTexture->data = stbi_load(pTexture->path.c_str(), &pTexture->width, &pTexture->height, &pTexture->format, STBI_default);
-        if (pTexture->data == nullptr)
-        {
-            printf("Failed to load texture: %s\n", pTexture->path.c_str());
-        }
-    }
 
     return true;
 }
@@ -1037,19 +1000,7 @@ FBXMaterial* FBXFile::extractMaterial(void* a_mesh, int a_materialIndex)
 
                         std::string fullPath = m_path + szFilename;
 
-                        auto iter = m_textures.find(fullPath);
-                        if (iter != m_textures.end())
-                        {
-                            material->textures[i] = iter->second;
-                        }
-                        else
-                        {
-                            FBXTexture* texture = new FBXTexture();
-                            texture->name = szFilename;
-                            texture->path = fullPath;
-                            material->textures[i] = texture;
-                            m_textures[ fullPath ] = texture;
-                        }
+                        material->texturePaths[i] = fullPath;
                     }
                 }
             }
@@ -1062,30 +1013,57 @@ FBXMaterial* FBXFile::extractMaterial(void* a_mesh, int a_materialIndex)
     return nullptr;
 }
 
-void FBXFile::initialiseOpenGLTextures()
+void FBXFile::extractBonesAndAnimations(void* a_node, void* a_scene)
 {
-    int textureUnit = 0;
-    for (auto texture : m_textures)
+    FbxNode* lNode = (FbxNode*)a_node;
+    // gather bones to create indices for them in a skeleton
+    for (unsigned int i = 0; i < (unsigned int)lNode->GetChildCount(); ++i)
     {
-    //  texture.second->handle = SOIL_create_OGL_texture(texture.second->data, texture.second->width, texture.second->height, texture.second->channels,
-    //      SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_TEXTURE_REPEATS);
-        switch (texture.second->format)
-        {
-        case STBI_grey: texture.second->format = GL_RED; break;
-        case STBI_grey_alpha: texture.second->format = GL_RG; break;
-        case STBI_rgb: texture.second->format = GL_RGB; break;
-        case STBI_rgb_alpha: texture.second->format = GL_RGBA; break;
-        };
-
-        glGenTextures(1, &texture.second->handle);
-        glActiveTexture(GL_TEXTURE0 + textureUnit);
-        glBindTexture(GL_TEXTURE_2D, texture.second->handle);
-        glTexImage2D(GL_TEXTURE_2D, 0, texture.second->format, texture.second->width, texture.second->height, 0, texture.second->format, GL_UNSIGNED_BYTE, texture.second->data);
-    //  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        gatherBones((void*)lNode->GetChild(i));
     }
+
+
+    // build skeleton and extract animation keyframes
+    if (m_importAssistor->bones.size() > 0)
+    {
+        FBXSkeleton* skeleton = new FBXSkeleton();
+        skeleton->m_boneCount = (unsigned int)m_importAssistor->bones.size();
+
+        skeleton->m_nodes = new FBXNode *[skeleton->m_boneCount];
+
+        void* pBonesBuffer = malloc(sizeof(glm::mat4)*(skeleton->m_boneCount + 1));
+        skeleton->m_bones = new(pBonesBuffer) glm::mat4[skeleton->m_boneCount];
+
+        void* pBindPosesBuffer = malloc(sizeof(glm::mat4)*(skeleton->m_boneCount + 1));
+        skeleton->m_bindPoses = new(pBindPosesBuffer)glm::mat4[skeleton->m_boneCount];
+
+        skeleton->m_parentIndex = new int[skeleton->m_boneCount];
+
+        for (unsigned int i = 0; i < skeleton->m_boneCount; ++i)
+        {
+            skeleton->m_nodes[i] = m_importAssistor->bones[i];
+            skeleton->m_bones[i] = skeleton->m_nodes[i]->m_localTransform;
+        }
+        for (unsigned int i = 0; i < skeleton->m_boneCount; ++i)
+        {
+            skeleton->m_parentIndex[i] = -1;
+            for (int j = 0; j < (int)skeleton->m_boneCount; ++j)
+            {
+                if (skeleton->m_nodes[i]->m_parent == skeleton->m_nodes[j])
+                {
+                    skeleton->m_parentIndex[i] = j;
+                    break;
+                }
+            }
+        }
+
+        extractSkeleton(skeleton, a_scene);
+
+        m_skeletons.push_back(skeleton);
+
+        extractAnimation(a_scene);
+    }
+
 }
 
 void FBXFile::extractAnimation(void* a_scene)
@@ -1560,12 +1538,12 @@ FBXMaterial* FBXFile::getMaterialByName(const char* a_name)
     return nullptr;
 }
 
-FBXTexture* FBXFile::getTextureByName(const char* a_name)
+const Texture& FBXFile::getTextureByName(const char* a_name) const
 {
     auto oIter = m_textures.find(a_name);
     if (oIter != m_textures.end())
         return oIter->second;
-    return nullptr;
+    return Texture::Invalid;
 }
 
 FBXAnimation* FBXFile::getAnimationByName(const char* a_name)
@@ -1620,15 +1598,15 @@ FBXAnimation* FBXFile::getAnimationByIndex(unsigned int a_index)
     return nullptr;
 }
 
-FBXTexture* FBXFile::getTextureByIndex(unsigned int a_index)
+const Texture& FBXFile::getTextureByIndex(unsigned int a_index) const
 {
-    for (auto t : m_textures)
+    for(const auto& t : m_textures)
     {
         if (a_index-- == 0)
             return t.second;
     }
 
-    return nullptr;
+    return Texture::Invalid;
 }
 
 void FBXFile::gatherBones(void* a_object)

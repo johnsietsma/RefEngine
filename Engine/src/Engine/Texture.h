@@ -11,6 +11,8 @@
 class Texture
 {
 public:
+    const static Texture Invalid;
+
     enum class TextureType { RGB, RGBA };
 
     // Construct an invalid texture, call create later.
@@ -21,13 +23,14 @@ public:
 
     ~Texture() = default;
 
-    bool isValid() { return m_textureId != (GLuint)-1; }
+    bool isValid() const { return m_textureId != (GLuint)-1; }
     GLuint getId() const { return m_textureId; }
 
     void setId(GLuint textureId) { m_textureId = textureId; }
 
     // Create and upload the OpenGL texture using the data provided.
-    void create(const unsigned char* data, int imageWidth, int imageHeight, TextureType textureType);
+    void create(const unsigned char* data, int imageWidth, int imageHeight, TextureType textureType, bool generateMipmaps=false);
+    void create(const unsigned char* data, int imageWidth, int imageHeight, int componentCount, bool generateMipmaps = false);
 
     // Create a texture from a float buffer
     void create(const float* data, int imageWidth, int imageHeight);
@@ -40,7 +43,8 @@ private:
         int imageWidth, int imageHeight, // The image dimensions in texels
         GLuint internalFormat,  // The format OpenGL should use to store the data
         GLuint format,  // The format the data is provided in
-        GLuint dataType // The type of data stored in the image buffer
+        GLuint dataType, // The type of data stored in the image buffer
+        bool generateMipmaps
         );
 
 

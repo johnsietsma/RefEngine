@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Engine/Texture.h"
+
 #include <map>
 #include <vector>
 #include <string>
@@ -15,85 +17,7 @@
 #include "glm/gtc/epsilon.hpp"
 
 struct ImportAssistor;
-
-// A complete vertex structure with all the data needed from the FBX file
-class FBXVertex
-{
-public:
-
-    enum VertexAttributeFlags
-    {
-        ePOSITION = (1 << 0),
-        eCOLOUR = (1 << 1),
-        eNORMAL = (1 << 2),
-        eTANGENT = (1 << 3),
-        eBINORMAL = (1 << 4),
-        eINDICES = (1 << 5),
-        eWEIGHTS = (1 << 6),
-        eTEXCOORD1 = (1 << 7),
-        eTEXCOORD2 = (1 << 8),
-    };
-
-    enum class Offsets
-    {
-        PositionOffset = 0,
-        ColourOffset = PositionOffset + sizeof(glm::vec4),
-        NormalOffset = ColourOffset + sizeof(glm::vec4),
-        TangentOffset = NormalOffset + sizeof(glm::vec4),
-        BiNormalOffset = TangentOffset + sizeof(glm::vec4),
-        IndicesOffset = BiNormalOffset + sizeof(glm::vec4),
-        WeightsOffset = IndicesOffset + sizeof(glm::vec4),
-        TexCoord1Offset = WeightsOffset + sizeof(glm::vec4),
-        TexCoord2Offset = TexCoord1Offset + sizeof(glm::vec2),
-    };
-
-    FBXVertex();
-    ~FBXVertex();
-
-    glm::vec4   position;
-    glm::vec4   colour;
-    glm::vec4   normal;
-    glm::vec4   tangent;
-    glm::vec4   binormal;
-    glm::vec4   indices;
-    glm::vec4   weights;
-    glm::vec2   texCoord1;
-    glm::vec2   texCoord2;
-
-    bool operator == (const FBXVertex& a_rhs) const;
-    bool operator < (const FBXVertex& a_rhs) const;
-
-    // internal use only!
-    unsigned int index[4];
-};
-
-enum class Offsets1
-{
-    PositionOffset = 0,
-    ColourOffset = offsetof(class FBXVertex, colour),
-    NormalOffset = offsetof(class FBXVertex, normal),
-    TangentOffset = offsetof(class FBXVertex, tangent),
-    BiNormalOffset = offsetof(class FBXVertex, binormal),
-    IndicesOffset = offsetof(class FBXVertex, indices),
-    WeightsOffset = offsetof(class FBXVertex, weights),
-    TexCoord1Offset = offsetof(class FBXVertex, texCoord1),
-    TexCoord2Offset = offsetof(class FBXVertex, texCoord2)
-};
-
-
-struct FBXTexture
-{
-    FBXTexture();
-    ~FBXTexture();
-
-    std::string     name;
-    std::string     path;
-    unsigned int    handle;
-    unsigned char*  data;
-    int             width;
-    int             height;
-    int             format;
-};
+struct FBXVertex;
 
 // A simple FBX material that supports 8 texture channels
 struct FBXMaterial
@@ -135,7 +59,7 @@ struct FBXMaterial
     glm::vec4       specular;                   // RGB + Shininess/Gloss stored in A
     glm::vec4       emissive;                   // RGB + Emissive Factor stored in A
 
-    FBXTexture*     textures[TextureTypes_Count];
+    std::string     texturePaths[TextureTypes_Count];
     glm::vec2       textureOffsets[TextureTypes_Count];         // Texture coordinate offset
     glm::vec2       textureTiling[TextureTypes_Count];          // Texture repeat count
     float           textureRotation[TextureTypes_Count];        // Texture rotation around Z (2D rotation)
@@ -342,9 +266,6 @@ public:
         );
     void            unload();
 
-    // goes through all loaded textures and creates their GL versions
-    void            initialiseOpenGLTextures();
-
     // the folder path of the FBX file
     // useful for accessing texture locations
     const char*         getPath() const { return m_path.c_str(); }
@@ -368,7 +289,7 @@ public:
     FBXCameraNode*  getCameraByName(const char* a_name);
     FBXMaterial*    getMaterialByName(const char* a_name);
     FBXAnimation*   getAnimationByName(const char* a_name);
-    FBXTexture*     getTextureByName(const char* a_name);
+    const Texture&  getTextureByName(const char* a_name) const;
 
     // these methods are slow as the items are stored in a map
     FBXMeshNode*    getMeshByIndex(unsigned int a_index) const { return m_meshes[a_index]; }
@@ -377,7 +298,7 @@ public:
     FBXMaterial*    getMaterialByIndex(unsigned int a_index);
     FBXSkeleton*    getSkeletonByIndex(unsigned int a_index) { return m_skeletons[a_index]; }
     FBXAnimation*   getAnimationByIndex(unsigned int a_index);
-    FBXTexture*     getTextureByIndex(unsigned int a_index);
+    const Texture&  getTextureByIndex(unsigned int a_index) const;
 
 private:
 
@@ -387,6 +308,7 @@ private:
     void    extractLight(FBXLightNode* a_light, void* a_object);
     void    extractCamera(FBXCameraNode* a_camera, void* a_object);
 
+    void    extractBonesAndAnimations(void* a_node, void* a_scene);
     void    gatherBones(void* a_object);
     void    extractSkeleton(FBXSkeleton* a_skeleton, void* a_scene);
 
@@ -411,7 +333,7 @@ private:
     std::map<std::string, FBXLightNode*>    m_lights;
     std::map<std::string, FBXCameraNode*>   m_cameras;
     std::map<std::string, FBXMaterial*>     m_materials;
-    std::map<std::string, FBXTexture*>      m_textures;
+    std::map<std::string, Texture>          m_textures;
 
     std::vector<FBXSkeleton*>               m_skeletons;
     std::map<std::string, FBXAnimation*>    m_animations;
@@ -420,44 +342,7 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////////
-inline FBXVertex::FBXVertex()
-    : position(0, 0, 0, 1),
-    colour(1, 1, 1, 1),
-    normal(0, 0, 0, 0),
-    tangent(0, 0, 0, 0),
-    binormal(0, 0, 0, 0),
-    indices(0, 0, 0, 0),
-    weights(0, 0, 0, 0),
-    texCoord1(0, 0),
-    texCoord2(0, 0)
-{
 
-}
-
-inline FBXVertex::~FBXVertex()
-{
-
-}
-
-inline bool FBXVertex::operator == (const FBXVertex& a_rhs) const
-{
-    return memcmp(this, &a_rhs, sizeof(FBXVertex)) == 0;
-}
-
-inline bool FBXVertex::operator < (const FBXVertex& a_rhs) const
-{
-    return memcmp(this, &a_rhs, sizeof(FBXVertex)) < 0;
-}
-
-inline FBXTexture::FBXTexture()
-    : handle(0 - 1),
-    data(nullptr),
-    width(0),
-    height(0),
-    format(0)
-{
-
-}
 
 inline FBXMaterial::FBXMaterial()
     : ambient(0, 0, 0, 0),
@@ -465,7 +350,6 @@ inline FBXMaterial::FBXMaterial()
     specular(1, 1, 1, 1),
     emissive(0, 0, 0, 0)
 {
-    memset(textures, 0, TextureTypes_Count * sizeof(FBXTexture*));
     memset(textureOffsets, 0, TextureTypes_Count * sizeof(glm::vec2));
     memset(textureTiling, 0, TextureTypes_Count * sizeof(glm::vec2));
     memset(textureRotation, 0, TextureTypes_Count * sizeof(float));
@@ -473,7 +357,6 @@ inline FBXMaterial::FBXMaterial()
 
 inline FBXMaterial::~FBXMaterial()
 {
-
 }
 
 inline FBXNode::FBXNode()

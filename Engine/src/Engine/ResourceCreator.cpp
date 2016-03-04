@@ -3,8 +3,6 @@
 #include "GeometryCreator.h"
 #include "Helpers.h"
 
-#include "FBXFile.h"
-
 #include "stb_image.h"
 
 #include <iostream>

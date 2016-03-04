@@ -3,7 +3,7 @@
 #include "Engine/GameObject.h"
 #include "Engine/Program.h"
 
-#include "FBXFile.h"
+#include "File/FBXFile.h"
 
 #include <string>
 #include <vector>

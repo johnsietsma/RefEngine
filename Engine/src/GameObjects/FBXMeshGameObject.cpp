@@ -33,12 +33,6 @@ bool FBXMeshGameObject::create()
     if (!m_fbxFile.load(m_meshFileName.c_str()))
         return false;
 
-    // FBX files can have file paths to textures they use. When the FBX is loaded these textures will have been read from disk.
-    // initialiseOpenGLTextures() creates OpenGL texture ids and uploads the texture data to OpenGL.
-    // The texture id can be retrieved via m_fbxFile->getMeshByIndex(0)->m_materials[0]->textures[FBXMaterial::DiffuseTexture]->handle *phew!*
-    // See below for details.
-    m_fbxFile.initialiseOpenGLTextures();
-
     // Extract the mesh and diffuse textures
     for (unsigned int meshIndex = 0; meshIndex < m_fbxFile.getMeshCount(); meshIndex++)
     {
@@ -64,14 +58,15 @@ bool FBXMeshGameObject::create()
             glUseProgram(renderable.program.getId());
 
             for (int textureIndex = 0; textureIndex < FBXMaterial::TextureTypes_Count; textureIndex++) {
-                auto& pTexture = pMaterial->textures[textureIndex];
+                auto& texturePath = pMaterial->texturePaths[textureIndex];
+                auto& texture = m_fbxFile.getTextureByName(texturePath.c_str());
 
-                if (pTexture != nullptr) {
+                if (texture.isValid()) {
                     // Bind the texture to a texture unit. textureIndex _must_ be an int.
                     renderable.program.setUniform(FBXMaterial::getTextureName(textureIndex), textureIndex);
 
                     renderable.samplers.emplace_back(
-                            Texture(pTexture->handle),
+                            Texture(texture.getId()),
                             textureIndex // Use the index as the texture unit
                         );
                 }

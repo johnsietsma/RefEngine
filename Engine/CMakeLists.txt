@@ -17,7 +17,7 @@ file(GLOB_RECURSE HEADERS "src/*.h")
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 source_group(Headers FILES ${HEADERS})
-source_group(Source FILES $${SOURCES})
+source_group(Source FILES ${SOURCES})
 
 
 # --- OpenGL ---
