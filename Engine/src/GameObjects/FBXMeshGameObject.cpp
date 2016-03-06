@@ -46,7 +46,7 @@ bool FBXMeshGameObject::create()
         renderable.mesh.create(pFbxMesh->m_vertices.data(), (GLsizei)pFbxMesh->m_vertices.size(), pFbxMesh->m_indices.data(), (GLsizei)pFbxMesh->m_indices.size());
 
         // Put a bounding volume around it for frustum culling
-        m_boundingVolume.addBoundingSphere(glm::vec3(pFbxMesh->m_globalTransform[3]), pFbxMesh->m_vertices);
+        m_boundingVolume.addBoundingSphere(glm::vec3(pFbxMesh->m_globalTransform[3]), pFbxMesh->m_vertices.position);
 
         // Figure out how to index into the the 4 programs created above
         int texIndex  = 0;

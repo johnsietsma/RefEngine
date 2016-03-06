@@ -42,12 +42,12 @@ void BoundingVolume::addBoundingSphere(glm::vec3 center, std::vector<glm::vec3> 
 }
 
 
-void BoundingVolume::addBoundingSphere(glm::vec3 center, std::vector<Vertex_FBX> pointsToFit)
+void BoundingVolume::addBoundingSphere(glm::vec3 center, std::vector<glm::vec4> pointsToFit)
 {
     auto pShape = std::make_shared<Sphere>();
-    for (auto& vertex : pointsToFit)
+    for (auto& point : pointsToFit)
     {
-        pShape->expand( glm::vec3(vertex.position) );
+        pShape->expand( glm::vec3(point) );
     }
 
     m_shapes.push_back(pShape);

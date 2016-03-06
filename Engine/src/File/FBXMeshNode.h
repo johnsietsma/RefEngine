@@ -48,6 +48,6 @@ public:
 
     unsigned int                m_vertexAttributes;
     std::vector<Material*>      m_materials;
-    std::vector<Vertex_FBX>     m_vertices;
+    Vertices_FBX                m_vertices;
     std::vector<unsigned int>   m_indices;
 };

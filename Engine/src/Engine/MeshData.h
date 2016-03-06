@@ -2,7 +2,7 @@
 
 
 /*
-    Contains data that defeins the vertex and index data of a mesh.
+    Contains data that defines the vertex and index data of a mesh.
     This struct does no memory management, that's up to its user.
 */
 struct MeshData

@@ -26,11 +26,11 @@ public:
     // Setup OpenGL buffers and vertex attributes to be able to render these vertices.
     template<typename T>
     bool create(const MeshData& meshData) {
-        return create<T>(static_cast<T*>(meshData.pVertices), meshData.vertexCount, meshData.pIndices, meshData.indexCount);
+        return create<T>(static_cast<T*>(meshData.pVertices), meshData.vertexCount * sizeof(T), meshData.pIndices, meshData.indexCount);
     }
 
     template<typename T>
-    bool create(T* pVertices, GLsizei vertexCount, unsigned int* pInidices, GLsizei indexCount);
+    bool create(T* pVertices, GLsizei vertexSize, unsigned int* pInidices, GLsizei indexCount);
 
     void destroy();
 
@@ -43,7 +43,7 @@ private:
 
 
 template<typename T>
-bool Mesh::create(T* pVertices, GLsizei vertexCount, unsigned int* pIndices, GLsizei indexCount)
+bool Mesh::create(T* pVertices, GLsizei vertexSize, unsigned int* pIndices, GLsizei indexCount)
 {
     assert(m_VAO == -1 && "Mesh has already been created.");
     assert(pVertices != nullptr);
@@ -57,7 +57,7 @@ bool Mesh::create(T* pVertices, GLsizei vertexCount, unsigned int* pIndices, GLs
 
     glGenBuffers(1, &m_VBO); // Create the VBO
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO); // Make it active
-    glBufferData(GL_ARRAY_BUFFER, vertexCount * sizeof(T), pVertices, GL_STATIC_DRAW); // Upload data
+    glBufferData(GL_ARRAY_BUFFER, vertexSize, pVertices, GL_STATIC_DRAW); // Upload data
 
     VertexAttributes::Setup<T>();
 
