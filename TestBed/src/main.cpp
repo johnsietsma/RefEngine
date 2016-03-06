@@ -38,15 +38,15 @@ void addParticles(std::shared_ptr<Engine> pEngine)
 bool addSoulSpear(std::shared_ptr<Engine> pEngine)
 {
     // Programs that the RenderMode component can swap between,
-    Program vertLitProgram = ResourceCreator::CreateProgram("texNormal", "vertexLit");
+    Program vertLitProgram = ResourceCreator::CreateProgram("normal", "vertexLit");
     if (!vertLitProgram.isValid())
         return false;
 
-    Program texturedProgram = ResourceCreator::CreateProgram("texNormal", "textured");
+    Program texturedProgram = ResourceCreator::CreateProgram("texturedNormal", "textured");
     if (!texturedProgram.isValid())
         return false;
 
-    Program fragLitProgram = ResourceCreator::CreateProgram("normal", "texturedVertLit");
+    Program fragLitProgram = ResourceCreator::CreateProgram("texturedNormal", "texturedVertLit");
     if (!fragLitProgram.isValid())
         return false;
 
@@ -56,7 +56,8 @@ bool addSoulSpear(std::shared_ptr<Engine> pEngine)
         fragLitProgram
     };
 
-    auto fbxGameObject = std::make_shared<FBXMeshGameObject>(Transform(), "./data/models/soulspear/soulspear.fbx", nullptr);
+    auto fbxTransform( glm::vec3(-3,0,0));
+    auto fbxGameObject = std::make_shared<FBXMeshGameObject>(fbxTransform, "./data/models/soulspear/soulspear.fbx", nullptr);
     fbxGameObject->addComponent(std::make_shared<RenderModeComponent>(fbxGameObject, renderPrograms));
     pEngine->addGameObject(fbxGameObject);
 
@@ -85,8 +86,8 @@ bool setup(std::shared_ptr<Engine> pEngine)
     //pEngine->addGameObject( std::make_shared<TexturedQuadGameObject>(fboQuadTrans, fboRenderPass.getTexture(), "textured", "boxBlur") );
 
     // --- Soul spear
-    //if (!addSoulSpear(pEngine))
-        //return false;
+    if (!addSoulSpear(pEngine))
+        return false;
 
     // --- Pyro ---
     //Transform pyroTransform = Transform(glm::vec3(-6, 0, -2), glm::quat(), glm::vec3(0.001f));

@@ -39,6 +39,8 @@ public:
 
     Material();
     ~Material();
+    
+    bool isTextured() const;
 
     std::string     name;
     glm::vec4       ambient;                    // RGB + Ambient Factor stored in A
@@ -69,3 +71,13 @@ inline Material::~Material()
 {
 }
 
+
+inline bool Material::isTextured() const
+{
+    for (size_t textureIndex = 0; textureIndex < (size_t)Material::TextureType::Count; textureIndex++) 
+    {
+        if( texturePaths[textureIndex].length() > 0 ) 
+            return true;
+    }
+    return false;
+}

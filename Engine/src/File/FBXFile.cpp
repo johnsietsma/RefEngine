@@ -536,30 +536,6 @@ bool FBXFile::load(
 
         m_root->updateGlobalTransform();
 
-        // load textures!
-        if (m_importAssistor->loadTextures)
-        {
-            for (const auto& material : m_materials)
-            {
-                for (auto texturePath : material.second->texturePaths)
-                {
-                    if (texturePath.size() == 0) continue; // No texture path
-                    if (getTextureByName(texturePath.c_str()).isValid()) continue; // Already been created
-
-                    int width, height, format;
-                    unsigned char* data = stbi_load(texturePath.c_str(), &width, &height, &format, STBI_default);
-                    if (data == nullptr)
-                    {
-                        printf("Failed to load texture: %s\n", texturePath.c_str());
-                    }
-                    else
-                    {
-                        m_textures[texturePath].create(data, width, height, format);
-                    }
-                }
-            }
-        }
-
         delete m_importAssistor;
         m_importAssistor = nullptr;
     }

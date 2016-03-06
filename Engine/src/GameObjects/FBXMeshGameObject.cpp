@@ -19,18 +19,16 @@ FBXMeshGameObject::FBXMeshGameObject(const Transform& transform, const char* pMe
 
 bool FBXMeshGameObject::create()
 {
-    // Create the program for rendering the non-skinned meshes.
-    m_defaultProgram = ResourceCreator::CreateProgram("texNormal", "texturedVertLit");
-    if (!m_defaultProgram.isValid())
-        return false;
-
-    // Create the program for rendering this FBX.
-    // Use a skinning vertex shader to support animation.
-    // Use the default textured fragment shader.
-    m_skinningProgram = ResourceCreator::CreateProgram("skinning", "texturedVertLit");
-    if (!m_skinningProgram.isValid())
-        return false;
-
+    m_programs[0] = ResourceCreator::CreateProgram("normal", "vertexLit"); // No anims, not texture
+    m_programs[1] = ResourceCreator::CreateProgram("texturedNormal", "texturedVertexLit"); // No anims, textured
+    m_programs[2] = ResourceCreator::CreateProgram("skinning", "vertexLit"); // Anims, not textured
+    m_programs[3] = ResourceCreator::CreateProgram("skinning", "texturedVertLit"); // Anims, textured
+    
+    for( auto& prog : m_programs ) {
+        if( !prog.isValid() )
+            return false;
+    }
+    
     if (!m_fbxFile.load(m_meshFileName.c_str()))
         return false;
 
@@ -48,9 +46,9 @@ bool FBXMeshGameObject::create()
 
         m_boundingVolume.addBoundingSphere(glm::vec3(pFbxMesh->m_globalTransform[3]), pFbxMesh->m_vertices);
 
-        // Take a copy of the correct program.
-        // This object still owns the resource and needs to clean it up.
-        renderable.program = pFbxMesh->m_name == m_skinnedMeshName ? m_skinningProgram : m_defaultProgram;
+        // Figure out how to index into the the 4 programs created above
+        int texIndex  = 0;
+        int animIndex = pFbxMesh->m_name == m_skinnedMeshName ? 2 : 0;
 
         // A mesh can have multiple materials. For simplicity we'll only use the first one
         if (pFbxMesh->m_materials.size() > 0) {
@@ -60,9 +58,11 @@ bool FBXMeshGameObject::create()
 
             for (int textureIndex = 0; textureIndex < (size_t)Material::TextureType::Count; textureIndex++) {
                 auto& texturePath = pMaterial->texturePaths[textureIndex];
-                auto& texture = m_fbxFile.getTextureByName(texturePath.c_str());
+                Texture texture = ResourceCreator::CreateTexture( texturePath.c_str() );
 
                 if (texture.isValid()) {
+                    texIndex = 1;
+                    
                     // Bind the texture to a texture unit. textureIndex _must_ be an int.
                     renderable.program.setUniform(Material::getTextureName((Material::TextureType)textureIndex), textureIndex);
 
@@ -73,6 +73,9 @@ bool FBXMeshGameObject::create()
                 }
             }
         }
+        
+        // Take a copy of the correct program. This class does the cleanup.
+        renderable.program = m_programs[texIndex + animIndex]; 
     }
 
 
@@ -84,8 +87,10 @@ void FBXMeshGameObject::destroy()
 {
     m_fbxFile.unload(); // Clean up texture resources.
 
-    //m_defaultProgram.destroy();
-    //m_skinningProgram.destroy();
+    for( auto& prog: m_programs ) 
+    {
+        prog.destroy();
+    }
 
     GameObject::destroy();
 }
