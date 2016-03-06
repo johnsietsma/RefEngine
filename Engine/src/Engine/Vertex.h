@@ -3,6 +3,8 @@
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
+#include <vector>
+
 /*
     Vertex definitions.
     Add new structs here to define new vertex types.
@@ -40,4 +42,17 @@ struct Vertex_FBX
     glm::vec4 weights;
     glm::vec2 texCoord1;
     glm::vec2 texCoord2;
+};
+
+struct Vertices_FBX
+{
+    std::vector<glm::vec4> position;
+    std::vector<glm::vec4> colour;
+    std::vector<glm::vec4> normal;
+    std::vector<glm::vec4> tangent;
+    std::vector<glm::vec4> binormal;
+    std::vector<glm::vec4> indices;
+    std::vector<glm::vec4> weights;
+    std::vector<glm::vec2> texCoord1;
+    std::vector<glm::vec2> texCoord2;
 };
