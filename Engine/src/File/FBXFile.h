@@ -18,52 +18,7 @@
 
 struct ImportAssistor;
 struct FBXVertex;
-
-// A simple FBX material that supports 8 texture channels
-struct FBXMaterial
-{
-    enum TextureTypes
-    {
-        DiffuseTexture = 0,
-        AmbientTexture,
-        GlowTexture,
-        SpecularTexture,
-        GlossTexture,
-        NormalTexture,
-        AlphaTexture,
-        DisplacementTexture,
-
-        TextureTypes_Count
-    };
-
-    static const char* getTextureName(unsigned int textureIndex) {
-        switch (textureIndex) {
-        case DiffuseTexture: return "diffuseSampler";
-        case AmbientTexture: return "ambientSampler";
-        case GlowTexture: return "glowSampler";
-        case SpecularTexture: return "specularSampler";
-        case GlossTexture: return "glossSampler";
-        case NormalTexture: return "normalSampler";
-        case AlphaTexture: return "alphaSampler";
-        case DisplacementTexture: return "displacementSampler";
-        default: assert(false); return nullptr;
-        }
-    }
-
-    FBXMaterial();
-    ~FBXMaterial();
-
-    std::string     name;
-    glm::vec4       ambient;                    // RGB + Ambient Factor stored in A
-    glm::vec4       diffuse;                    // RGBA
-    glm::vec4       specular;                   // RGB + Shininess/Gloss stored in A
-    glm::vec4       emissive;                   // RGB + Emissive Factor stored in A
-
-    std::string     texturePaths[TextureTypes_Count];
-    glm::vec2       textureOffsets[TextureTypes_Count];         // Texture coordinate offset
-    glm::vec2       textureTiling[TextureTypes_Count];          // Texture repeat count
-    float           textureRotation[TextureTypes_Count];        // Texture rotation around Z (2D rotation)
-};
+class Material;
 
 // Simple tree node with local/global transforms and children
 // Also has a void* user data that the application can make use of
@@ -110,7 +65,7 @@ public:
     virtual ~FBXMeshNode();
 
     unsigned int                m_vertexAttributes;
-    std::vector<FBXMaterial*>   m_materials;
+    std::vector<Material*>   m_materials;
     std::vector<FBXVertex>      m_vertices;
     std::vector<unsigned int>   m_indices;
 };
@@ -254,7 +209,7 @@ public:
     };
 
     // must unload a scene before loading a new one over top
-    bool            load(
+    bool  load(
         const char* a_filename,
         UNIT_SCALE a_scale = FBXFile::UNITS_METER,
         bool a_loadTextures = true,
@@ -287,7 +242,7 @@ public:
     FBXMeshNode*    getMeshByName(const char* a_name);
     FBXLightNode*   getLightByName(const char* a_name);
     FBXCameraNode*  getCameraByName(const char* a_name);
-    FBXMaterial*    getMaterialByName(const char* a_name);
+    Material*       getMaterialByName(const char* a_name);
     FBXAnimation*   getAnimationByName(const char* a_name);
     const Texture&  getTextureByName(const char* a_name) const;
 
@@ -295,7 +250,7 @@ public:
     FBXMeshNode*    getMeshByIndex(unsigned int a_index) const { return m_meshes[a_index]; }
     FBXLightNode*   getLightByIndex(unsigned int a_index);
     FBXCameraNode*  getCameraByIndex(unsigned int a_index);
-    FBXMaterial*    getMaterialByIndex(unsigned int a_index);
+    Material*       getMaterialByIndex(unsigned int a_index);
     FBXSkeleton*    getSkeletonByIndex(unsigned int a_index) { return m_skeletons[a_index]; }
     FBXAnimation*   getAnimationByIndex(unsigned int a_index);
     const Texture&  getTextureByIndex(unsigned int a_index) const;
@@ -315,7 +270,7 @@ private:
     void    extractAnimation(void* a_scene);
     void    extractAnimationTrack(std::vector<int>& a_tracks, void* a_layer, void* a_node, std::vector<void*>& a_nodes, unsigned int& a_startFrame, unsigned int& a_endFrame);
 
-    FBXMaterial*    extractMaterial(void* a_mesh, int a_materialIndex);
+    Material*    extractMaterial(void* a_mesh, int a_materialIndex);
 
     static void     optimiseMesh(FBXMeshNode* a_mesh);
     static void     calculateTangentsBinormals(std::vector<FBXVertex>& a_vertices, const std::vector<unsigned int>& a_indices);
@@ -332,7 +287,7 @@ private:
     std::vector<FBXMeshNode*>               m_meshes;
     std::map<std::string, FBXLightNode*>    m_lights;
     std::map<std::string, FBXCameraNode*>   m_cameras;
-    std::map<std::string, FBXMaterial*>     m_materials;
+    std::map<std::string, Material*>        m_materials;
     std::map<std::string, Texture>          m_textures;
 
     std::vector<FBXSkeleton*>               m_skeletons;
@@ -343,21 +298,6 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
-
-inline FBXMaterial::FBXMaterial()
-    : ambient(0, 0, 0, 0),
-    diffuse(1, 1, 1, 1),
-    specular(1, 1, 1, 1),
-    emissive(0, 0, 0, 0)
-{
-    memset(textureOffsets, 0, TextureTypes_Count * sizeof(glm::vec2));
-    memset(textureTiling, 0, TextureTypes_Count * sizeof(glm::vec2));
-    memset(textureRotation, 0, TextureTypes_Count * sizeof(float));
-}
-
-inline FBXMaterial::~FBXMaterial()
-{
-}
 
 inline FBXNode::FBXNode()
     : m_nodeType(NODE),

@@ -1,6 +1,7 @@
 #include "FBXMeshGameObject.h"
 
 #include "Engine/Camera.h"
+#include "Engine/Material.h"
 #include "Engine/ResourceCreator.h"
 #include "Engine/Sampler.h"
 #include "Engine/Texture.h"
@@ -53,17 +54,17 @@ bool FBXMeshGameObject::create()
 
         // A mesh can have multiple materials. For simplicity we'll only use the first one
         if (pFbxMesh->m_materials.size() > 0) {
-            FBXMaterial* pMaterial = pFbxMesh->m_materials[0];
+            Material* pMaterial = pFbxMesh->m_materials[0];
 
             glUseProgram(renderable.program.getId());
 
-            for (int textureIndex = 0; textureIndex < FBXMaterial::TextureTypes_Count; textureIndex++) {
+            for (int textureIndex = 0; textureIndex < (size_t)Material::TextureType::Count; textureIndex++) {
                 auto& texturePath = pMaterial->texturePaths[textureIndex];
                 auto& texture = m_fbxFile.getTextureByName(texturePath.c_str());
 
                 if (texture.isValid()) {
                     // Bind the texture to a texture unit. textureIndex _must_ be an int.
-                    renderable.program.setUniform(FBXMaterial::getTextureName(textureIndex), textureIndex);
+                    renderable.program.setUniform(Material::getTextureName((Material::TextureType)textureIndex), textureIndex);
 
                     renderable.samplers.emplace_back(
                             Texture(texture.getId()),

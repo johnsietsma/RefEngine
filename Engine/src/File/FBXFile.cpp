@@ -1,6 +1,7 @@
 #include "FBXFile.h"
 
 #include "FBXVertex.h"
+#include "Engine/Material.h"
 
 #include "gl_core_4_4.h"
 
@@ -872,7 +873,7 @@ void FBXFile::extractCamera(FBXCameraNode* a_camera, void* a_object)
     a_camera->m_viewMatrix = glm::lookAt(vEye,vTo,vUp);
 }
 
-FBXMaterial* FBXFile::extractMaterial(void* a_mesh, int a_materialIndex)
+Material* FBXFile::extractMaterial(void* a_mesh, int a_materialIndex)
 {
     FbxGeometry* pGeometry = (FbxGeometry*)a_mesh;
     FbxNode* lNode = pGeometry->GetNode();
@@ -886,7 +887,7 @@ FBXMaterial* FBXFile::extractMaterial(void* a_mesh, int a_materialIndex)
     }
     else
     {
-        FBXMaterial* material = new FBXMaterial;
+        Material* material = new Material;
         material->name = lMaterial->GetName();
 
         // get the implementation to see if it's a hardware shader.
@@ -974,7 +975,7 @@ FBXMaterial* FBXFile::extractMaterial(void* a_mesh, int a_materialIndex)
 
         if (m_importAssistor->loadTextures == true)
         {
-            for ( unsigned int i = 0 ; i < FBXMaterial::TextureTypes_Count ; ++i )
+            for ( unsigned int i = 0 ; i < (size_t)Material::TextureType::Count ; ++i )
             {
                 FbxProperty pProperty = lMaterial->FindProperty(FbxLayerElement::sTextureChannelNames[auiTextureLookup[i]]);
                 if ( pProperty.IsValid() &&
@@ -1530,7 +1531,7 @@ FBXCameraNode* FBXFile::getCameraByName(const char* a_name)
     return nullptr;
 }
 
-FBXMaterial* FBXFile::getMaterialByName(const char* a_name)
+Material* FBXFile::getMaterialByName(const char* a_name)
 {
     auto oIter = m_materials.find(a_name);
     if (oIter != m_materials.end())
@@ -1576,7 +1577,7 @@ FBXCameraNode* FBXFile::getCameraByIndex(unsigned int a_index)
     return nullptr;
 }
 
-FBXMaterial* FBXFile::getMaterialByIndex(unsigned int a_index)
+Material* FBXFile::getMaterialByIndex(unsigned int a_index)
 {
     for (auto t : m_materials)
     {
