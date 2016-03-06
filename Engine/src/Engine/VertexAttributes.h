@@ -2,8 +2,6 @@
 
 #include "Vertex.h"
 
-#include "File/FBXVertex.h"
-
 #include <assert.h>
 
 struct VertexAttributes {
@@ -26,4 +24,4 @@ template<>
 void VertexAttributes::Setup<Vertex_PositionNormalTexCoord>();
 
 template<>
-void VertexAttributes::Setup<FBXVertex>();
+void VertexAttributes::Setup<Vertex_FBX>();

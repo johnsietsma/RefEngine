@@ -45,29 +45,29 @@ void VertexAttributes::Setup<Vertex_PositionNormalTexCoord>()
 }
 
 template<>
-void VertexAttributes::Setup<FBXVertex>()
+void VertexAttributes::Setup<Vertex_FBX>()
 {
     // Position vertex attribute
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, position)));
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_FBX), (void*)(offsetof(Vertex_FBX, position)));
 
     // Texcoord vertex attribute
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, texCoord1)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_FBX), (void*)(offsetof(Vertex_FBX, texCoord1)));
 
     // Normal vertex attribute
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, normal)));
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_FBX), (void*)(offsetof(Vertex_FBX, normal)));
 
     // Tangent vertex attribute
     glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, tangent)));
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_FBX), (void*)(offsetof(Vertex_FBX, tangent)));
 
     // Weights vertex attribute
     glEnableVertexAttribArray(4);
-    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, weights)));
+    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_FBX), (void*)(offsetof(Vertex_FBX, weights)));
 
     // Indices vertex attribute
     glEnableVertexAttribArray(5);
-    glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(FBXVertex), (void*)(offsetof(FBXVertex, indices)));
+    glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_FBX), (void*)(offsetof(Vertex_FBX, indices)));
 }

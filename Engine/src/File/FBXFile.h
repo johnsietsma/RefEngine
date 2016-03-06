@@ -17,7 +17,7 @@
 #include "glm/gtc/epsilon.hpp"
 
 struct ImportAssistor;
-struct FBXVertex;
+struct Vertex_FBX;
 class Material;
 
 // Simple tree node with local/global transforms and children
@@ -79,7 +79,7 @@ public:
 
     unsigned int                m_vertexAttributes;
     std::vector<Material*>      m_materials;
-    std::vector<FBXVertex>      m_vertices;
+    std::vector<Vertex_FBX>      m_vertices;
     std::vector<unsigned int>   m_indices;
 };
 
@@ -286,7 +286,7 @@ private:
     Material*    extractMaterial(void* a_mesh, int a_materialIndex);
 
     static void     optimiseMesh(FBXMeshNode* a_mesh);
-    static void     calculateTangentsBinormals(std::vector<FBXVertex>& a_vertices, const std::vector<unsigned int>& a_indices);
+    static void     calculateTangentsBinormals(std::vector<Vertex_FBX>& a_vertices, const std::vector<unsigned int>& a_indices);
 
     unsigned int    nodeCount(FBXNode* a_node);
 

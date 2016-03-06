@@ -1,6 +1,6 @@
 #include "FBXFile.h"
 
-#include "FBXVertex.h"
+#include "Engine/Vertex.h"
 #include "Engine/Material.h"
 
 #include "gl_core_4_4.h"
@@ -152,7 +152,7 @@ int GetVertexColorDirectIndex( FbxGeometryElementVertexColor* pVertexColor, int 
     
 }
 
-void LoadVertexPositions( FbxVector4* pVertexPositions, int vertexCount, std::vector<FBXVertex>& vertices )
+void LoadVertexPositions( FbxVector4* pVertexPositions, int vertexCount, std::vector<Vertex_FBX>& vertices )
 {
     vertices.resize(vertexCount);
     
@@ -186,7 +186,7 @@ void LoadVertexIndices( FbxMesh* pFbxMesh, std::vector<unsigned int>& indices)
     
 }
 
-void LoadVertexColors( FbxGeometryElementVertexColor* pVertexColors, int vertexCount, std::vector<FBXVertex>& vertices )
+void LoadVertexColors( FbxGeometryElementVertexColor* pVertexColors, int vertexCount, std::vector<Vertex_FBX>& vertices )
 {
     for (int i = 0; i < vertexCount; ++i)
     {
@@ -203,7 +203,7 @@ void LoadVertexColors( FbxGeometryElementVertexColor* pVertexColors, int vertexC
     }
 }
 
-void LoadTexCoords( FbxLayerElementUV* pTexCoord, FbxMesh* pFbxMesh, bool shouldFlipTextureY, std::vector<FBXVertex>& vertices, int uvNumber)
+void LoadTexCoords( FbxLayerElementUV* pTexCoord, FbxMesh* pFbxMesh, bool shouldFlipTextureY, std::vector<Vertex_FBX>& vertices, int uvNumber)
 {
     int polygonCount = pFbxMesh->GetPolygonCount();
     
@@ -243,7 +243,7 @@ void LoadTexCoords( FbxLayerElementUV* pTexCoord, FbxMesh* pFbxMesh, bool should
     
 }
 
-void LoadNormals(FbxGeometryElementNormal* pNormal, int vertexCount, std::vector<FBXVertex>& vertices)
+void LoadNormals(FbxGeometryElementNormal* pNormal, int vertexCount, std::vector<Vertex_FBX>& vertices)
 {
     for (int i = 0; i < vertexCount; ++i)
     {
@@ -267,7 +267,7 @@ void LoadNormals(FbxGeometryElementNormal* pNormal, int vertexCount, std::vector
     }
 }
 
-void LoadSkinningData( FbxMesh* pFbxMesh, std::vector<FBXVertex>& vertices, std::map<std::string,int> boneIndexList )
+void LoadSkinningData( FbxMesh* pFbxMesh, std::vector<Vertex_FBX>& vertices, std::map<std::string,int> boneIndexList )
 {
     FbxSkin* fbxSkin = (FbxSkin*)pFbxMesh->GetDeformer(0, FbxDeformer::eSkin);
     int skinClusterCount = fbxSkin != nullptr ? fbxSkin->GetClusterCount() : 0;
@@ -303,7 +303,7 @@ void LoadSkinningData( FbxMesh* pFbxMesh, std::vector<FBXVertex>& vertices, std:
         for (int polyVertexIndex = 0; polyVertexIndex < polygonSize && polyVertexIndex < 4 ; ++polyVertexIndex)
         {
             int vertexIndex = pFbxMesh->GetPolygonVertex(polygonIndex, polyVertexIndex);
-            FBXVertex& vertex = vertices[vertexIndex];
+            Vertex_FBX& vertex = vertices[vertexIndex];
             
             for (int skinClusterIndex = 0; skinClusterIndex != skinClusterCount; ++skinClusterIndex)
             {
@@ -741,9 +741,9 @@ void FBXFile::optimiseMesh(FBXMeshNode* a_mesh)
     }
     a_mesh->m_vertices.resize(j+1);
 
-    if ((a_mesh->m_vertexAttributes & FBXVertex::eTEXCOORD1) != 0)
+    if ((a_mesh->m_vertexAttributes & Vertex_FBX::eTEXCOORD1) != 0)
     {
-        a_mesh->m_vertexAttributes |= FBXVertex::eTANGENT|FBXVertex::eBINORMAL;
+        a_mesh->m_vertexAttributes |= Vertex_FBX::eTANGENT|Vertex_FBX::eBINORMAL;
         calculateTangentsBinormals(a_mesh->m_vertices,a_mesh->m_indices);
     }
      */
@@ -1403,7 +1403,7 @@ void FBXSkeleton::updateBones()
     }
 }
 
-void FBXFile::calculateTangentsBinormals(std::vector<FBXVertex>& a_vertices, const std::vector<unsigned int>& a_indices)
+void FBXFile::calculateTangentsBinormals(std::vector<Vertex_FBX>& a_vertices, const std::vector<unsigned int>& a_indices)
 {
     unsigned int vertexCount = (unsigned int)a_vertices.size();
     glm::vec3* tan1 = new glm::vec3[vertexCount * 2];
