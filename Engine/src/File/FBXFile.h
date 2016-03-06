@@ -47,7 +47,7 @@ public:
     };
 
     // must unload a scene before loading a new one over top
-    bool  load(
+    bool load(
         const char* a_filename,
         UNIT_SCALE a_scale = FBXFile::UNITS_METER,
         bool a_loadTextures = true,
@@ -57,41 +57,23 @@ public:
         bool a_loadLights = false,
         bool a_flipTextureY = true
         );
-    void            unload();
-
-    // the folder path of the FBX file
-    // useful for accessing texture locations
-    const char*         getPath() const { return m_path.c_str(); }
+        
+    void unload();
 
     // the scene arranged in a tree graph
-    FBXNode*            getRoot() const { return m_root; }
+    FBXNode*  getRoot() const { return m_root; }
 
     // the ambient light of the scene
-    const glm::vec4&    getAmbientLight() const { return m_ambientLight; }
+    const glm::vec4& getAmbientLight() const { return m_ambientLight; }
 
-    size_t    getMeshCount() const { return m_meshes.size(); }
-    size_t    getLightCount() const { return m_lights.size(); }
-    size_t    getCameraCount() const { return m_cameras.size(); }
-    size_t    getMaterialCount() const { return m_materials.size(); }
-    size_t    getSkeletonCount() const { return m_skeletons.size(); }
-    size_t    getAnimationCount() const { return m_animations.size(); }
-
-    FBXMeshNode*    getMeshByName(const char* a_name);
-    FBXLightNode*   getLightByName(const char* a_name);
-    FBXCameraNode*  getCameraByName(const char* a_name);
-    Material*       getMaterialByName(const char* a_name);
-    FBXAnimation*   getAnimationByName(const char* a_name);
-
-    // these methods are slow as the items are stored in a map
-    FBXMeshNode*    getMeshByIndex(unsigned int a_index) const { return m_meshes[a_index]; }
-    FBXLightNode*   getLightByIndex(unsigned int a_index);
-    FBXCameraNode*  getCameraByIndex(unsigned int a_index);
-    Material*       getMaterialByIndex(unsigned int a_index);
-    FBXSkeleton*    getSkeletonByIndex(unsigned int a_index) { return m_skeletons[a_index]; }
-    FBXAnimation*   getAnimationByIndex(unsigned int a_index);
+    const std::vector<FBXMeshNode*>& getMeshes() const { return m_meshes; }
+    const std::map<std::string,FBXLightNode*>& getLights() const { return m_lights; }
+    const std::map<std::string,FBXCameraNode*>& getCameras() const { return m_cameras; }
+    const std::map<std::string,Material*>& getMaterials() const { return m_materials; }
+    std::vector<FBXSkeleton*>& getSkeletons() { return m_skeletons; }
+    const std::map<std::string,FBXAnimation*>& getAnimations() const { return m_animations; }
 
 private:
-
     void    extractObject(FBXNode* a_parent, void* a_object);
 
     void    extractMeshes(void* pFbxMesh, FBXMeshNode& meshNode);
@@ -105,12 +87,12 @@ private:
     void    extractAnimation(void* a_scene);
     void    extractAnimationTrack(std::vector<int>& a_tracks, void* a_layer, void* a_node, std::vector<void*>& a_nodes, unsigned int& a_startFrame, unsigned int& a_endFrame);
 
-    Material*    extractMaterial(void* a_mesh, int a_materialIndex);
+    Material*  extractMaterial(void* a_mesh, int a_materialIndex);
 
-    static void     optimiseMesh(FBXMeshNode* a_mesh);
-    static void     calculateTangentsBinormals(std::vector<Vertex_FBX>& a_vertices, const std::vector<unsigned int>& a_indices);
+    static void optimiseMesh(FBXMeshNode* a_mesh);
+    static void calculateTangentsBinormals(std::vector<Vertex_FBX>& a_vertices, const std::vector<unsigned int>& a_indices);
 
-    unsigned int    nodeCount(FBXNode* a_node);
+    unsigned int nodeCount(FBXNode* a_node);
 
 private:
 

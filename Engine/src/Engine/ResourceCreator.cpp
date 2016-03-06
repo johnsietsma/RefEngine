@@ -70,11 +70,10 @@ Texture ResourceCreator::CreateTexture( const char* pTextureFilename )
     unsigned char* data = stbi_load(pTextureFilename, &imageWidth, &imageHeight, &imageComponents, 3);
     if (data == nullptr) return texture;
 
-    assert(imageComponents == 3);
     assert(imageWidth > 0);
     assert(imageHeight > 0);
 
-    texture.create(data, imageWidth, imageHeight, Texture::TextureType::RGB);
+    texture.create(data, imageWidth, imageHeight, imageComponents);
 
     stbi_image_free(data);
 

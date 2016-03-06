@@ -1,8 +1,13 @@
 #pragma once
 
+#include "Engine/Vertex.h"
+
 #include <glm/mat4x4.hpp>
 
 #include <vector>
+
+class Material;
+
 
 // Simple tree node with local/global transforms and children
 // Also has a void* user data that the application can make use of
@@ -63,7 +68,7 @@ public:
 
     unsigned int                m_vertexAttributes;
     std::vector<Material*>      m_materials;
-    std::vector<Vertex_FBX>      m_vertices;
+    std::vector<Vertex_FBX>     m_vertices;
     std::vector<unsigned int>   m_indices;
 };
 

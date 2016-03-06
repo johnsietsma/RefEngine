@@ -3,6 +3,10 @@
 #include <glm/vec3.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+#include <string>
+
+class FBXNode;
+
 // A single frame for a bone in an animation
 class FBXKeyFrame
 {

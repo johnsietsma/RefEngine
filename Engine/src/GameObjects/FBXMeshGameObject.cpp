@@ -36,10 +36,8 @@ bool FBXMeshGameObject::create()
         return false;
 
     // Extract the mesh and diffuse textures
-    for (unsigned int meshIndex = 0; meshIndex < m_fbxFile.getMeshCount(); meshIndex++)
+    for (const auto pFbxMesh : m_fbxFile.getMeshes())
     {
-        auto pFbxMesh = m_fbxFile.getMeshByIndex(meshIndex);
-
         // Add a new mesh to our collection
         m_renderables.emplace_back(); // Creates a Mesh, calling the constructor with no parameters.
         auto& renderable = m_renderables.back(); // Get a reference to the new mesh.
@@ -47,6 +45,7 @@ bool FBXMeshGameObject::create()
         // Grab the vertex and index data and upload it to OpenGL
         renderable.mesh.create(pFbxMesh->m_vertices.data(), (GLsizei)pFbxMesh->m_vertices.size(), pFbxMesh->m_indices.data(), (GLsizei)pFbxMesh->m_indices.size());
 
+        // Put a bounding volume around it for frustum culling
         m_boundingVolume.addBoundingSphere(glm::vec3(pFbxMesh->m_globalTransform[3]), pFbxMesh->m_vertices);
 
         // Figure out how to index into the the 4 programs created above
@@ -101,14 +100,18 @@ void FBXMeshGameObject::destroy()
 
 void FBXMeshGameObject::update(float deltaTime)
 {
-    if (m_fbxFile.getSkeletonCount() == 0 || m_fbxFile.getAnimationCount() == 0) return;
-
     // Keep track of how much time has passed
     m_elapsedTime += deltaTime;
+    
+    std::vector<FBXSkeleton*>& skeletons = m_fbxFile.getSkeletons();
+    auto& animationMap = m_fbxFile.getAnimations();
+    
+    if( skeletons.size() == 0 || animationMap.size() == 0  )
+        return;
 
     // Just use the first skeleton and first animation.
-    FBXSkeleton* pSkeleton = m_fbxFile.getSkeletonByIndex(0);
-    FBXAnimation* pAnimation = m_fbxFile.getAnimationByIndex(0);
+    FBXSkeleton* pSkeleton = skeletons[0];
+    const FBXAnimation* pAnimation = animationMap.begin()->second;
     assert(pAnimation->totalFrames() > 0);
 
     // Get the position, scale, rotation values of the keyframes in the animation at m_elapsedTime.
@@ -130,10 +133,12 @@ void FBXMeshGameObject::preDraw(const Camera& camera, const Light& light)
         Program& program = renderable.program;
         assert(program.isValid());
         glUseProgram(program.getId());
+        
+        std::vector<FBXSkeleton*>& skeletons = m_fbxFile.getSkeletons();
 
-        if (m_fbxFile.getSkeletonCount() > 0 && program.hasUniform("bones"))
+        if (skeletons.size() > 0 && program.hasUniform("bones"))
         {
-            FBXSkeleton* pSkeleton = m_fbxFile.getSkeletonByIndex(0);
+            FBXSkeleton* pSkeleton = skeletons[0];
 
             // Use the nodes we've evaluated above to update the bone positions and combine with the bind pose.
             pSkeleton->updateBones();
