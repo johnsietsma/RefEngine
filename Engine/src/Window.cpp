@@ -45,6 +45,20 @@ Window::~Window()
     m_pWindow = nullptr;
 }
 
+glm::ivec2 Window::getFramebufferSize() const
+{
+    int width, height;
+    glfwGetFramebufferSize(m_pWindow, &width, &height);
+    return glm::ivec2( width, height );
+}
+
+glm::ivec2 Window::getWindowSize() const
+{
+    int width, height;
+    glfwGetWindowSize(m_pWindow, &width, &height);
+    return glm::ivec2( width, height );
+}
+
 float Window::getAspectRatio() const
 {
     int width, height;
