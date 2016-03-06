@@ -1,5 +1,8 @@
 #include "FBXFile.h"
 
+#include "FBXNode.h"
+#include "FBXAnimation.h"
+
 #include "Engine/Vertex.h"
 #include "Engine/Material.h"
 
@@ -7,11 +10,6 @@
 
 #include <fbxsdk.h>
 
-
-#define STB_IMAGE_IMPLEMENTATION
-#pragma warning( disable : 4312 )
-#include <stb_image.h>
-#pragma warning( default : 4312 )
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_inverse.hpp>
@@ -366,8 +364,6 @@ void FBXFile::unload()
         delete s;
     for (auto a : m_animations)
         delete a.second;
-    for (auto tex : m_textures)
-        tex.second.destroy();
 
 
     m_meshes.clear();
@@ -376,7 +372,6 @@ void FBXFile::unload()
     m_materials.clear();
     m_skeletons.clear();
     m_animations.clear();
-    m_textures.clear();
 }
 
 bool FBXFile::load(
@@ -1515,14 +1510,6 @@ Material* FBXFile::getMaterialByName(const char* a_name)
     return nullptr;
 }
 
-const Texture& FBXFile::getTextureByName(const char* a_name) const
-{
-    auto oIter = m_textures.find(a_name);
-    if (oIter != m_textures.end())
-        return oIter->second;
-    return Texture::Invalid;
-}
-
 FBXAnimation* FBXFile::getAnimationByName(const char* a_name)
 {
     auto oIter = m_animations.find(a_name);
@@ -1573,17 +1560,6 @@ FBXAnimation* FBXFile::getAnimationByIndex(unsigned int a_index)
     }
 
     return nullptr;
-}
-
-const Texture& FBXFile::getTextureByIndex(unsigned int a_index) const
-{
-    for(const auto& t : m_textures)
-    {
-        if (a_index-- == 0)
-            return t.second;
-    }
-
-    return Texture::Invalid;
 }
 
 void FBXFile::gatherBones(void* a_object)
