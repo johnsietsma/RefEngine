@@ -6,7 +6,7 @@
 #include "Engine/Sampler.h"
 #include "Engine/Texture.h"
 
-#include "File/FBXNode.h"
+#include "File/FBXMeshNode.h"
 #include "File/FBXAnimation.h"
 
 #include "gl_core_4_4.h"

@@ -4,6 +4,7 @@
 
 #include <glm/mat4x4.hpp>
 
+#include <string>
 #include <vector>
 
 class Material;
@@ -16,7 +17,7 @@ class FBXNode
 {
 public:
 
-    enum NodeType : unsigned int
+    enum class NodeType
     {
         NODE = 0,
         MESH,
@@ -24,8 +25,21 @@ public:
         CAMERA
     };
 
-    FBXNode();
-    virtual ~FBXNode();
+    FBXNode() : FBXNode( NodeType::NODE ) {}
+    
+    FBXNode( NodeType nodeType ) :
+        m_nodeType(nodeType ),
+        m_localTransform(1), 
+        m_globalTransform(1),
+        m_parent(nullptr),
+        m_userData(nullptr) 
+    {}
+
+    virtual ~FBXNode()
+    {
+        for (auto n : m_children)
+            delete n;
+    }
 
     // updates global transform based off parent's global and local
     // then updates children
@@ -43,42 +57,15 @@ public:
     void*                   m_userData;
 };
 
-// A simple mesh node that contains an array of vertices and indices used
-// to represent a triangle mesh.
-// Also points to a shared material, and stores a bitfield of vertex attributes
-class FBXMeshNode : public FBXNode
-{
-public:
 
-    enum VertexAttributeFlags
-    {
-        ePOSITION = (1 << 0),
-        eCOLOUR = (1 << 1),
-        eNORMAL = (1 << 2),
-        eTANGENT = (1 << 3),
-        eBINORMAL = (1 << 4),
-        eINDICES = (1 << 5),
-        eWEIGHTS = (1 << 6),
-        eTEXCOORD1 = (1 << 7),
-        eTEXCOORD2 = (1 << 8),
-    };
-
-    FBXMeshNode();
-    virtual ~FBXMeshNode();
-
-    unsigned int                m_vertexAttributes;
-    std::vector<Material*>      m_materials;
-    std::vector<Vertex_FBX>     m_vertices;
-    std::vector<unsigned int>   m_indices;
-};
 
 // A light node that can represent a point, directional, or spot light
 class FBXLightNode : public FBXNode
 {
 public:
 
-    FBXLightNode();
-    virtual ~FBXLightNode();
+    FBXLightNode() : FBXNode(NodeType::LIGHT) {}
+    virtual ~FBXLightNode() = default;
 
     enum LightType : unsigned int
     {
@@ -101,11 +88,11 @@ class FBXCameraNode : public FBXNode
 {
 public:
 
-    FBXCameraNode();
-    virtual ~FBXCameraNode();
+    FBXCameraNode() : FBXNode(NodeType::CAMERA) {}
+    virtual ~FBXCameraNode() = default;
 
     // overridden to update m_viewMatrix automatically
-    virtual void            updateGlobalTransform();
+    virtual void updateGlobalTransform() override;
 
     float       m_fieldOfView;  // if 0 then orthographic rather than perspective
     float       m_aspectRatio;  // if 0 then ratio based off screen resolution
@@ -116,50 +103,4 @@ public:
 };
 
 
-inline FBXNode::FBXNode()
-    : m_nodeType(NODE),
-    m_localTransform(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1),
-    m_globalTransform(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1),
-    m_parent(nullptr),
-    m_userData(nullptr)
-{
 
-}
-
-inline FBXNode::~FBXNode()
-{
-    for (auto n : m_children)
-        delete n;
-}
-
-inline FBXMeshNode::FBXMeshNode() :
-    m_vertices(0),
-    m_indices(0)
-{
-    m_nodeType = MESH;
-}
-
-inline FBXMeshNode::~FBXMeshNode()
-{
-
-}
-
-inline FBXLightNode::FBXLightNode()
-{
-    m_nodeType = LIGHT;
-}
-
-inline FBXLightNode::~FBXLightNode()
-{
-
-}
-
-inline FBXCameraNode::FBXCameraNode()
-{
-    m_nodeType = CAMERA;
-}
-
-inline FBXCameraNode::~FBXCameraNode()
-{
-
-}
