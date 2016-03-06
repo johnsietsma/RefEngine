@@ -517,6 +517,12 @@ bool FBXFile::load(
         m_ambientLight.y = (float)ambientColor.mGreen;
         m_ambientLight.z = (float)ambientColor.mBlue;
         m_ambientLight.w = (float)ambientColor.mAlpha;
+        
+        // gather bones to create indices for them in a skeleton
+        for (unsigned int i = 0; i < (unsigned int)lNode->GetChildCount(); ++i)
+        {
+            gatherBones((void*)lNode->GetChild(i));
+        }
 
         // extract scene (meshes, lights, cameras)
         for (i = 0; i < (unsigned int)lNode->GetChildCount(); ++i)
@@ -987,54 +993,44 @@ Material* FBXFile::extractMaterial(void* a_mesh, int a_materialIndex)
 void FBXFile::extractBonesAndAnimations(void* a_node, void* a_scene)
 {
     FbxNode* lNode = (FbxNode*)a_node;
-    // gather bones to create indices for them in a skeleton
-    for (unsigned int i = 0; i < (unsigned int)lNode->GetChildCount(); ++i)
-    {
-        gatherBones((void*)lNode->GetChild(i));
-    }
-
 
     // build skeleton and extract animation keyframes
-    if (m_importAssistor->bones.size() > 0)
+    if (m_importAssistor->bones.size() == 0) return;
+    
+    FBXSkeleton* skeleton = new FBXSkeleton();
+    skeleton->m_boneCount = (unsigned int)m_importAssistor->bones.size();
+
+    skeleton->m_nodes = new FBXNode *[skeleton->m_boneCount];
+
+    void* pBonesBuffer = malloc(sizeof(glm::mat4)*(skeleton->m_boneCount + 1));
+    skeleton->m_bones = new(pBonesBuffer) glm::mat4[skeleton->m_boneCount];
+
+    void* pBindPosesBuffer = malloc(sizeof(glm::mat4)*(skeleton->m_boneCount + 1));
+    skeleton->m_bindPoses = new(pBindPosesBuffer)glm::mat4[skeleton->m_boneCount];
+
+    skeleton->m_parentIndex = new int[skeleton->m_boneCount];
+
+    for (unsigned int i = 0; i < skeleton->m_boneCount; ++i)
     {
-        FBXSkeleton* skeleton = new FBXSkeleton();
-        skeleton->m_boneCount = (unsigned int)m_importAssistor->bones.size();
-
-        skeleton->m_nodes = new FBXNode *[skeleton->m_boneCount];
-
-        void* pBonesBuffer = malloc(sizeof(glm::mat4)*(skeleton->m_boneCount + 1));
-        skeleton->m_bones = new(pBonesBuffer) glm::mat4[skeleton->m_boneCount];
-
-        void* pBindPosesBuffer = malloc(sizeof(glm::mat4)*(skeleton->m_boneCount + 1));
-        skeleton->m_bindPoses = new(pBindPosesBuffer)glm::mat4[skeleton->m_boneCount];
-
-        skeleton->m_parentIndex = new int[skeleton->m_boneCount];
-
-        for (unsigned int i = 0; i < skeleton->m_boneCount; ++i)
+        skeleton->m_nodes[i] = m_importAssistor->bones[i];
+        skeleton->m_bones[i] = skeleton->m_nodes[i]->m_localTransform;
+    }
+    for (unsigned int i = 0; i < skeleton->m_boneCount; ++i)
+    {
+        skeleton->m_parentIndex[i] = -1;
+        for (int j = 0; j < (int)skeleton->m_boneCount; ++j)
         {
-            skeleton->m_nodes[i] = m_importAssistor->bones[i];
-            skeleton->m_bones[i] = skeleton->m_nodes[i]->m_localTransform;
-        }
-        for (unsigned int i = 0; i < skeleton->m_boneCount; ++i)
-        {
-            skeleton->m_parentIndex[i] = -1;
-            for (int j = 0; j < (int)skeleton->m_boneCount; ++j)
+            if (skeleton->m_nodes[i]->m_parent == skeleton->m_nodes[j])
             {
-                if (skeleton->m_nodes[i]->m_parent == skeleton->m_nodes[j])
-                {
-                    skeleton->m_parentIndex[i] = j;
-                    break;
-                }
+                skeleton->m_parentIndex[i] = j;
+                break;
             }
         }
-
-        extractSkeleton(skeleton, a_scene);
-
-        m_skeletons.push_back(skeleton);
-
-        extractAnimation(a_scene);
     }
 
+    extractSkeleton(skeleton, a_scene);
+    m_skeletons.push_back(skeleton);
+    extractAnimation(a_scene);
 }
 
 void FBXFile::extractAnimation(void* a_scene)
