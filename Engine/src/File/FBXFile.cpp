@@ -671,7 +671,7 @@ void FBXFile::extractMeshes(void* a_object, FBXMeshNode& meshNode)
     FbxGeometryElementVertexColor* fbxColours = pFbxMesh->GetElementVertexColor(0);
     if( fbxColours!=nullptr )
     {
-        meshNode.m_vertexAttributes |= FBXVertex::eCOLOUR;
+        meshNode.m_vertexAttributes |= FBXMeshNode::eCOLOUR;
         LoadVertexColors( fbxColours, vertexCount, meshNode.m_vertices );
     }
     
@@ -679,21 +679,21 @@ void FBXFile::extractMeshes(void* a_object, FBXMeshNode& meshNode)
     if( fbxTexCoord0 )
     {
         LoadTexCoords( fbxTexCoord0,  pFbxMesh, m_importAssistor->flipTextureY, meshNode.m_vertices, 0);
-        meshNode.m_vertexAttributes |= FBXVertex::eTEXCOORD1;
+        meshNode.m_vertexAttributes |= FBXMeshNode::eTEXCOORD1;
     }
 
     FbxGeometryElementUV* fbxTexCoord1 = pFbxMesh->GetElementUV(1);
     if( fbxTexCoord1 )
     {
         LoadTexCoords( fbxTexCoord1,  pFbxMesh, m_importAssistor->flipTextureY, meshNode.m_vertices, 1);
-        meshNode.m_vertexAttributes |= FBXVertex::eTEXCOORD2;
+        meshNode.m_vertexAttributes |= FBXMeshNode::eTEXCOORD2;
     }
 
     FbxGeometryElementNormal* fbxNormal = pFbxMesh->GetElementNormal(0);
     if( fbxNormal )
     {
         LoadNormals(fbxNormal, vertexCount, meshNode.m_vertices);
-        meshNode.m_vertexAttributes |= FBXVertex::eNORMAL;
+        meshNode.m_vertexAttributes |= FBXMeshNode::eNORMAL;
 
     }
     

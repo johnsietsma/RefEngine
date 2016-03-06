@@ -64,7 +64,7 @@ bool FBXMeshGameObject::create()
                     texIndex = 1;
                     
                     // Bind the texture to a texture unit. textureIndex _must_ be an int.
-                    renderable.program.setUniform(Material::getTextureName((Material::TextureType)textureIndex), textureIndex);
+                    renderable.program.setUniform(Material::getTextureUniformName((Material::TextureType)textureIndex), textureIndex);
 
                     renderable.samplers.emplace_back(
                             Texture(texture.getId()),

@@ -1,6 +1,10 @@
 #pragma once
 
+#include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
+
 #include <map>
+#include <string>
 
 // A simple FBX material that supports 8 texture channels
 class Material
@@ -19,65 +23,28 @@ public:
         Count
     };
     
-    /*std:map<TextureType, const char*> textueNameMap {
-        
-    }*/
-
-    static const char* getTextureName(TextureType textureIndex) {
-        switch (textureIndex) {
-        case TextureType::DiffuseTexture: return "diffuseSampler";
-        case TextureType::AmbientTexture: return "ambientSampler";
-        case TextureType::GlowTexture: return "glowSampler";
-        case TextureType::SpecularTexture: return "specularSampler";
-        case TextureType::GlossTexture: return "glossSampler";
-        case TextureType::NormalTexture: return "normalSampler";
-        case TextureType::AlphaTexture: return "alphaSampler";
-        case TextureType::DisplacementTexture: return "displacementSampler";
-        default: assert(false); return nullptr;
-        }
+    // Get a name that could be used for a uniform.
+    static const char* getTextureUniformName(TextureType textureIndex) {
+        return TextueUnformNameMap[textureIndex];
     }
 
-    Material();
-    ~Material();
+    Material() = default;
+    ~Material() = default;
     
     bool isTextured() const;
 
     std::string     name;
-    glm::vec4       ambient;                    // RGB + Ambient Factor stored in A
-    glm::vec4       diffuse;                    // RGBA
-    glm::vec4       specular;                   // RGB + Shininess/Gloss stored in A
-    glm::vec4       emissive;                   // RGB + Emissive Factor stored in A
+    glm::vec4       ambient = glm::vec4(0,0,0,0);                    // RGB + Ambient Factor stored in A
+    glm::vec4       diffuse = glm::vec4(1,1,1,1);                    // RGBA
+    glm::vec4       specular = glm::vec4(1,1,1,1);                   // RGB + Shininess/Gloss stored in A
+    glm::vec4       emissive = glm::vec4(0,0,0,0);                   // RGB + Emissive Factor stored in A
 
-    std::string     texturePaths[(size_t)TextureType::Count];
-    glm::vec2       textureOffsets[(size_t)TextureType::Count];         // Texture coordinate offset
-    glm::vec2       textureTiling[(size_t)TextureType::Count];          // Texture repeat count
-    float           textureRotation[(size_t)TextureType::Count];        // Texture rotation around Z (2D rotation)
+    std::string     texturePaths[(size_t)TextureType::Count] {};
+    glm::vec2       textureOffsets[(size_t)TextureType::Count] {};         // Texture coordinate offset
+    glm::vec2       textureTiling[(size_t)TextureType::Count] {};          // Texture repeat count
+    float           textureRotation[(size_t)TextureType::Count] {};        // Texture rotation around Z (2D rotation)
+    
+private:
+    // Maps a TextureType to a a name that could be used by a uniform.
+    static std::map<TextureType, const char*> TextueUnformNameMap;
 };
-
-
-inline Material::Material()
-    : ambient(0, 0, 0, 0),
-    diffuse(1, 1, 1, 1),
-    specular(1, 1, 1, 1),
-    emissive(0, 0, 0, 0),
-    texturePaths{},
-    textureOffsets{},
-    textureTiling{},
-    textureRotation{}
-{
-}
-
-inline Material::~Material()
-{
-}
-
-
-inline bool Material::isTextured() const
-{
-    for (size_t textureIndex = 0; textureIndex < (size_t)Material::TextureType::Count; textureIndex++) 
-    {
-        if( texturePaths[textureIndex].length() > 0 ) 
-            return true;
-    }
-    return false;
-}
