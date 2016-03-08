@@ -9,33 +9,34 @@
 #include <cmath>
 
 
-void GeometryCreator::createTexuredQuad(Vertex_PositionTexCoord** ppVertexPositionBuffer, unsigned int** ppIndicesBuffer)
+MeshData GeometryCreator::createTexuredQuad(Vertex_PositionTexCoord** ppVertexPositionBuffer, unsigned int** ppIndicesBuffer)
 {
     const int size = 10;
-	Vertex_PositionTexCoord* pVertices = new Vertex_PositionTexCoord[6 * 4] // 6 floats, 4 verts
-	{
-		{ glm::vec4(-size, 0,  size,  1), glm::vec2(0, 1) },
-		{ glm::vec4( size, 0,  size,  1), glm::vec2(1, 1) },
-		{ glm::vec4( size, 0, -size,  1), glm::vec2(1, 0) },
-		{ glm::vec4(-size, 0, -size,  1), glm::vec2(0, 0) }
-	};
+    const size_t vertexCount = 6 * 4; // 6 floats, 4 verts
+    Vertex_PositionTexCoord* pVertices = new Vertex_PositionTexCoord[vertexCount] 
+    {
+        { glm::vec4(-size, 0,  size,  1), glm::vec2(0, 1) },
+        { glm::vec4( size, 0,  size,  1), glm::vec2(1, 1) },
+        { glm::vec4( size, 0, -size,  1), glm::vec2(1, 0) },
+        { glm::vec4(-size, 0, -size,  1), glm::vec2(0, 0) }
+    };
 
-	*ppVertexPositionBuffer = pVertices;
+    size_t indexCount = 6; // 2 tris per quad
+    unsigned int* pIndices = new unsigned int[indexCount]
+    {
+        0, 1, 2,
+        0, 2, 3,
+    };
 
-	unsigned int* pIndices = new unsigned int[6]
-	{
-		0, 1, 2,
-		0, 2, 3,
-	};
-
-	*ppIndicesBuffer = pIndices;
+    return MeshData( pVertices, vertexCount, pIndices, indexCount );
 }
 
 
-void GeometryCreator::createTexuredQuad(Vertex_PositionNormalTexCoord** ppVertexPositionBuffer, unsigned int** ppIndicesBuffer)
+MeshData GeometryCreator::createTexuredQuad(Vertex_PositionNormalTexCoord** ppVertexPositionBuffer, unsigned int** ppIndicesBuffer)
 {
     const int size = 10;
-    Vertex_PositionNormalTexCoord* pVertices = new Vertex_PositionNormalTexCoord[10 * 4] // 10 floats, 4 verts
+    const size_t vertexCount = 10 * 4; // 10 floats, 4 verts
+    Vertex_PositionNormalTexCoord* pVertices = new Vertex_PositionNormalTexCoord[vertexCount] 
     {
         { glm::vec4(-size, 0,  size,  1), glm::vec4(0,1,0,0), glm::vec2(0, 1) },
         { glm::vec4( size, 0,  size,  1), glm::vec4(0,1,0,0), glm::vec2(1, 1) },
@@ -45,13 +46,14 @@ void GeometryCreator::createTexuredQuad(Vertex_PositionNormalTexCoord** ppVertex
 
     *ppVertexPositionBuffer = pVertices;
 
-    unsigned int* pIndices = new unsigned int[6]
+    size_t indexCount = 6; // 2 tris per quad
+    unsigned int* pIndices = new unsigned int[indexCount]
     {
         0, 1, 2,
         0, 2, 3,
     };
 
-    *ppIndicesBuffer = pIndices;
+    return { pVertices, vertexCount, pIndices, indexCount };
 }
 
 

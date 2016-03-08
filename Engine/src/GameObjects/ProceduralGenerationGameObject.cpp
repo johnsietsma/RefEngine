@@ -27,8 +27,7 @@ bool ProceduralGenerationGameObject::create()
         return false;
 
     // Create the grid data
-    MeshData meshData;
-    GeometryCreator::createGrid<Vertex_PositionTexCoord>(&meshData, 100, 100, 0.1f);
+    MeshData meshData = GeometryCreator::createGrid<Vertex_PositionTexCoord>(&meshData, 100, 100, 0.1f);
 
     // Create the OpenGL mesh from that data
     Mesh mesh;

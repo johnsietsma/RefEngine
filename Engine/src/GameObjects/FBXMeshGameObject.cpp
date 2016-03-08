@@ -41,9 +41,22 @@ bool FBXMeshGameObject::create()
         // Add a new mesh to our collection
         m_renderables.emplace_back(); // Creates a Mesh, calling the constructor with no parameters.
         auto& renderable = m_renderables.back(); // Get a reference to the new mesh.
+        
+        const Vertices_FBX& vertices = pFbxMesh->m_vertices;
+        std::vector<VertexDataBuffer> fbxVertexDataBuffers {
+            vertices.position,
+            vertices.color,
+            vertices.normal,
+            vertices.tangent,
+            vertices.binormal,
+            vertices.indices,
+            vertices.weights,
+            vertices.texCoord1,
+            vertices.texCoord2
+        };
 
         // Grab the vertex and index data and upload it to OpenGL
-        renderable.mesh.create(pFbxMesh->m_vertices.data(), (GLsizei)pFbxMesh->m_vertices.size(), pFbxMesh->m_indices.data(), (GLsizei)pFbxMesh->m_indices.size());
+        renderable.mesh.create( fbxVertexDataBuffers, pFbxMesh->m_indices.data(), (GLsizei)pFbxMesh->m_indices.size() );
 
         // Put a bounding volume around it for frustum culling
         m_boundingVolume.addBoundingSphere(glm::vec3(pFbxMesh->m_globalTransform[3]), pFbxMesh->m_vertices.position);

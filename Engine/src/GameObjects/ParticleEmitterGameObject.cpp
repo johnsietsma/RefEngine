@@ -69,7 +69,7 @@ bool ParticleEmitterGameObject::create()
         pIndexData[indexStart + 5] = vertStart + 3;
     }
 
-    renderable.mesh.create(m_pVertices, vertCount, pIndexData, indexCount);
+    renderable.mesh.create( MeshData( m_pVertices, vertCount, pIndexData, indexCount ) );
 
     m_renderables.push_back(renderable);
 
@@ -237,7 +237,7 @@ void ParticleEmitterGameObject::preDraw(const Camera& camera, const Light& light
     // There is only one renderable
     Renderable& renderable = m_renderables[0];
 
-    glBindBuffer(GL_ARRAY_BUFFER, renderable.mesh.getVBO());
+    glBindBuffer(GL_ARRAY_BUFFER, renderable.mesh.getVBOs()[0]);
 
     // We've moved the particles, so we'll upload the new particle vertex data.
     glBufferSubData(GL_ARRAY_BUFFER, 0, m_firstDeadIndex * 4 * sizeof(Vertex_PositionColor), m_pVertices);

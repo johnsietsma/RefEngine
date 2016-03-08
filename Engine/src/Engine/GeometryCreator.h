@@ -20,12 +20,12 @@ public:
 	GeometryCreator() = delete;
 
 	// Create the vertices and indices for a quad.
-	static void createTexuredQuad(Vertex_PositionTexCoord** ppVertexPositionBuffer, unsigned int** ppIndicesBuffer);
-    static void createTexuredQuad(Vertex_PositionNormalTexCoord** ppVertexPositionBuffer, unsigned int** ppIndicesBuffer);
+	static MeshData createTexuredQuad(Vertex_PositionTexCoord** ppVertexPositionBuffer, unsigned int** ppIndicesBuffer);
+    static MeshData createTexuredQuad(Vertex_PositionNormalTexCoord** ppVertexPositionBuffer, unsigned int** ppIndicesBuffer);
 
 	// Create the vertices and indices for a grid.
     template<typename T>
-	static void createGrid(MeshData *pMeshData, unsigned int rowCount, unsigned int columnCount, float scale=1);
+	static MeshData createGrid(unsigned int rowCount, unsigned int columnCount, float scale=1);
 
 private:
     // -- Helpers to fill in grid data --
@@ -46,7 +46,7 @@ private:
 
 
 template<typename T>
-void GeometryCreator::createGrid(MeshData *pMeshData, unsigned int rowCount, unsigned int columnCount, float scale)
+MeshData GeometryCreator::createGrid(unsigned int rowCount, unsigned int columnCount, float scale)
 {
     // Create the verts
     unsigned int vertexCount = rowCount * columnCount;
@@ -103,9 +103,5 @@ void GeometryCreator::createGrid(MeshData *pMeshData, unsigned int rowCount, uns
     }
 
     // Setup the mesh data
-    pMeshData->pVertices = pVertices;
-    pMeshData->vertexCount = vertexCount;
-    pMeshData->pIndices = pIndices;
-    pMeshData->indexCount = indexCount;
-
+    return MeshData( pVertices, vertexCount, pIndices, indexCount );
 }

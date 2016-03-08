@@ -7,10 +7,11 @@
 #include "VertexAttributes.h"
 
 #include <assert.h>
+#include <vector>
 
 
 /*
-    A Mesh is a vertex array object, a vertex buffer object and a vertex index object.
+    A Mesh is a vertex array object, a collection vertex buffer objects and a vertex index object.
 */
 class Mesh
 {
@@ -18,61 +19,25 @@ public:
     bool isValid() { return m_indexCount > 0 && m_VAO != (GLuint)-1; }
 
     GLuint getVAO() const { return m_VAO; }
-    GLuint getVBO() const { return m_VBO; }
+    std::vector<GLuint> getVBOs() const { return m_VBOs; }
     GLsizei getIndexCount() const { return m_indexCount; }
 
     void setIndexCount(GLsizei indexCount) { m_indexCount = indexCount; }
 
     // Setup OpenGL buffers and vertex attributes to be able to render these vertices.
-    template<typename T>
     bool create(const MeshData& meshData) {
-        return create<T>(static_cast<T*>(meshData.pVertices), meshData.vertexCount * sizeof(T), meshData.pIndices, meshData.indexCount);
+        return create(meshData.buffers, meshData.pIndexBuffer, meshData.indexCount);
     }
 
-    template<typename T>
-    bool create(T* pVertices, GLsizei vertexSize, unsigned int* pInidices, GLsizei indexCount);
+    bool create(std::vector<VertexDataBuffer> buffers, unsigned int* pIndexBuffer, GLsizei indexCount);
 
     void destroy();
 
 private:
     GLuint m_indexCount = 0;
     GLuint m_VAO = (GLuint)-1;
-    GLuint m_VBO = (GLuint)-1;
     GLuint m_IBO = (GLuint)-1;
+    std::vector<GLuint> m_VBOs;
 };
 
-
-template<typename T>
-bool Mesh::create(T* pVertices, GLsizei vertexSize, unsigned int* pIndices, GLsizei indexCount)
-{
-    assert(m_VAO == -1 && "Mesh has already been created.");
-    assert(pVertices != nullptr);
-    assert(vertexCount != 0);
-    assert(pIndices != nullptr);
-    assert(indexCount != 0);
-
-    // Create the VAO. Must be first so the buffers are associated with it.
-    glGenVertexArrays(1, &m_VAO);
-    glBindVertexArray(m_VAO);
-
-    glGenBuffers(1, &m_VBO); // Create the VBO
-    glBindBuffer(GL_ARRAY_BUFFER, m_VBO); // Make it active
-    glBufferData(GL_ARRAY_BUFFER, vertexSize, pVertices, GL_STATIC_DRAW); // Upload data
-
-    VertexAttributes::Setup<T>();
-
-    // Create the IBO
-    glGenBuffers(1, &m_IBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount*sizeof(unsigned int), pIndices, GL_STATIC_DRAW);
-
-    // Unbind
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    m_indexCount = indexCount;
-
-    return true;
-}
 

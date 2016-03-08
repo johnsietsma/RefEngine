@@ -111,12 +111,12 @@ void FBXMeshNode::LoadVertexPositions( FbxVector4* pVertexPositions, int vertexC
     
     for (int i = 0; i < vertexCount; ++i)
     {
-        auto& vertex = m_vertices.positions[i];
+        auto& position = m_vertices.position[i];
         FbxVector4 vPos = pVertexPositions[i];
-        vertex.position.x = (float)vPos[0];
-        vertex.position.y = (float)vPos[1];
-        vertex.position.z = (float)vPos[2];
-        vertex.position.w = 1;
+        position.x = (float)vPos[0];
+        position.y = (float)vPos[1];
+        position.z = (float)vPos[2];
+        position.w = 1;
     }
 }
 
@@ -148,7 +148,7 @@ void FBXMeshNode::LoadVertexColors( FbxLayerElementVertexColor* pVertexColors, i
         auto& color = m_vertices.color[i];
         int directIndex = GetVertexColorDirectIndex(pVertexColors, i );
         if( directIndex >= 0 ) {
-            FbxColor fbxColour = pVertexColors->GetDirectArray().GetAt(directIndex);
+            FbxColor fbxColor = pVertexColors->GetDirectArray().GetAt(directIndex);
             
             color.x = (float)fbxColor.mRed;
             color.y = (float)fbxColor.mGreen;
@@ -194,10 +194,10 @@ void FBXMeshNode::LoadTexCoords( FbxLayerElementUV* pTexCoord, FbxMesh* pFbxMesh
                     texCoord1.x = (float)fbxUV[0];
                     texCoord1.y = (float)fbxUV[1];
                     
-                    if (shouldFlipTextureY) vertex.texCoord1.y = 1.0f - vertex.texCoord1.y;
+                    if (shouldFlipTextureY) texCoord1.y = 1.0f - texCoord1.y;
                 }
                 else if( uvNumber == 1 ) {
-                    auto& texCoord1 = m_vertices.texCoord1[vertexIndex];
+                    auto& texCoord2 = m_vertices.texCoord2[vertexIndex];
                     texCoord2.x = (float)fbxUV[0];
                     texCoord2.y = (float)fbxUV[1];
                     

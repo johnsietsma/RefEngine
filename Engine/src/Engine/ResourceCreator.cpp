@@ -21,7 +21,7 @@ Mesh ResourceCreator::CreateTexturedQuad()
 
     GeometryCreator::createTexuredQuad(&pVertices, &pIndices);
 
-    mesh.create(pVertices, 6 * 4, pIndices, 6);
+     mesh.create( MeshData(pVertices, 6 * 4, pIndices, 6) );
 
     delete[] pVertices;
     delete[] pIndices;
