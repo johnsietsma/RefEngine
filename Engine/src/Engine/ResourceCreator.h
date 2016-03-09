@@ -9,9 +9,7 @@ class ResourceCreator
     ResourceCreator() = delete;
 
 public:
-    static Mesh CreateTexturedQuad();
+    static Program createProgram(const char* pVertexShaderFilename, const char* pFragmentShaderFilename);
 
-    static Program CreateProgram(const char* pVertexShaderFilename, const char* pFragmentShaderFilename);
-
-    static Texture CreateTexture(const char* pTextureFilename);
+    static Texture createTexture(const char* pTextureFilename);
 };

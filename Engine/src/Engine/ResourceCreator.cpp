@@ -12,25 +12,7 @@
 #include <string>
 
 
-Mesh ResourceCreator::CreateTexturedQuad()
-{
-    Mesh mesh;
-
-    Vertex_PositionNormalTexCoord* pVertices;
-    unsigned int* pIndices;
-
-    GeometryCreator::createTexuredQuad(&pVertices, &pIndices);
-
-     mesh.create( MeshData(pVertices, 6 * 4, pIndices, 6) );
-
-    delete[] pVertices;
-    delete[] pIndices;
-
-    return mesh;
-}
-
-
-Program ResourceCreator::CreateProgram(const char* pVertexShaderName, const char* pFragmentShaderName)
+Program ResourceCreator::createProgram(const char* pVertexShaderName, const char* pFragmentShaderName)
 {
     Program program;
 
@@ -62,12 +44,12 @@ Program ResourceCreator::CreateProgram(const char* pVertexShaderName, const char
 }
 
 
-Texture ResourceCreator::CreateTexture( const char* pTextureFilename )
+Texture ResourceCreator::createTexture( const char* pTextureFilename )
 {
     Texture texture;
 
     int imageWidth, imageHeight, imageComponents;
-    unsigned char* data = stbi_load(pTextureFilename, &imageWidth, &imageHeight, &imageComponents, 3);
+    unsigned char* data = stbi_load(pTextureFilename, &imageWidth, &imageHeight, &imageComponents, STBI_default );
     if (data == nullptr) return texture;
 
     assert(imageWidth > 0);

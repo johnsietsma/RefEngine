@@ -3,63 +3,61 @@
 #include "gl_core_4_4.h"
 
 template<>
-std::vector<VertexAttribute> VertexAttributes::Create<Vertex_PositionColor>()
+std::vector<BufferAccessor> VertexAttributes::create<Vertex_PositionColor>()
 {
     return {
-        // Position
-        { 0, 4, GL_FLOAT, sizeof(Vertex_PositionColor), offsetof(Vertex_PositionColor, position) },
-        // Color
-        { 1, 4, GL_FLOAT, sizeof(Vertex_PositionColor), offsetof(Vertex_PositionColor, color) }
+        { BufferAccessorType::Position, 4, GL_FLOAT, sizeof(Vertex_PositionColor), offsetof(Vertex_PositionColor, position) },
+        { BufferAccessorType::Color,    4, GL_FLOAT, sizeof(Vertex_PositionColor), offsetof(Vertex_PositionColor, color) }
     };
 }
 
 template<>
-std::vector<VertexAttribute> VertexAttributes::Create<Vertex_PositionTexCoord>()
+std::vector<BufferAccessor> VertexAttributes::create<Vertex_PositionTexCoord>()
 {
     return {
-        // Position
-        { 0, 4, GL_FLOAT, sizeof(Vertex_PositionTexCoord), offsetof(Vertex_PositionTexCoord, position) },
-
-        // Texcoord
-        { 1, 2, GL_FLOAT, sizeof(Vertex_PositionTexCoord), offsetof(Vertex_PositionTexCoord, texCoord) },
+        { BufferAccessorType::Position,  4, GL_FLOAT, sizeof(Vertex_PositionTexCoord), offsetof(Vertex_PositionTexCoord, position) },
+        { BufferAccessorType::TexCoord1, 2, GL_FLOAT, sizeof(Vertex_PositionTexCoord), offsetof(Vertex_PositionTexCoord, texCoord) },
     };
 }
 
 template<>
-std::vector<VertexAttribute> VertexAttributes::Create<Vertex_PositionNormalTexCoord>()
+std::vector<BufferAccessor> VertexAttributes::create<Vertex_PositionNormalTexCoord>()
 {
     return {
-        // Position
-        { 0, 4, GL_FLOAT, sizeof(Vertex_PositionNormalTexCoord), offsetof(Vertex_PositionNormalTexCoord, position) },
-
-        // Texcoord
-        { 1, 2, GL_FLOAT, sizeof(Vertex_PositionNormalTexCoord), offsetof(Vertex_PositionNormalTexCoord, texCoord) },
-
-        // Normal
-        { 2, 4, GL_FLOAT, sizeof(Vertex_PositionNormalTexCoord), offsetof(Vertex_PositionNormalTexCoord, normal) },
+        { BufferAccessorType::Position,  4, GL_FLOAT, sizeof(Vertex_PositionNormalTexCoord), offsetof(Vertex_PositionNormalTexCoord, position) },
+        { BufferAccessorType::TexCoord1, 2, GL_FLOAT, sizeof(Vertex_PositionNormalTexCoord), offsetof(Vertex_PositionNormalTexCoord, texCoord) },
+        { BufferAccessorType::Normal,    4, GL_FLOAT, sizeof(Vertex_PositionNormalTexCoord), offsetof(Vertex_PositionNormalTexCoord, normal) },
     };
 }
 
 template<>
-std::vector<VertexAttribute> VertexAttributes::Create<Vertex_FBX>()
+std::vector<BufferAccessor> VertexAttributes::create<Vertex_FBX>()
 {
     return {
-        // Position
-        { 0, 4, GL_FLOAT, sizeof(Vertex_FBX), offsetof(Vertex_FBX, position) },
+        { BufferAccessorType::Position,  4, GL_FLOAT, sizeof(Vertex_FBX), offsetof(Vertex_FBX, position) },
+        { BufferAccessorType::Color,     4, GL_FLOAT, sizeof(Vertex_FBX), offsetof(Vertex_FBX, color) },
+        { BufferAccessorType::Normal,    4, GL_FLOAT, sizeof(Vertex_FBX), offsetof(Vertex_FBX, normal) },
+        { BufferAccessorType::Tangent,   4, GL_FLOAT, sizeof(Vertex_FBX), offsetof(Vertex_FBX, tangent) },
+        { BufferAccessorType::Binormal,  4, GL_FLOAT, sizeof(Vertex_FBX), offsetof(Vertex_FBX, binormal) },
+        { BufferAccessorType::Indices,   4, GL_FLOAT, sizeof(Vertex_FBX), offsetof(Vertex_FBX, indices) },
+        { BufferAccessorType::Weights,   4, GL_FLOAT, sizeof(Vertex_FBX), offsetof(Vertex_FBX, weights) },
+        { BufferAccessorType::TexCoord1, 2, GL_FLOAT, sizeof(Vertex_FBX), offsetof(Vertex_FBX, texCoord1) },
+        { BufferAccessorType::TexCoord2, 2, GL_FLOAT, sizeof(Vertex_FBX), offsetof(Vertex_FBX, texCoord2) },
+    };
+}
 
-        // Texcoord
-        { 1, 2, GL_FLOAT, sizeof(Vertex_FBX), offsetof(Vertex_FBX, texCoord1) },
-
-        // Normal
-        { 2, 4, GL_FLOAT, sizeof(Vertex_FBX), offsetof(Vertex_FBX, normal) },
-
-        // Tangent
-        { 3, 4, GL_FLOAT, sizeof(Vertex_FBX), offsetof(Vertex_FBX, tangent) },
-
-        // Weights
-        { 4, 4, GL_FLOAT, sizeof(Vertex_FBX), offsetof(Vertex_FBX, weights) },
-
-        // Indices
-        { 5, 4, GL_FLOAT, sizeof(Vertex_FBX), offsetof(Vertex_FBX, indices) },
+template<>
+std::vector<BufferAccessor> VertexAttributes::create<Vertices_FBX>()
+{
+    return {
+        { BufferAccessorType::Position,  4, GL_FLOAT, 0, 0 },
+        { BufferAccessorType::Color,     4, GL_FLOAT, 0, 0 },
+        { BufferAccessorType::Normal,    4, GL_FLOAT, 0, 0 },
+        { BufferAccessorType::Tangent,   4, GL_FLOAT, 0, 0 },
+        { BufferAccessorType::Binormal,  4, GL_FLOAT, 0, 0 },
+        { BufferAccessorType::Indices,   4, GL_FLOAT, 0, 0 },
+        { BufferAccessorType::Weights,   4, GL_FLOAT, 0, 0 },
+        { BufferAccessorType::TexCoord1, 2, GL_FLOAT, 0, 0 },
+        { BufferAccessorType::TexCoord2, 2, GL_FLOAT, 0, 0 },
     };
 }

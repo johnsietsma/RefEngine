@@ -3,7 +3,7 @@
 void Vertices_FBX::resize( size_t newSize )
 {
     position.resize(newSize);
-    colour.resize(newSize);
+    color.resize(newSize);
     normal.resize(newSize);
     tangent.resize(newSize);
     binormal.resize(newSize);

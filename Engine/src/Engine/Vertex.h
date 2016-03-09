@@ -34,7 +34,7 @@ struct Vertex_PositionNormalTexCoord
 struct Vertex_FBX
 {
     glm::vec4 position;
-    glm::vec4 colour;
+    glm::vec4 color;
     glm::vec4 normal;
     glm::vec4 tangent;
     glm::vec4 binormal;

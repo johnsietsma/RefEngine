@@ -30,7 +30,7 @@ bool ParticleEmitterGameObject::create()
 
     Renderable renderable;
 
-    renderable.program = ResourceCreator::CreateProgram("color", "vertexColor");
+    renderable.program = ResourceCreator::createProgram("color", "vertexColor");
     if (!renderable.program.isValid()) return false;
 
     m_emitTimer = 0;
@@ -69,7 +69,9 @@ bool ParticleEmitterGameObject::create()
         pIndexData[indexStart + 5] = vertStart + 3;
     }
 
-    renderable.mesh.create( MeshData( m_pVertices, vertCount, pIndexData, indexCount ) );
+    Primitive vertexPrimitive = Primitive::create( m_pVertices, vertCount );
+    Buffer indexBuffer(pIndexData, indexCount);
+    renderable.mesh.create( vertexPrimitive, indexBuffer );
 
     m_renderables.push_back(renderable);
 

@@ -12,7 +12,7 @@ out vec4 vShadowCoord;
 
 void main()
 {
-	vNormal = normal;
-	vShadowCoord = lightProjectionView * position;
+    vNormal = normal;
+    vShadowCoord = lightProjectionView * position;
     gl_Position = projectionView * model * position;
 }

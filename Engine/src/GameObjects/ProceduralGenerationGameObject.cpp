@@ -1,7 +1,7 @@
 #include "ProceduralGenerationGameObject.h"
 
 #include "Engine/Camera.h"
-#include "Engine/MeshData.h"
+#include "Engine/Mesh.h"
 #include "Engine/GeometryCreator.h"
 #include "Engine/ResourceCreator.h"
 #include "Engine/Transform.h"
@@ -22,20 +22,12 @@ ProceduralGenerationGameObject::~ProceduralGenerationGameObject()
 
 bool ProceduralGenerationGameObject::create()
 {
-    auto program = ResourceCreator::CreateProgram("heightMap", "textured");
+    auto program = ResourceCreator::createProgram("heightMap", "textured");
     if (!program.isValid())
         return false;
 
-    // Create the grid data
-    MeshData meshData = GeometryCreator::createGrid<Vertex_PositionTexCoord>(&meshData, 100, 100, 0.1f);
-
-    // Create the OpenGL mesh from that data
-    Mesh mesh;
-    mesh.create<Vertex_PositionTexCoord>(meshData);
-
-    // Now we've given the buffers to OpenGL, we dont need them anymore.
-    delete[] (Vertex_PositionTexCoord*)meshData.pVertices;
-    delete[] meshData.pIndices;
+    // Create the grid mesh
+    Mesh mesh = GeometryCreator::createGrid<Vertex_PositionTexCoord>(100, 100, 0.1f);
 
     // ---- Create the noise texture ----
     const int rowCount = 64;
@@ -84,7 +76,7 @@ bool ProceduralGenerationGameObject::create()
 
     delete pPerlinData;
 
-    m_diffuseTexture = ResourceCreator::CreateTexture("./data/textures/Bowling_grass_pxr128.png");
+    m_diffuseTexture = ResourceCreator::createTexture("./data/textures/Bowling_grass_pxr128.png");
     assert(m_diffuseTexture.isValid());
     program.setUniform("diffuseSampler", m_diffuseTextureUnit);
 

@@ -186,7 +186,8 @@ void FBXMeshNode::LoadTexCoords( FbxLayerElementUV* pTexCoord, FbxMesh* pFbxMesh
             if( vertexIndex!=-1 &&  directIndex>=0 ) {
                 FbxVector2 fbxUV = pTexCoord->GetDirectArray().GetAt(directIndex);
                 
-                assert((unsigned int)vertexIndex < m_vertices.size());
+                assert((unsigned int)vertexIndex < m_vertices.texCoord1.size());
+                assert((unsigned int)vertexIndex < m_vertices.texCoord2.size());
                 
                 
                 if( uvNumber == 0 ) {
@@ -227,11 +228,11 @@ void FBXMeshNode::LoadNormals(FbxLayerElementNormal* pNormal, int vertexCount )
         if( directIndex >= 0 )
         {
             FbxVector4 normal = pNormal->GetDirectArray().GetAt(directIndex);
-            auto& normal = m_vertices.normal[i];
-            normal.x = (float)normal[0];
-            normal.y = (float)normal[1];
-            normal.z = (float)normal[2];
-            normal.w = 0;
+            auto& vertexNormal = m_vertices.normal[i];
+            vertexNormal.x = (float)normal[0];
+            vertexNormal.y = (float)normal[1];
+            vertexNormal.z = (float)normal[2];
+            vertexNormal.w = 0;
         }
     }
 }
@@ -274,8 +275,8 @@ void FBXMeshNode::LoadSkinningData( FbxMesh* pFbxMesh, std::map<std::string,int>
         for (int polyVertexIndex = 0; polyVertexIndex < polygonSize && polyVertexIndex < 4 ; ++polyVertexIndex)
         {
             int vertexIndex = pFbxMesh->GetPolygonVertex(polygonIndex, polyVertexIndex);
-            auto* weight = m_vertices.weights[vertexIndex];
-            auto* indices = m_vertices.indices[vertexIndex];
+            auto& weight = m_vertices.weights[vertexIndex];
+            auto& indices = m_vertices.indices[vertexIndex];
             
             for (int skinClusterIndex = 0; skinClusterIndex != skinClusterCount; ++skinClusterIndex)
             {
@@ -291,24 +292,24 @@ void FBXMeshNode::LoadSkinningData( FbxMesh* pFbxMesh, std::map<std::string,int>
                     if (vertexIndex == lIndices[l])
                     {
                         // add weight and index
-                        if (weights.x == 0)
+                        if (weight.x == 0)
                         {
-                            weights.x = (float)lWeights[l];
+                            weight.x = (float)lWeights[l];
                             indices.x = (float)skinClusterBoneIndices[skinClusterIndex];
                         }
-                        else if (weights.y == 0)
+                        else if (weight.y == 0)
                         {
-                            weights.y = (float)lWeights[l];
+                            weight.y = (float)lWeights[l];
                             indices.y = (float)skinClusterBoneIndices[skinClusterIndex];
                         }
-                        else if (weights.z == 0)
+                        else if (weight.z == 0)
                         {
-                            weights.z = (float)lWeights[l];
+                            weight.z = (float)lWeights[l];
                             indices.z = (float)skinClusterBoneIndices[skinClusterIndex];
                         }
                         else
                         {
-                            weights.w = (float)lWeights[l];
+                            weight.w = (float)lWeights[l];
                             indices.w = (float)skinClusterBoneIndices[skinClusterIndex];
                         }
                     }
@@ -329,7 +330,7 @@ void FBXMeshNode::calculateTangentsAndBinormals()
     
     m_vertexAttributes |= VertexAttributeFlags::eTANGENT|VertexAttributeFlags::eBINORMAL;
     
-    size_t vertexCount = m_vertices.size();
+    size_t vertexCount = m_vertices.position.size();
     glm::vec3* tan1 = new glm::vec3[vertexCount * 2];
     glm::vec3* tan2 = tan1 + vertexCount;
     memset(tan1, 0, vertexCount * sizeof(glm::vec3) * 2);
