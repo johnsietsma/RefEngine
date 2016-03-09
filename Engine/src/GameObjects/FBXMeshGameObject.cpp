@@ -78,7 +78,6 @@ bool FBXMeshGameObject::create()
         if (pFbxMesh->m_materials.size() > 0) {
             Material* pMaterial = pFbxMesh->m_materials[0];
 
-            glUseProgram(renderable.program.getId());
 
             for (int textureIndex = 0; textureIndex < (size_t)Material::TextureType::Count; textureIndex++) {
                 auto& texturePath = pMaterial->texturePaths[textureIndex];
@@ -86,9 +85,12 @@ bool FBXMeshGameObject::create()
 
                 if (texture.isValid()) {
                     texIndex = 1;
-                    
+
+                    Program prog = m_programs[texIndex + animIndex];
+                    glUseProgram(prog.getId());
+
                     // Bind the texture to a texture unit. textureIndex _must_ be an int.
-                    renderable.program.setUniform(Material::getTextureUniformName((Material::TextureType)textureIndex), textureIndex);
+                    prog.setUniform(Material::getTextureUniformName((Material::TextureType)textureIndex), textureIndex);
 
                     renderable.samplers.emplace_back(
                             Texture(texture.getId()),
@@ -115,6 +117,12 @@ void FBXMeshGameObject::destroy()
     {
         prog.destroy();
     }
+
+    for (auto& rend : m_renderables)
+    {
+        rend.program.setId(-1); // We've already cleaned this up
+    }
+
 
     GameObject::destroy();
 }
