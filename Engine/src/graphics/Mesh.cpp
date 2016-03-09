@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-#include "Vertex.h"
+#include "data/Vertex.h"
 
 #include <assert.h>
 

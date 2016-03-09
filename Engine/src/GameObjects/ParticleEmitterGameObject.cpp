@@ -1,7 +1,7 @@
 #include "ParticleEmitterGameObject.h"
 
-#include "Engine/Camera.h"
-#include "Engine/ResourceCreator.h"
+#include "engine/Camera.h"
+#include "engine/ResourceCreator.h"
 
 #include "GameObjects/Particle.h"
 

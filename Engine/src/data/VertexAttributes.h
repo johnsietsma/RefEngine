@@ -1,7 +1,8 @@
 #pragma once
 
-#include "BufferAccessor.h"
 #include "Vertex.h"
+
+#include "data/BufferAccessor.h"
 
 #include "gl_core_4_4.h"
 

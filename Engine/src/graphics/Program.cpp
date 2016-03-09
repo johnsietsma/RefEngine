@@ -1,6 +1,4 @@
-#include "Engine/Program.h"
-
-#include "Helpers.h"
+#include "graphics/Program.h"
 
 #include <assert.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -8,6 +6,45 @@
 #include <functional>
 #include <iostream>
 #include <string>
+
+
+// Check whether a shader compile succeeded.
+// Logs to stderr and returns false if ti has failed.
+bool CheckCompileStatus(GLuint shaderId)
+{
+    GLint result = GL_FALSE;
+    int logLength = 0;
+    glGetShaderiv(shaderId, GL_COMPILE_STATUS, &result);
+    if (result != GL_TRUE) {
+        char* logBuffer = NULL;
+        glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logLength);
+        logBuffer = new char[logLength];
+        glGetShaderInfoLog(shaderId, logLength, NULL, logBuffer);
+        std::cerr << "Compile Error: " << logBuffer << std::endl;
+        delete[] logBuffer;
+        return false;
+    }
+    return true;
+}
+
+// Check whether a program link succeeded.
+// Logs to stderr and returns false if ti has failed.
+bool CheckLinkStatus(GLuint programId)
+{
+    GLint result = GL_FALSE;
+    int logLength = 0;
+    glGetProgramiv(programId, GL_LINK_STATUS, &result);
+    if (result != GL_TRUE) {
+        char* logBuffer = NULL;
+        glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &logLength);
+        logBuffer = new char[logLength];
+        glGetProgramInfoLog(programId, logLength, NULL, logBuffer);
+        std::cerr << "Link Error: " << logBuffer << std::endl;
+        delete[] logBuffer;
+        return false;
+    }
+    return true;
+}
 
 
 bool Program::create(const char* pVertShaderSource, const char* pFragShaderSource)

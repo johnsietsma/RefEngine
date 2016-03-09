@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Engine/GameObject.h"
-#include "Engine/Program.h"
+#include "engine/GameObject.h"
+#include "graphics/Program.h"
 
-#include "File/FBXFile.h"
+#include "fbx/FBXFile.h"
 
 #include <string>
 #include <vector>

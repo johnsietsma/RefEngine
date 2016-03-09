@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include "BufferAccessor.h"
-#include "Primitive.h"
+#include "data/BufferAccessor.h"
+#include "data/Primitive.h"
 
 #include "gl_core_4_4.h"
 

@@ -2,7 +2,7 @@
 
 #include "FBXNode.h"
 
-#include "Engine/Vertex.h"
+#include "data/Vertex.h"
 
 #include <map>
 

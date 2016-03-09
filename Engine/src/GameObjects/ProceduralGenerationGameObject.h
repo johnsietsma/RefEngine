@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Engine/GameObject.h"
-#include "Engine/Mesh.h"
-#include "Engine/Program.h"
-#include "Engine/Texture.h"
+#include "engine/GameObject.h"
+#include "graphics/Mesh.h"
+#include "graphics/Program.h"
+#include "graphics/Texture.h"
 
 #include <glm/vec3.hpp>
 

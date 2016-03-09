@@ -1,6 +1,8 @@
 #include "ResourceCreator.h"
 
-#include "GeometryCreator.h"
+#include "graphics/Program.h"
+#include "graphics/Texture.h"
+
 #include "Helpers.h"
 
 #define STB_IMAGE_IMPLEMENTATION

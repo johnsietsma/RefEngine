@@ -4,8 +4,8 @@
 #include "FBXMeshNode.h"
 #include "FBXAnimation.h"
 
-#include "Engine/Vertex.h"
-#include "Engine/Material.h"
+#include "data/Vertex.h"
+#include "engine/Material.h"
 
 #include "gl_core_4_4.h"
 

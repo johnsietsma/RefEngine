@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vertex.h"
+#include "data/Vertex.h"
 
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>

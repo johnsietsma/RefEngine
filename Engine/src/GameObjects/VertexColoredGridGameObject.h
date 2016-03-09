@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Engine/GameObject.h"
-#include "Engine/Mesh.h"
-#include "Engine/Program.h"
+#include "engine/GameObject.h"
+#include "graphics/Mesh.h"
+#include "graphics/Program.h"
 
 #include <glm/vec2.hpp>
 

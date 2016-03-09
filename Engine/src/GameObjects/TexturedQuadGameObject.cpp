@@ -1,9 +1,9 @@
 #include "TexturedQuadGameObject.h"
 
-#include "Engine/Camera.h"
-#include "Engine/GeometryCreator.h"
-#include "Engine/ResourceCreator.h"
-#include "Engine/Vertex.h"
+#include "engine/Camera.h"
+#include "engine/GeometryCreator.h"
+#include "engine/ResourceCreator.h"
+#include "data/Vertex.h"
 
 #include "gl_core_4_4.h"
 

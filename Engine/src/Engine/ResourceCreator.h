@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Engine/Mesh.h"
-#include "Engine/Program.h"
-#include "Engine/Texture.h"
+class Program;
+class Texture;
 
 class ResourceCreator
 {

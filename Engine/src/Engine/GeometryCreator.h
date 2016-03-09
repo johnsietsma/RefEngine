@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Mesh.h"
-#include "Vertex.h"
+#include "graphics/Mesh.h"
+#include "data/Vertex.h"
 
 #include <glm/vec3.hpp>
 

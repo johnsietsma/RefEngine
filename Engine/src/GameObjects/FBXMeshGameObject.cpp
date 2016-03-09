@@ -1,14 +1,14 @@
 #include "FBXMeshGameObject.h"
 
-#include "Engine/Camera.h"
-#include "Engine/Material.h"
-#include "Engine/ResourceCreator.h"
-#include "Engine/Primitive.h"
-#include "Engine/Sampler.h"
-#include "Engine/Texture.h"
+#include "engine/Camera.h"
+#include "engine/Material.h"
+#include "engine/ResourceCreator.h"
+#include "data/Primitive.h"
+#include "graphics/Sampler.h"
+#include "graphics/Texture.h"
 
-#include "File/FBXMeshNode.h"
-#include "File/FBXAnimation.h"
+#include "fbx/FBXMeshNode.h"
+#include "fbx/FBXAnimation.h"
 
 #include "gl_core_4_4.h"
 

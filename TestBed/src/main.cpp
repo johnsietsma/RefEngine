@@ -8,11 +8,12 @@
 #include "GameObjects.h"
 #include "Window.h"
 
-#include "Components/RenderModeComponent.h"
+#include "components/RenderModeComponent.h"
 
-#include "Engine/Camera.h"
-#include "Engine/RenderPass.h"
-#include "Engine/ResourceCreator.h"
+#include "engine/Camera.h"
+#include "engine/ResourceCreator.h"
+
+#include "graphics/RenderPass.h"
 
 #include <glm/vec3.hpp>
 #include <memory>

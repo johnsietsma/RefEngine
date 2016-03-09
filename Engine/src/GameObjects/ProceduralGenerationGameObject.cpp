@@ -1,10 +1,11 @@
 #include "ProceduralGenerationGameObject.h"
 
-#include "Engine/Camera.h"
-#include "Engine/Mesh.h"
-#include "Engine/GeometryCreator.h"
-#include "Engine/ResourceCreator.h"
-#include "Engine/Transform.h"
+#include "engine/Camera.h"
+#include "engine/GeometryCreator.h"
+#include "engine/ResourceCreator.h"
+#include "engine/Transform.h"
+
+#include "graphics/Mesh.h"
 
 #include <glm/gtc/noise.hpp>
 
