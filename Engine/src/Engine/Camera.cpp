@@ -21,7 +21,7 @@ Camera::~Camera()
 
 void Camera::getFrustumPlanes( glm::vec4 (&pPlanes)[6] ) const
 {
-    glm::mat4 transform = getProjectionView();
+    glm::mat4 transform = getProjectionViewTransform();
 
     // right side
     pPlanes[0] = vec4(  transform[0][3] - transform[0][0],

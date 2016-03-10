@@ -19,9 +19,9 @@ public:
     void    setPerspective(float fovY, float aspectRatio, float near, float far);
 
     const Transform&    getTransform() const { return m_transform; }
-    const glm::mat4&    getProjection() const { return m_projection; }
-    glm::mat4           getView() const { return glm::inverse(m_transform.getMatrix());  }
-    glm::mat4           getProjectionView() const { return m_projection * getView(); }
+    const glm::mat4&    getProjectionTransform() const { return m_projection; }
+    glm::mat4           getViewTransform() const { return glm::inverse(m_transform.getMatrix());  }
+    glm::mat4           getProjectionViewTransform() const { return m_projection * getViewTransform(); }
     void                getFrustumPlanes( glm::vec4 (&pPlanes)[6] ) const;
 
     // returns a world-space normalized vector pointing away from the camera's world-space position

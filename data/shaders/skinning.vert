@@ -13,8 +13,8 @@ out vec3 vNormal;
 out vec3 vTangent;
 out vec3 vBiTangent;
 
-uniform mat4 model;
-uniform mat4 projectionView;
+uniform mat4 modelTransform;
+uniform mat4 projectionViewTransform;
 
 const int MAX_BONES = 128;
 uniform mat4 bones[MAX_BONES];
@@ -34,5 +34,5 @@ void main()
          P += bones[index.z] * position * weights.z;
          P += bones[index.w] * position * weights.w;
 
-    gl_Position = projectionView * model * P;
+    gl_Position = projectionViewTransform * modelTransform * P;
 }

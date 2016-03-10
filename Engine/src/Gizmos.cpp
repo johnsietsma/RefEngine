@@ -1,7 +1,7 @@
 #include "Gizmos.h"
 #include "gl_core_4_4.h"
 
-#if not defined GLM_SWIZZLE
+#ifndef GLM_SWIZZLE
 #define GLM_SWIZZLE
 #endif
 

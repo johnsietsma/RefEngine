@@ -2,10 +2,10 @@
 
 in vec4 position;
 
-uniform mat4 model;
-uniform mat4 projectionView;
+uniform mat4 modelTransform;
+uniform mat4 projectionViewTransform;
 
 void main()
 {
-    gl_Position = projectionView * model * position;
+    gl_Position = projectionViewTransform * modelTransform * position;
 }

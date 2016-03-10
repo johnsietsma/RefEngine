@@ -188,7 +188,7 @@ void Engine::draw()
 
     if( m_shouldDrawGrid ) {
         // display the 3D gizmos
-        Gizmos::draw(m_pMainCamera->getProjectionView());
+        Gizmos::draw(m_pMainCamera->getProjectionViewTransform());
     }
 }
 

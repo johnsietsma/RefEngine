@@ -20,11 +20,11 @@ void GameObject::draw(const Camera& camera, const Light& light, Program override
 
     const float lightOrthoSize = 15;
     glm::mat4 lightProjection = glm::ortho(-lightOrthoSize, lightOrthoSize, -lightOrthoSize, lightOrthoSize, -lightOrthoSize, lightOrthoSize);
-    glm::mat4 lightView = light.getTransform().getInverseMatrix();
-    glm::mat4 textureSpaceOffset(0.5f);
-    textureSpaceOffset[3] = glm::vec4(0.5f, 0.5f, 0.5f, 1.f);
-    glm::mat4 lightProjectionViewNDC = lightProjection * lightView;
-    glm::mat4 lightProjectionView = textureSpaceOffset * lightProjectionViewNDC;
+    glm::mat4 lightViewInverse = light.getTransform().getInverseMatrix();
+    glm::mat4 textureOffsetTransform(0.5f);
+    textureOffsetTransform[3] = glm::vec4(0.5f, 0.5f, 0.5f, 1.f);
+    glm::mat4 lightProjectionViewNDC = lightProjection * lightViewInverse;
+    glm::mat4 lightProjectionView = textureOffsetTransform * lightProjectionViewNDC;
 
     for (auto& renderable : m_renderables)
     {
@@ -38,8 +38,11 @@ void GameObject::draw(const Camera& camera, const Light& light, Program override
         // Just blindly go through and set well-known uniforms.
         // TODO: Only do this if needed.
 
-        program.setUniform("model",  m_transform.getMatrix());
-        program.setUniform("projectionView", camera.getProjectionView());
+        program.setUniform("modelTransform",  m_transform.getMatrix());
+        program.setUniform("viewTransform", camera.getViewTransform());
+        program.setUniform("projectionTransform", camera.getProjectionTransform());
+        program.setUniform("projectionViewTransform", camera.getProjectionViewTransform());
+        program.setUniform("textureOffsetTransform", textureOffsetTransform);
         program.setUniform("lightDirection", light.getTransform().getForward() );
         program.setUniform("lightColor", light.getColor());
         program.setUniform("lightProjectionViewNDC", lightProjectionViewNDC);
@@ -74,3 +77,4 @@ void GameObject::destroy()
     }
     m_renderables.clear();
 }
+

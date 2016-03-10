@@ -3,8 +3,8 @@
 layout(location=0) in vec4 position;
 layout(location=2) in vec4 normal;
 
-uniform mat4 model;
-uniform mat4 projectionView;
+uniform mat4 modelTransform;
+uniform mat4 projectionViewTransform;
 uniform mat4 lightProjectionView;
 
 out vec4 vNormal;
@@ -14,5 +14,5 @@ void main()
 {
 	vNormal = normal;
 	vShadowCoord = lightProjectionView * position;
-    gl_Position = projectionView * model * position;
+    gl_Position = projectionViewTransform * modelTransform * position;
 }

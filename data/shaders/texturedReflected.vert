@@ -2,27 +2,21 @@
 
 layout(location=0) in vec4 position;
 layout(location=1) in vec2 texCoord;
+layout(location=2) in vec2 normal;
 
 out vec2 vTexCoord;
+out vec2 vNormal;
 
-uniform mat4 model;
-uniform mat4 projectionView;
+uniform mat4 modelTransform;
+uniform mat4 textureOffsetTransform;
+uniform mat4 viewTransform;
+uniform mat4 iewTransform;
+uniform mat4 projectionTransform;
+uniform mat4 projectionViewTransform;
 
 void main()
 {
-	/*mat4 reflectMat = mat4(
-	    1.0, -2.0,  0.0,  0.0,
-	   -2.0, -1.0, -2.0,  0.0,
-	    0.0, -2.0, -2.0,  0.0,
-	    0.0,  0.0,  0.0,  1.0
-	);*/
-
-	mat4 reflectMat = mat4(
-	    1.0, -2.0,  0.0,  0.0,
-	   -2.0, -1.0, -2.0,  0.0,
-	    0.0, -2.0, -2.0,  0.0,
-	    0.0,  0.0,  0.0,  1.0
-	);
-
-    gl_Position = reflectMat * projectionView * model * position;
+	vTexCoord = texCoord;// (projectionTransform * inverse(viewTransform) * modelTransform * position).xy;
+	vNormal = normal;
+    gl_Position = projectionViewTransform * modelTransform * position;
 }
