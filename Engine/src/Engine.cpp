@@ -1,11 +1,12 @@
 #include "Engine.h"
 
-#include "Engine/Camera.h"
-#include "Engine/GameObject.h"
-#include "Engine/Helpers.h"
-#include "Engine/InputManager.h"
-#include "Engine/Light.h"
-#include "Engine/RenderPass.h"
+#include "engine/Camera.h"
+#include "engine/GameObject.h"
+#include "engine/Helpers.h"
+#include "engine/InputManager.h"
+#include "engine/Light.h"
+
+#include "graphics/RenderPass.h"
 
 #include "Gizmos.h"
 #include "gl_core_4_4.h"

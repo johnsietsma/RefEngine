@@ -1,56 +1,59 @@
 #pragma once
 
-#include "MeshData.h"
-#include "Vertex.h"
+#include "graphics/Mesh.h"
+#include "data/Vertex.h"
 
 #include <glm/vec3.hpp>
 
-struct MeshData;
+#include <vector>
+
 struct Vertex_PosivtionColor;
 struct Vertex_PosivtionTexCoord;
 
 /*
-	GeometryCreator is a utility class for creating simple geometry primitives.
-	It is an absrtact class that is designed to be a holder for static functions that do the geometry creation.
-	Creation function allocate memory, it's up to the caller to delete the memory.
+    GeometryCreator is a utility class for creating simple geometry primitives.
+    It is an absrtact class that is designed to be a holder for static functions that do the geometry creation.
+    Creation function allocate memory, it's up to the caller to delete the memory.
 */
 class GeometryCreator
 {
 public:
-	GeometryCreator() = delete;
+    GeometryCreator() = delete;
 
-	// Create the vertices and indices for a quad.
-	static void createTexuredQuad(Vertex_PositionTexCoord** ppVertexPositionBuffer, unsigned int** ppIndicesBuffer);
-    static void createTexuredQuad(Vertex_PositionNormalTexCoord** ppVertexPositionBuffer, unsigned int** ppIndicesBuffer);
-
-	// Create the vertices and indices for a grid.
+    // Create the vertices and indices for a quad.
     template<typename T>
-	static void createGrid(MeshData *pMeshData, unsigned int rowCount, unsigned int columnCount, float scale=1);
+    static Mesh createTexturedQuad() { assert(false) ; }
+
+    // Create the vertices and indices for a grid.
+    template<typename T>
+    static Mesh createGrid(unsigned int rowCount, unsigned int columnCount, float scale=1);
 
 private:
     // -- Helpers to fill in grid data --
 
-    // Doesn't do anything by default
-    static void fillGridData(unsigned int rowCount, unsigned int columnCount, void* pVertices) {};
-
     // Fill in vertex colors across the grid
-    static void fillGridData(Vertex_PositionColor* pVertices, unsigned int rowCount, unsigned int columnCount);
+    static void fillGridData(std::vector<Vertex_PositionColor>& vertices, unsigned int rowCount, unsigned int columnCount);
 
     // Setup texture coordinates so a texture will stretch across the grid
-    static void fillGridData(Vertex_PositionTexCoord* pVertices, unsigned int rowCount, unsigned int columnCount);
+    static void fillGridData(std::vector<Vertex_PositionTexCoord>& vertices, unsigned int rowCount, unsigned int columnCount);
 
 };
 
 
+template<>
+Mesh GeometryCreator::createTexturedQuad<Vertex_PositionTexCoord>();
+
+template<>
+Mesh GeometryCreator::createTexturedQuad<Vertex_PositionNormalTexCoord>();
 
 
 
 template<typename T>
-void GeometryCreator::createGrid(MeshData *pMeshData, unsigned int rowCount, unsigned int columnCount, float scale)
+inline Mesh GeometryCreator::createGrid(unsigned int rowCount, unsigned int columnCount, float scale)
 {
     // Create the verts
-    unsigned int vertexCount = rowCount * columnCount;
-    T* pVertices = new T[vertexCount];
+    const unsigned int vertexCount = rowCount * columnCount;
+    std::vector<T> vertices(vertexCount);
 
     float width = columnCount * scale;
     float height = rowCount * scale;
@@ -67,16 +70,16 @@ void GeometryCreator::createGrid(MeshData *pMeshData, unsigned int rowCount, uns
             float columnPos = static_cast<float>(columnIndex) * scale;
             float rowPos = static_cast<float>(rowIndex) * scale;
             glm::vec3 pos(columnPos, 0, rowPos);
-            pVertices[index].position = glm::vec4((originPos + pos), 1);
+            vertices[index].position = glm::vec4((originPos + pos), 1);
 
         }
     }
 
-    fillGridData(pVertices, rowCount, columnCount);
+    fillGridData(vertices, rowCount, columnCount);
 
     // Create the indices
-    unsigned int indexCount = (rowCount - 1) * (columnCount - 1) * 6;
-    unsigned int* pIndices = new unsigned int[indexCount];
+    const size_t indexCount = (rowCount - 1) * (columnCount - 1) * 6;
+    std::vector<unsigned int> indices(indexCount);
 
     unsigned int index = 0;
     for (unsigned int rowIndex = 0; rowIndex < (rowCount - 1); rowIndex++)
@@ -91,21 +94,23 @@ void GeometryCreator::createGrid(MeshData *pMeshData, unsigned int rowCount, uns
             assert(index + 6 <= indexCount);
 
             // Triangle 1
-            pIndices[index++] = indexCurrent;
-            pIndices[index++] = indexNextRow;
-            pIndices[index++] = indexNextRowNextColumn;
+            indices[index++] = indexCurrent;
+            indices[index++] = indexNextRow;
+            indices[index++] = indexNextRowNextColumn;
 
             // Triangle 2
-            pIndices[index++] = indexCurrent;
-            pIndices[index++] = indexNextRowNextColumn;
-            pIndices[index++] = indexNextColumn;
+            indices[index++] = indexCurrent;
+            indices[index++] = indexNextRowNextColumn;
+            indices[index++] = indexNextColumn;
         }
     }
 
     // Setup the mesh data
-    pMeshData->pVertices = pVertices;
-    pMeshData->vertexCount = vertexCount;
-    pMeshData->pIndices = pIndices;
-    pMeshData->indexCount = indexCount;
+    Mesh mesh;
+    mesh.create(
+        Primitive::create(vertices, 1),
+        Buffer::create(indices, 1)
+     );
+    return mesh;
 
 }

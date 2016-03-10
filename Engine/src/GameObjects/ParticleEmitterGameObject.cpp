@@ -1,7 +1,7 @@
 #include "ParticleEmitterGameObject.h"
 
-#include "Engine/Camera.h"
-#include "Engine/ResourceCreator.h"
+#include "engine/Camera.h"
+#include "engine/ResourceCreator.h"
 
 #include "GameObjects/Particle.h"
 
@@ -30,7 +30,7 @@ bool ParticleEmitterGameObject::create()
 
     Renderable renderable;
 
-    renderable.program = ResourceCreator::CreateProgram("color", "vertexColor");
+    renderable.program = ResourceCreator::createProgram("color", "vertexColor");
     if (!renderable.program.isValid()) return false;
 
     m_emitTimer = 0;
@@ -69,7 +69,9 @@ bool ParticleEmitterGameObject::create()
         pIndexData[indexStart + 5] = vertStart + 3;
     }
 
-    renderable.mesh.create(m_pVertices, vertCount, pIndexData, indexCount);
+    Primitive vertexPrimitive = Primitive::create( m_pVertices, vertCount );
+    Buffer indexBuffer(pIndexData, indexCount);
+    renderable.mesh.create( vertexPrimitive, indexBuffer );
 
     m_renderables.push_back(renderable);
 
@@ -237,7 +239,7 @@ void ParticleEmitterGameObject::preDraw(const Camera& camera, const Light& light
     // There is only one renderable
     Renderable& renderable = m_renderables[0];
 
-    glBindBuffer(GL_ARRAY_BUFFER, renderable.mesh.getVBO());
+    glBindBuffer(GL_ARRAY_BUFFER, renderable.mesh.getVBOs()[0]);
 
     // We've moved the particles, so we'll upload the new particle vertex data.
     glBufferSubData(GL_ARRAY_BUFFER, 0, m_firstDeadIndex * 4 * sizeof(Vertex_PositionColor), m_pVertices);

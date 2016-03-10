@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Vertex.h"
+#include "data/Vertex.h"
 
 #include <glm/mat4x4.hpp>
 

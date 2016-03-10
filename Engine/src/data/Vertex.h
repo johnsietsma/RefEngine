@@ -34,7 +34,7 @@ struct Vertex_PositionNormalTexCoord
 struct Vertex_FBX
 {
     glm::vec4 position;
-    glm::vec4 colour;
+    glm::vec4 color;
     glm::vec4 normal;
     glm::vec4 tangent;
     glm::vec4 binormal;
@@ -44,10 +44,13 @@ struct Vertex_FBX
     glm::vec2 texCoord2;
 };
 
+// A AoS version of Vertex_FBX.
 struct Vertices_FBX
 {
+    void resize( size_t newSize );
+    
     std::vector<glm::vec4> position;
-    std::vector<glm::vec4> colour;
+    std::vector<glm::vec4> color;
     std::vector<glm::vec4> normal;
     std::vector<glm::vec4> tangent;
     std::vector<glm::vec4> binormal;

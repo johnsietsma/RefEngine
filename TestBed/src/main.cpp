@@ -8,11 +8,12 @@
 #include "GameObjects.h"
 #include "Window.h"
 
-#include "Components/RenderModeComponent.h"
+#include "components/RenderModeComponent.h"
 
-#include "Engine/Camera.h"
-#include "Engine/RenderPass.h"
-#include "Engine/ResourceCreator.h"
+#include "engine/Camera.h"
+#include "engine/ResourceCreator.h"
+
+#include "graphics/RenderPass.h"
 
 #include <glm/vec3.hpp>
 #include <memory>
@@ -38,15 +39,17 @@ void addParticles(std::shared_ptr<Engine> pEngine)
 bool addSoulSpear(std::shared_ptr<Engine> pEngine)
 {
     // Programs that the RenderMode component can swap between,
-    Program vertLitProgram = ResourceCreator::CreateProgram("texNormal", "vertexLit");
+
+    Program vertLitProgram = ResourceCreator::createProgram("normal", "vertexLit");
     if (!vertLitProgram.isValid())
         return false;
 
-    Program texturedProgram = ResourceCreator::CreateProgram("texNormal", "textured");
+    Program texturedProgram = ResourceCreator::createProgram("texturedNormal", "textured");
     if (!texturedProgram.isValid())
         return false;
 
-    Program fragLitProgram = ResourceCreator::CreateProgram("normal", "texturedVertLit");
+    Program fragLitProgram = ResourceCreator::createProgram("texturedNormal", "texturedVertexLit");
+
     if (!fragLitProgram.isValid())
         return false;
 
@@ -65,6 +68,7 @@ bool addSoulSpear(std::shared_ptr<Engine> pEngine)
 
 bool setup(std::shared_ptr<Engine> pEngine)
 {
+
     // Setup a RenderPass
     RenderPassConfig passConfig{
         glm::vec3(0.6f,0,0), // clear color
@@ -88,21 +92,20 @@ bool setup(std::shared_ptr<Engine> pEngine)
     if (!addSoulSpear(pEngine))
         return false;
 
-    /*
     // --- Pyro ---
     Transform pyroTransform = Transform(glm::vec3(-6, 0, -2), glm::quat(), glm::vec3(0.001f));
     pEngine->addGameObject(std::make_shared<FBXMeshGameObject>(pyroTransform, "./data/models/Pyro/pyro.fbx", "PYRO_BASE"));
 
     // --- Sprite sheet ---
-    Transform spriteSheetTrans(glm::vec3(-5, 2.5f, -5), glm::angleAxis(glm::radians(90.f), Transform::WORLD_RIGHT), glm::vec3(0.5f));
+    Transform spriteSheetTrans(glm::vec3(-5, 2.5f, -5), glm::angleAxis(glm::radians(90.f), Transform::WORLD_RIGHT), glm::vec3(0.2f));
     pEngine->addGameObject(std::make_shared<SpriteSheetQuadGameObject>(spriteSheetTrans, "./data/textures/spritesheet.png", 4, 4));
 
     // --- Crate ---
-    Texture quadTexture = ResourceCreator::CreateTexture("./data/textures/crate.png");
+    Texture quadTexture = ResourceCreator::createTexture("./data/textures/crate.png");
     if (!quadTexture.isValid())
         return false;
 
-    Transform quadTrans(glm::vec3(0, 2.5f, -5), glm::angleAxis(glm::radians(90.f), Transform::WORLD_RIGHT), glm::vec3(0.5f));
+    Transform quadTrans(glm::vec3(0, 2.5f, -5), glm::angleAxis(glm::radians(90.f), Transform::WORLD_RIGHT), glm::vec3(0.2f));
     pEngine->addGameObject(std::make_shared<TexturedQuadGameObject>(quadTrans, quadTexture));
 
     // --- Vert colored quad ---
@@ -111,6 +114,7 @@ bool setup(std::shared_ptr<Engine> pEngine)
 
     // --- Terrain ---
     pEngine->addGameObject(std::make_shared<ProceduralGenerationGameObject>(glm::vec3(10,0,0)));
+
 
     // --- Particles ---
     addParticles(pEngine);
@@ -121,7 +125,7 @@ bool setup(std::shared_ptr<Engine> pEngine)
 
 
     // --- Shadow RenderPass, with only depth target ---
-    Program shadowProgram = ResourceCreator::CreateProgram("lightProjection", "depth");
+    Program shadowProgram = ResourceCreator::createProgram("lightProjection", "depth");
     if (!shadowProgram.isValid())
         return false;
 
@@ -143,7 +147,6 @@ bool setup(std::shared_ptr<Engine> pEngine)
     Transform groundTrans(bunnyTransform);
     groundTrans.translate(glm::vec3(0, 0, 0)); // Move the plane centrally under the bunny
     pEngine->addGameObject(std::make_shared<TexturedQuadGameObject>(groundTrans, shadowRenderPass.getDepthBufferId(), "shadowMapSampler", "shadow", "shadow"));
-    */
     return true;
 }
 

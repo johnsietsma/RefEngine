@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Component.h"
+#include "engine/Component.h"
 
 class Transform;
 

@@ -2,7 +2,7 @@
 
 #include "FBXNode.h"
 
-#include "Engine/Vertex.h"
+#include "data/Vertex.h"
 
 #include <map>
 
@@ -48,6 +48,6 @@ public:
 
     unsigned int                m_vertexAttributes;
     std::vector<Material*>      m_materials;
-    std::vector<Vertex_FBX>     m_vertices;
+    Vertices_FBX                m_vertices;
     std::vector<unsigned int>   m_indices;
 };

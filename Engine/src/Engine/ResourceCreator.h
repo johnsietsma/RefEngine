@@ -1,17 +1,14 @@
 #pragma once
 
-#include "Engine/Mesh.h"
-#include "Engine/Program.h"
-#include "Engine/Texture.h"
+class Program;
+class Texture;
 
 class ResourceCreator
 {
     ResourceCreator() = delete;
 
 public:
-    static Mesh CreateTexturedQuad();
+    static Program createProgram(const char* pVertexShaderFilename, const char* pFragmentShaderFilename);
 
-    static Program CreateProgram(const char* pVertexShaderFilename, const char* pFragmentShaderFilename);
-
-    static Texture CreateTexture(const char* pTextureFilename);
+    static Texture createTexture(const char* pTextureFilename);
 };

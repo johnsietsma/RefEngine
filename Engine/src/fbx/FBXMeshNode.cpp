@@ -101,19 +101,22 @@ static int GetVertexColorDirectIndex( FbxGeometryElementVertexColor* pVertexColo
 }
 
 
+// ----------------------------------------------------------------------------------------
+
 
 void FBXMeshNode::LoadVertexPositions( FbxVector4* pVertexPositions, int vertexCount )
 {
+    // Resize all the vertex data to fit.
     m_vertices.resize(vertexCount);
     
     for (int i = 0; i < vertexCount; ++i)
     {
-        auto& vertex = m_vertices[i];
+        auto& position = m_vertices.position[i];
         FbxVector4 vPos = pVertexPositions[i];
-        vertex.position.x = (float)vPos[0];
-        vertex.position.y = (float)vPos[1];
-        vertex.position.z = (float)vPos[2];
-        vertex.position.w = 1;
+        position.x = (float)vPos[0];
+        position.y = (float)vPos[1];
+        position.z = (float)vPos[2];
+        position.w = 1;
     }
 }
 
@@ -142,15 +145,15 @@ void FBXMeshNode::LoadVertexColors( FbxLayerElementVertexColor* pVertexColors, i
     
     for (int i = 0; i < vertexCount; ++i)
     {
-        auto& vertex = m_vertices[i];
+        auto& color = m_vertices.color[i];
         int directIndex = GetVertexColorDirectIndex(pVertexColors, i );
         if( directIndex >= 0 ) {
-            FbxColor fbxColour = pVertexColors->GetDirectArray().GetAt(directIndex);
+            FbxColor fbxColor = pVertexColors->GetDirectArray().GetAt(directIndex);
             
-            vertex.colour.x = (float)fbxColour.mRed;
-            vertex.colour.y = (float)fbxColour.mGreen;
-            vertex.colour.z = (float)fbxColour.mBlue;
-            vertex.colour.w = (float)fbxColour.mAlpha;
+            color.x = (float)fbxColor.mRed;
+            color.y = (float)fbxColor.mGreen;
+            color.z = (float)fbxColor.mBlue;
+            color.w = (float)fbxColor.mAlpha;
         }
     }
 }
@@ -183,21 +186,23 @@ void FBXMeshNode::LoadTexCoords( FbxLayerElementUV* pTexCoord, FbxMesh* pFbxMesh
             if( vertexIndex!=-1 &&  directIndex>=0 ) {
                 FbxVector2 fbxUV = pTexCoord->GetDirectArray().GetAt(directIndex);
                 
-                assert((unsigned int)vertexIndex < m_vertices.size());
-                auto& vertex = m_vertices[vertexIndex];
+                assert((unsigned int)vertexIndex < m_vertices.texCoord1.size());
+                assert((unsigned int)vertexIndex < m_vertices.texCoord2.size());
                 
                 
                 if( uvNumber == 0 ) {
-                    vertex.texCoord1.x = (float)fbxUV[0];
-                    vertex.texCoord1.y = (float)fbxUV[1];
+                    auto& texCoord1 = m_vertices.texCoord1[vertexIndex];
+                    texCoord1.x = (float)fbxUV[0];
+                    texCoord1.y = (float)fbxUV[1];
                     
-                    if (shouldFlipTextureY) vertex.texCoord1.y = 1.0f - vertex.texCoord1.y;
+                    if (shouldFlipTextureY) texCoord1.y = 1.0f - texCoord1.y;
                 }
                 else if( uvNumber == 1 ) {
-                    vertex.texCoord2.x = (float)fbxUV[0];
-                    vertex.texCoord2.y = (float)fbxUV[1];
+                    auto& texCoord2 = m_vertices.texCoord2[vertexIndex];
+                    texCoord2.x = (float)fbxUV[0];
+                    texCoord2.y = (float)fbxUV[1];
                     
-                    if (shouldFlipTextureY) vertex.texCoord2.y = 1.0f - vertex.texCoord2.y;
+                    if (shouldFlipTextureY) texCoord2.y = 1.0f - texCoord2.y;
                 }
                 
             }
@@ -223,11 +228,11 @@ void FBXMeshNode::LoadNormals(FbxLayerElementNormal* pNormal, int vertexCount )
         if( directIndex >= 0 )
         {
             FbxVector4 normal = pNormal->GetDirectArray().GetAt(directIndex);
-            auto& vertex = m_vertices[i];
-            vertex.normal.x = (float)normal[0];
-            vertex.normal.y = (float)normal[1];
-            vertex.normal.z = (float)normal[2];
-            vertex.normal.w = 0;
+            auto& vertexNormal = m_vertices.normal[i];
+            vertexNormal.x = (float)normal[0];
+            vertexNormal.y = (float)normal[1];
+            vertexNormal.z = (float)normal[2];
+            vertexNormal.w = 0;
         }
     }
 }
@@ -270,7 +275,8 @@ void FBXMeshNode::LoadSkinningData( FbxMesh* pFbxMesh, std::map<std::string,int>
         for (int polyVertexIndex = 0; polyVertexIndex < polygonSize && polyVertexIndex < 4 ; ++polyVertexIndex)
         {
             int vertexIndex = pFbxMesh->GetPolygonVertex(polygonIndex, polyVertexIndex);
-            Vertex_FBX& vertex = m_vertices[vertexIndex];
+            auto& weight = m_vertices.weights[vertexIndex];
+            auto& indices = m_vertices.indices[vertexIndex];
             
             for (int skinClusterIndex = 0; skinClusterIndex != skinClusterCount; ++skinClusterIndex)
             {
@@ -286,25 +292,25 @@ void FBXMeshNode::LoadSkinningData( FbxMesh* pFbxMesh, std::map<std::string,int>
                     if (vertexIndex == lIndices[l])
                     {
                         // add weight and index
-                        if (vertex.weights.x == 0)
+                        if (weight.x == 0)
                         {
-                            vertex.weights.x = (float)lWeights[l];
-                            vertex.indices.x = (float)skinClusterBoneIndices[skinClusterIndex];
+                            weight.x = (float)lWeights[l];
+                            indices.x = (float)skinClusterBoneIndices[skinClusterIndex];
                         }
-                        else if (vertex.weights.y == 0)
+                        else if (weight.y == 0)
                         {
-                            vertex.weights.y = (float)lWeights[l];
-                            vertex.indices.y = (float)skinClusterBoneIndices[skinClusterIndex];
+                            weight.y = (float)lWeights[l];
+                            indices.y = (float)skinClusterBoneIndices[skinClusterIndex];
                         }
-                        else if (vertex.weights.z == 0)
+                        else if (weight.z == 0)
                         {
-                            vertex.weights.z = (float)lWeights[l];
-                            vertex.indices.z = (float)skinClusterBoneIndices[skinClusterIndex];
+                            weight.z = (float)lWeights[l];
+                            indices.z = (float)skinClusterBoneIndices[skinClusterIndex];
                         }
                         else
                         {
-                            vertex.weights.w = (float)lWeights[l];
-                            vertex.indices.w = (float)skinClusterBoneIndices[skinClusterIndex];
+                            weight.w = (float)lWeights[l];
+                            indices.w = (float)skinClusterBoneIndices[skinClusterIndex];
                         }
                     }
                 }
@@ -324,7 +330,7 @@ void FBXMeshNode::calculateTangentsAndBinormals()
     
     m_vertexAttributes |= VertexAttributeFlags::eTANGENT|VertexAttributeFlags::eBINORMAL;
     
-    size_t vertexCount = m_vertices.size();
+    size_t vertexCount = m_vertices.position.size();
     glm::vec3* tan1 = new glm::vec3[vertexCount * 2];
     glm::vec3* tan2 = tan1 + vertexCount;
     memset(tan1, 0, vertexCount * sizeof(glm::vec3) * 2);
@@ -336,13 +342,13 @@ void FBXMeshNode::calculateTangentsAndBinormals()
         unsigned int i2 = m_indices[a + 1];
         unsigned int i3 = m_indices[a + 2];
 
-        const glm::vec4& v1 = m_vertices[i1].position;
-        const glm::vec4& v2 = m_vertices[i2].position;
-        const glm::vec4& v3 = m_vertices[i3].position;
+        const glm::vec4& v1 = m_vertices.position[i1];
+        const glm::vec4& v2 = m_vertices.position[i2];
+        const glm::vec4& v3 = m_vertices.position[i3];
 
-        const glm::vec2& w1 = m_vertices[i1].texCoord1;
-        const glm::vec2& w2 = m_vertices[i2].texCoord1;
-        const glm::vec2& w3 = m_vertices[i3].texCoord1;
+        const glm::vec2& w1 = m_vertices.texCoord1[i1];
+        const glm::vec2& w2 = m_vertices.texCoord1[i2];
+        const glm::vec2& w3 = m_vertices.texCoord1[i3];
 
         float x1 = v2.x - v1.x;
         float x2 = v3.x - v1.x;
@@ -372,18 +378,18 @@ void FBXMeshNode::calculateTangentsAndBinormals()
 
     for (size_t a = 0; a < vertexCount; a++)
     {
-        const glm::vec3& n = m_vertices[a].normal.xyz();
+        const glm::vec3& n = m_vertices.normal[a].xyz();
         const glm::vec3& t = tan1[a];
 
         // Gram-Schmidt orthogonalise
         glm::vec3 p = t - n * glm::dot(n, t);
         if ( glm::length(p) != 0 )
         {
-            m_vertices[a].tangent = glm::vec4( glm::normalize( p ), 0.0f );
+            m_vertices.tangent[a] = glm::vec4( glm::normalize( p ), 0.0f );
 
             // calculate binormal
             float sign = glm::dot(glm::cross(n.xyz(), t.xyz()), tan2[a].xyz()) < 0.0f ? -1.0f : 1.0f;
-            m_vertices[a].binormal = glm::vec4(glm::cross(m_vertices[a].normal.xyz(),m_vertices[a].tangent.xyz()) * sign, 0);
+            m_vertices.binormal[a] = glm::vec4(glm::cross(n,m_vertices.tangent[a].xyz()) * sign, 0);
         }
     }
 

@@ -4,8 +4,8 @@
 #include "FBXMeshNode.h"
 #include "FBXAnimation.h"
 
-#include "Engine/Vertex.h"
-#include "Engine/Material.h"
+#include "data/Vertex.h"
+#include "engine/Material.h"
 
 #include "gl_core_4_4.h"
 
@@ -957,30 +957,6 @@ void FBXFile::gatherBones(void* a_object)
     {
         gatherBones((void*)fbxNode->GetChild(i));
     }
-}
-
-void FBXNode::updateGlobalTransform()
-{
-    if (m_parent != nullptr)
-        m_globalTransform = m_parent->m_globalTransform * m_localTransform;
-    else
-        m_globalTransform = m_localTransform;
-
-    for (auto child : m_children)
-        child->updateGlobalTransform();
-}
-
-void FBXCameraNode::updateGlobalTransform()
-{
-    if (m_parent != nullptr)
-        m_globalTransform = m_parent->m_globalTransform * m_localTransform;
-    else
-        m_globalTransform = m_localTransform;
-
-    m_viewMatrix = glm::inverse( m_globalTransform );
-
-    for (auto child : m_children)
-        child->updateGlobalTransform();
 }
 
 FBXAnimation* FBXAnimation::clone() const

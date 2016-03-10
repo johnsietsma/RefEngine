@@ -1,5 +1,5 @@
 
-#include "Engine/Camera.h"
+#include "engine/Camera.h"
 #include <GLFW/glfw3.h>
 #include <glm/gtx/quaternion.hpp>
 

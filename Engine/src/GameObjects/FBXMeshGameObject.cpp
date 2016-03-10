@@ -1,13 +1,14 @@
 #include "FBXMeshGameObject.h"
 
-#include "Engine/Camera.h"
-#include "Engine/Material.h"
-#include "Engine/ResourceCreator.h"
-#include "Engine/Sampler.h"
-#include "Engine/Texture.h"
+#include "engine/Camera.h"
+#include "engine/Material.h"
+#include "engine/ResourceCreator.h"
+#include "data/Primitive.h"
+#include "graphics/Sampler.h"
+#include "graphics/Texture.h"
 
-#include "File/FBXMeshNode.h"
-#include "File/FBXAnimation.h"
+#include "fbx/FBXMeshNode.h"
+#include "fbx/FBXAnimation.h"
 
 #include "gl_core_4_4.h"
 
@@ -22,10 +23,10 @@ FBXMeshGameObject::FBXMeshGameObject(const Transform& transform, const char* pMe
 
 bool FBXMeshGameObject::create()
 {
-    m_programs[0] = ResourceCreator::CreateProgram("normal", "vertexLit"); // No anims, not texture
-    m_programs[1] = ResourceCreator::CreateProgram("texturedNormal", "texturedVertexLit"); // No anims, textured
-    m_programs[2] = ResourceCreator::CreateProgram("skinning", "vertexLit"); // Anims, not textured
-    m_programs[3] = ResourceCreator::CreateProgram("skinning", "texturedVertLit"); // Anims, textured
+    m_programs[0] = ResourceCreator::createProgram("normal", "vertexLit"); // No anims, not texture
+    m_programs[1] = ResourceCreator::createProgram("texturedNormal", "texturedVertexLit"); // No anims, textured
+    m_programs[2] = ResourceCreator::createProgram("skinning", "vertexLit"); // Anims, not textured
+    m_programs[3] = ResourceCreator::createProgram("skinning", "texturedVertexLit"); // Anims, textured
     
     for( auto& prog : m_programs ) {
         if( !prog.isValid() )
@@ -41,12 +42,33 @@ bool FBXMeshGameObject::create()
         // Add a new mesh to our collection
         m_renderables.emplace_back(); // Creates a Mesh, calling the constructor with no parameters.
         auto& renderable = m_renderables.back(); // Get a reference to the new mesh.
+        
+        const Vertices_FBX& vertices = pFbxMesh->m_vertices;
+        std::vector<Buffer> fbxVertexBuffers {
+            Buffer::create(vertices.position),
+            Buffer::create(vertices.color),
+            Buffer::create(vertices.normal),
+            Buffer::create(vertices.tangent),
+            Buffer::create(vertices.binormal),
+            Buffer::create(vertices.indices),
+            Buffer::create(vertices.weights),
+            Buffer::create(vertices.texCoord1),
+            Buffer::create(vertices.texCoord2)
+        };
+        
+        std::vector<BufferAccessor> fbxVertexBufferAccessors = VertexAttributes::create<Vertices_FBX>();
+        
+        std::vector<Primitive> fbxVertexPrimitives;
+        for( int i=0; i< fbxVertexBuffers.size(); i++ )
+        {
+            fbxVertexPrimitives.emplace_back( fbxVertexBuffers[i], fbxVertexBufferAccessors[i] );
+        }
 
         // Grab the vertex and index data and upload it to OpenGL
-        renderable.mesh.create(pFbxMesh->m_vertices.data(), (GLsizei)pFbxMesh->m_vertices.size(), pFbxMesh->m_indices.data(), (GLsizei)pFbxMesh->m_indices.size());
+        renderable.mesh.create( fbxVertexPrimitives, Buffer::create(pFbxMesh->m_indices) );
 
         // Put a bounding volume around it for frustum culling
-        m_boundingVolume.addBoundingSphere(glm::vec3(pFbxMesh->m_globalTransform[3]), pFbxMesh->m_vertices);
+        m_boundingVolume.addBoundingSphere(glm::vec3(pFbxMesh->m_globalTransform[3]), pFbxMesh->m_vertices.position);
 
         // Figure out how to index into the the 4 programs created above
         int texIndex  = 0;
@@ -59,7 +81,7 @@ bool FBXMeshGameObject::create()
 
             for (int textureIndex = 0; textureIndex < (size_t)Material::TextureType::Count; textureIndex++) {
                 auto& texturePath = pMaterial->texturePaths[textureIndex];
-                Texture texture = ResourceCreator::CreateTexture( texturePath.c_str() );
+                Texture texture = ResourceCreator::createTexture( texturePath.c_str() );
 
                 if (texture.isValid()) {
                     texIndex = 1;

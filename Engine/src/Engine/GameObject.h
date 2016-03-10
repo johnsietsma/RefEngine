@@ -1,10 +1,11 @@
 #pragma once
 
-#include "Engine/Component.h"
-#include "Engine/Program.h"
-#include "Engine/Renderable.h"
-#include "Engine/BoundingVolume.h"
-#include "Engine/Transform.h"
+#include "engine/Component.h"
+#include "engine/BoundingVolume.h"
+#include "engine/Transform.h"
+
+#include "graphics/Program.h"
+#include "graphics/Renderable.h"
 
 #include <memory>
 
