@@ -36,7 +36,7 @@ struct BufferAccessor
     {}
 
     // Create a new BufferAccessor without a Buffer bound to it. Useful to describe data before it's available.
-    BufferAccessor(BufferAccessorType a_accessorType, int a_count, GLenum a_dataType, size_t a_byteStride, size_t a_byteOffset) :
+    BufferAccessor(BufferAccessorType a_accessorType, int a_count, GLenum a_dataType, GLsizei a_byteStride, size_t a_byteOffset) :
         accessorType(a_accessorType),
         count(a_count),
         dataType(a_dataType),
@@ -54,7 +54,7 @@ struct BufferAccessor
     BufferAccessorType accessorType; // The type we're accessing, eg, positions or normals.
     int count;          // num of attributes (not bytes).
     GLenum dataType;    // The type of data stored in the buffer, eg GL_FLOAT.
-    size_t byteStride;     // Stride of the component in the buffer, eg VEC3 may have a stride of 4*3=12 bytes.
+    GLsizei byteStride;     // Stride of the component in the buffer, eg VEC3 may have a stride of 4*3=12 bytes.
     size_t byteOffset;  // Offset into the buffer.
 };
 
