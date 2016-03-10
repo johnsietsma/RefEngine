@@ -27,8 +27,6 @@ Engine::Engine( const char* pWindowName ) :
 {
     if( !m_pWindow->isValid() ) return;
 
-
-
     auto major = ogl_GetMajorVersion();
     auto minor = ogl_GetMinorVersion();
     std::cout << "GL: " << major << "." << minor << std::endl;
@@ -44,7 +42,7 @@ Engine::Engine( const char* pWindowName ) :
 
     // create a default camera
     Transform camTransform(vec3(2, 6, 13), vec3(0));
-    glm::ivec2 size(1024, 768);
+    glm::ivec2 size = m_pWindow->getFramebufferSize();
     m_pMainCamera = std::make_shared<Camera>(camTransform, glm::radians(45.f), size.x/(float)size.y, 0.1f, 1000.f);
     m_cameras.push_back( m_pMainCamera );
 

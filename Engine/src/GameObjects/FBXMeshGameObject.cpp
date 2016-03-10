@@ -1,9 +1,13 @@
 #include "FBXMeshGameObject.h"
 
 #include "Engine/Camera.h"
+#include "Engine/Material.h"
 #include "Engine/ResourceCreator.h"
 #include "Engine/Sampler.h"
 #include "Engine/Texture.h"
+
+#include "File/FBXMeshNode.h"
+#include "File/FBXAnimation.h"
 
 #include "gl_core_4_4.h"
 
@@ -18,26 +22,22 @@ FBXMeshGameObject::FBXMeshGameObject(const Transform& transform, const char* pMe
 
 bool FBXMeshGameObject::create()
 {
-    // Create the program for rendering the non-skinned meshes.
-    m_defaultProgram = ResourceCreator::CreateProgram("texNormal", "texturedVertLit");
-    if (!m_defaultProgram.isValid())
-        return false;
-
-    // Create the program for rendering this FBX.
-    // Use a skinning vertex shader to support animation.
-    // Use the default textured fragment shader.
-    m_skinningProgram = ResourceCreator::CreateProgram("skinning", "texturedVertLit");
-    if (!m_skinningProgram.isValid())
-        return false;
-
+    m_programs[0] = ResourceCreator::CreateProgram("normal", "vertexLit"); // No anims, not texture
+    m_programs[1] = ResourceCreator::CreateProgram("texturedNormal", "texturedVertexLit"); // No anims, textured
+    m_programs[2] = ResourceCreator::CreateProgram("skinning", "vertexLit"); // Anims, not textured
+    m_programs[3] = ResourceCreator::CreateProgram("skinning", "texturedVertLit"); // Anims, textured
+    
+    for( auto& prog : m_programs ) {
+        if( !prog.isValid() )
+            return false;
+    }
+    
     if (!m_fbxFile.load(m_meshFileName.c_str()))
         return false;
 
     // Extract the mesh and diffuse textures
-    for (unsigned int meshIndex = 0; meshIndex < m_fbxFile.getMeshCount(); meshIndex++)
+    for (const auto pFbxMesh : m_fbxFile.getMeshes())
     {
-        auto pFbxMesh = m_fbxFile.getMeshByIndex(meshIndex);
-
         // Add a new mesh to our collection
         m_renderables.emplace_back(); // Creates a Mesh, calling the constructor with no parameters.
         auto& renderable = m_renderables.back(); // Get a reference to the new mesh.
@@ -45,25 +45,30 @@ bool FBXMeshGameObject::create()
         // Grab the vertex and index data and upload it to OpenGL
         renderable.mesh.create(pFbxMesh->m_vertices.data(), (GLsizei)pFbxMesh->m_vertices.size(), pFbxMesh->m_indices.data(), (GLsizei)pFbxMesh->m_indices.size());
 
+        // Put a bounding volume around it for frustum culling
         m_boundingVolume.addBoundingSphere(glm::vec3(pFbxMesh->m_globalTransform[3]), pFbxMesh->m_vertices);
 
-        // Take a copy of the correct program.
-        // This object still owns the resource and needs to clean it up.
-        renderable.program = pFbxMesh->m_name == m_skinnedMeshName ? m_skinningProgram : m_defaultProgram;
+        // Figure out how to index into the the 4 programs created above
+        int texIndex  = 0;
+        int animIndex = pFbxMesh->m_name == m_skinnedMeshName ? 2 : 0;
 
         // A mesh can have multiple materials. For simplicity we'll only use the first one
         if (pFbxMesh->m_materials.size() > 0) {
-            FBXMaterial* pMaterial = pFbxMesh->m_materials[0];
+            Material* pMaterial = pFbxMesh->m_materials[0];
 
-            glUseProgram(renderable.program.getId());
 
-            for (int textureIndex = 0; textureIndex < FBXMaterial::TextureTypes_Count; textureIndex++) {
+            for (int textureIndex = 0; textureIndex < (size_t)Material::TextureType::Count; textureIndex++) {
                 auto& texturePath = pMaterial->texturePaths[textureIndex];
-                auto& texture = m_fbxFile.getTextureByName(texturePath.c_str());
+                Texture texture = ResourceCreator::CreateTexture( texturePath.c_str() );
 
                 if (texture.isValid()) {
+                    texIndex = 1;
+
+                    Program prog = m_programs[texIndex + animIndex];
+                    glUseProgram(prog.getId());
+
                     // Bind the texture to a texture unit. textureIndex _must_ be an int.
-                    renderable.program.setUniform(FBXMaterial::getTextureName(textureIndex), textureIndex);
+                    prog.setUniform(Material::getTextureUniformName((Material::TextureType)textureIndex), textureIndex);
 
                     renderable.samplers.emplace_back(
                             Texture(texture.getId()),
@@ -72,6 +77,9 @@ bool FBXMeshGameObject::create()
                 }
             }
         }
+        
+        // Take a copy of the correct program. This class does the cleanup.
+        renderable.program = m_programs[texIndex + animIndex]; 
     }
 
 
@@ -83,8 +91,16 @@ void FBXMeshGameObject::destroy()
 {
     m_fbxFile.unload(); // Clean up texture resources.
 
-    //m_defaultProgram.destroy();
-    //m_skinningProgram.destroy();
+    for( auto& prog: m_programs ) 
+    {
+        prog.destroy();
+    }
+
+    for (auto& rend : m_renderables)
+    {
+        rend.program.setId(-1); // We've already cleaned this up
+    }
+
 
     GameObject::destroy();
 }
@@ -92,14 +108,18 @@ void FBXMeshGameObject::destroy()
 
 void FBXMeshGameObject::update(float deltaTime)
 {
-    if (m_fbxFile.getSkeletonCount() == 0 || m_fbxFile.getAnimationCount() == 0) return;
-
     // Keep track of how much time has passed
     m_elapsedTime += deltaTime;
+    
+    std::vector<FBXSkeleton*>& skeletons = m_fbxFile.getSkeletons();
+    auto& animationMap = m_fbxFile.getAnimations();
+    
+    if( skeletons.size() == 0 || animationMap.size() == 0  )
+        return;
 
     // Just use the first skeleton and first animation.
-    FBXSkeleton* pSkeleton = m_fbxFile.getSkeletonByIndex(0);
-    FBXAnimation* pAnimation = m_fbxFile.getAnimationByIndex(0);
+    FBXSkeleton* pSkeleton = skeletons[0];
+    const FBXAnimation* pAnimation = animationMap.begin()->second;
     assert(pAnimation->totalFrames() > 0);
 
     // Get the position, scale, rotation values of the keyframes in the animation at m_elapsedTime.
@@ -121,10 +141,12 @@ void FBXMeshGameObject::preDraw(const Camera& camera, const Light& light)
         Program& program = renderable.program;
         assert(program.isValid());
         glUseProgram(program.getId());
+        
+        std::vector<FBXSkeleton*>& skeletons = m_fbxFile.getSkeletons();
 
-        if (m_fbxFile.getSkeletonCount() > 0 && program.hasUniform("bones"))
+        if (skeletons.size() > 0 && program.hasUniform("bones"))
         {
-            FBXSkeleton* pSkeleton = m_fbxFile.getSkeletonByIndex(0);
+            FBXSkeleton* pSkeleton = skeletons[0];
 
             // Use the nodes we've evaluated above to update the bone positions and combine with the bind pose.
             pSkeleton->updateBones();

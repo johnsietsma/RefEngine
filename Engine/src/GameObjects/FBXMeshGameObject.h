@@ -29,9 +29,8 @@ private:
     FBXFile m_fbxFile; // Loads the FBX and stores the associated data.
     std::string m_meshFileName;
     std::string m_skinnedMeshName;
-
-    Program m_defaultProgram;
-    Program m_skinningProgram;
+    
+    Program m_programs[4];
 
     float m_elapsedTime = 0; // Time passed since creation.
 };

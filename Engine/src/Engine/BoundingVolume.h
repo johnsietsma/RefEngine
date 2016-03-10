@@ -1,6 +1,6 @@
 #pragma once
 
-#include "File/FBXVertex.h"
+#include "Vertex.h"
 
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -19,7 +19,7 @@ public:
     void addBoundingSphere(glm::vec3 center, std::vector<glm::vec3> pointsToFit);
 
     //TODO: Remove the FBX dep
-    void addBoundingSphere(glm::vec3 center, std::vector<FBXVertex> pointsToFit );
+    void addBoundingSphere(glm::vec3 center, std::vector<Vertex_FBX> pointsToFit );
 
 private:
     std::vector<std::shared_ptr<Shape>> m_shapes;
