@@ -59,7 +59,7 @@ void GameObject::draw(const Camera& camera, const Light& light, Program override
             }
         }
 
-        glDrawElements(GL_TRIANGLES, renderable.mesh.getIndexCount(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, (GLsizei)renderable.mesh.getIndexCount(), GL_UNSIGNED_INT, 0);
     }
 }
 

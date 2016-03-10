@@ -54,7 +54,7 @@ struct BufferAccessor
     BufferAccessorType accessorType; // The type we're accessing, eg, positions or normals.
     int count;          // num of attributes (not bytes).
     GLenum dataType;    // The type of data stored in the buffer, eg GL_FLOAT.
-    int byteStride;     // Stride of the component in the buffer, eg VEC3 may have a stride of 4*3=12 bytes.
+    size_t byteStride;     // Stride of the component in the buffer, eg VEC3 may have a stride of 4*3=12 bytes.
     size_t byteOffset;  // Offset into the buffer.
 };
 

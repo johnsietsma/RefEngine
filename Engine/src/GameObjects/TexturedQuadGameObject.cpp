@@ -21,7 +21,7 @@ bool TexturedQuadGameObject::create()
     renderable.program.setUniform("shadowBias", 0.01f);
 
     //  Create the quad geo
-    renderable.mesh = GeometryCreator::createTexturedQuad<Vertex_PositionTexCoord>();
+    renderable.mesh = GeometryCreator::createTexturedQuad<Vertex_PositionNormalTexCoord>();
     if (!renderable.mesh.isValid())
         return false;
 

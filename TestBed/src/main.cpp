@@ -47,7 +47,7 @@ bool addSoulSpear(std::shared_ptr<Engine> pEngine)
     if (!texturedProgram.isValid())
         return false;
 
-    Program fragLitProgram = ResourceCreator::createProgram("texturedNormal", "texturedVertLit");
+    Program fragLitProgram = ResourceCreator::createProgram("texturedNormal", "texturedVertexLit");
     if (!fragLitProgram.isValid())
         return false;
 
@@ -67,6 +67,7 @@ bool addSoulSpear(std::shared_ptr<Engine> pEngine)
 
 bool setup(std::shared_ptr<Engine> pEngine)
 {
+
     // Setup a RenderPass
     RenderPassConfig passConfig{
         glm::vec3(0.6f,0,0), // clear color

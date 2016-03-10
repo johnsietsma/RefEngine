@@ -26,7 +26,7 @@ bool FBXMeshGameObject::create()
     m_programs[0] = ResourceCreator::createProgram("normal", "vertexLit"); // No anims, not texture
     m_programs[1] = ResourceCreator::createProgram("texturedNormal", "texturedVertexLit"); // No anims, textured
     m_programs[2] = ResourceCreator::createProgram("skinning", "vertexLit"); // Anims, not textured
-    m_programs[3] = ResourceCreator::createProgram("skinning", "texturedVertLit"); // Anims, textured
+    m_programs[3] = ResourceCreator::createProgram("skinning", "texturedVertexLit"); // Anims, textured
     
     for( auto& prog : m_programs ) {
         if( !prog.isValid() )
