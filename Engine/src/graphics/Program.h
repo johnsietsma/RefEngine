@@ -15,7 +15,7 @@ public:
     Program() : m_programID((GLuint)-1) {};
     ~Program() = default;
 
-    bool isValid() { return m_programID != (GLuint)-1; }
+    bool isValid() const { return m_programID != (GLuint)-1; }
     GLuint getId() const { return m_programID; }
     void setId(GLuint id) { m_programID = id; }
 

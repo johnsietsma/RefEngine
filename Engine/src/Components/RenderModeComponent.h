@@ -15,8 +15,9 @@ public:
         m_programs(programs)
     {}
 
-    virtual void onKeyEvent( Input::Key key ) override
+    virtual void onKeyEvent( Input::Key key, Input::Action action) override
     {
+        if (action != Input::Action::Press) return;
         if( (int)key < (int)Input::Key::Zero && (int)key > (int)Input::Key::Nine ) return;
 
         GLenum mode=  GL_FILL;

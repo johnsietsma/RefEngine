@@ -1,8 +1,4 @@
-#include "InputManager.h"
-
-#include "Engine.h"
-#include "GameObject.h"
-#include "Input.h"
+#include "InputManagerGLFW.h"
 
 #include <GLFW/glfw3.h>
 
@@ -11,25 +7,70 @@
 static std::unordered_map<GLFWwindow*, InputManager*> windowManagerMap;
 static std::unordered_map<int,Input::Key> keyCodeMap;
 
+
+
 Input::Key getKey( int keyCode )
 {
-
     auto keyItr = keyCodeMap.find(keyCode);
-    if( keyItr == keyCodeMap.end() ) return Input::Key::Unknown;
+    if( keyItr == keyCodeMap.end() ) return Input::Key::None;
     return keyItr->second;
 }
 
+Input::MouseButton getMouseButton( int mouseButonCode )
+{
+    switch (mouseButonCode)
+    {
+    case GLFW_MOUSE_BUTTON_LEFT: return Input::MouseButton::Left;
+    case GLFW_MOUSE_BUTTON_MIDDLE: return Input::MouseButton::Middle;
+    case GLFW_MOUSE_BUTTON_RIGHT: return Input::MouseButton::Right;
+    default: assert(false);
+    }
+    return Input::MouseButton::None;
+}
 
-void key_callback(GLFWwindow* pWindow, int keyCode, int scancode, int actionCode, int mods)
+Input::Action getAction( int actionCode )
+{
+    switch (actionCode)
+    {
+    case GLFW_PRESS: return Input::Action::Press;
+    case GLFW_RELEASE: return Input::Action::Release;
+    case GLFW_REPEAT: break; 
+    default: break; 
+    }
+    return Input::Action::None;
+}
+
+
+static void key_callback(GLFWwindow* pWindow, int keyCode, int scancode, int actionCode, int mods)
 {
     InputManager* pInputManager = windowManagerMap[pWindow];
     if( pInputManager==nullptr ) return;
 
     Input::Key key = getKey( keyCode );
+    Input::Action action = getAction(actionCode);
 
-    if( key==Input::Key::Unknown ) return;
+    if( key==Input::Key::None ) return;
 
-    pInputManager->onKeyEvent( key );
+    pInputManager->onKeyEvent( key, action );
+}
+
+static void mouse_button_callback(GLFWwindow* pWindow, int buttonCode, int actionCode, int mods)
+{
+    InputManager* pInputManager = windowManagerMap[pWindow];
+    if (pInputManager == nullptr) return;
+
+    Input::MouseButton button = getMouseButton(buttonCode);
+    Input::Action action = getAction(actionCode);
+
+    pInputManager->onMouseButton(button, action);
+}
+
+static void cursor_position_callback(GLFWwindow* pWindow, double xPos, double yPos)
+{
+    InputManager* pInputManager = windowManagerMap[pWindow];
+    if (pInputManager == nullptr) return;
+
+    pInputManager->onMouseMove((float)xPos, (float)yPos);
 }
 
 
@@ -137,27 +178,18 @@ void makeKeyCodeMap()
     keyCodeMap[GLFW_KEY_MENU] = Input::Key::Menu;
 }
 
-InputManager::InputManager( GLFWwindow* pWindow, std::shared_ptr<Engine> pEngine ) :
-    m_pEngine(pEngine)
+InputManagerGLFW::InputManagerGLFW( GLFWwindow* pWindow )
 {
     windowManagerMap[pWindow] = this;
     makeKeyCodeMap();
     glfwSetKeyCallback( pWindow, key_callback );
+    glfwSetMouseButtonCallback(pWindow, mouse_button_callback);
+    glfwSetCursorPosCallback(pWindow, cursor_position_callback);
 }
 
 
-void InputManager::onKeyEvent( Input::Key key )
+void InputManagerGLFW::pollEvents() const
 {
-    auto pEngine = m_pEngine.lock();
-    if( pEngine==nullptr ) return;
-
-    for( std::shared_ptr<GameObject>& pGameObject : pEngine->getGameObjects() )
-    {
-        for( std::shared_ptr<Component>& pComponent : pGameObject->getComponents() )
-        {
-            pComponent->onKeyEvent( key );
-        }
-
-    }
+    glfwPollEvents();
 }
 

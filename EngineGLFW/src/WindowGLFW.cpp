@@ -1,11 +1,11 @@
-#include "Window.h"
+#include "WindowGLFW.h"
 
 #include "gl_core_4_4.h"
 
 #include <GLFW/glfw3.h>
 
 
-Window::Window(const char* title, int width, int height) :
+WindowGLFW::WindowGLFW(const char* title, int width, int height) :
     m_pWindow(nullptr)
 {
     if (glfwInit() == GL_FALSE)
@@ -38,28 +38,38 @@ Window::Window(const char* title, int width, int height) :
         });
 }
 
-Window::~Window()
+WindowGLFW::~WindowGLFW()
 {
     glfwDestroyWindow(m_pWindow);
     glfwTerminate();
     m_pWindow = nullptr;
 }
 
-glm::ivec2 Window::getFramebufferSize() const
+float WindowGLFW::getTime() const
+{
+    return (float)glfwGetTime();
+}
+
+void WindowGLFW::swapBuffers() const
+{
+    glfwSwapBuffers( m_pWindow );
+}
+
+glm::ivec2 WindowGLFW::getFramebufferSize() const
 {
     int width, height;
     glfwGetFramebufferSize(m_pWindow, &width, &height);
     return glm::ivec2( width, height );
 }
 
-glm::ivec2 Window::getWindowSize() const
+glm::ivec2 WindowGLFW::getWindowSize() const
 {
     int width, height;
     glfwGetWindowSize(m_pWindow, &width, &height);
     return glm::ivec2( width, height );
 }
 
-float Window::getAspectRatio() const
+float WindowGLFW::getAspectRatio() const
 {
     int width, height;
     glfwGetWindowSize(m_pWindow, &width, &height);

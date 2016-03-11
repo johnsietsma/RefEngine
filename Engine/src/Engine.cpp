@@ -1,20 +1,23 @@
 #include "Engine.h"
 
+#include "components/CameraComponent.h"
+
 #include "engine/Camera.h"
 #include "engine/GameObject.h"
+#include "engine/GameObjectManager.h"
 #include "engine/Helpers.h"
-#include "engine/InputManager.h"
 #include "engine/Light.h"
+#include "engine/Window.h"
 
 #include "graphics/RenderPass.h"
 
+#include "input/InputManager.h"
+
 #include "Gizmos.h"
 #include "gl_core_4_4.h"
-#include "Window.h"
 
 #include <glm/glm.hpp>
 #include <glm/geometric.hpp>
-#include <GLFW/glfw3.h>
 
 #include <assert.h>
 #include <iostream>
@@ -22,11 +25,15 @@
 using glm::vec3;
 using glm::vec4;
 
-Engine::Engine( const char* pWindowName ) :
-    m_pWindow(std::make_shared<Window>(pWindowName, 1024, 768)),
+Engine::Engine(std::shared_ptr<Window> pWindow, std::shared_ptr<InputManager> pInputManager) :
+    m_pWindow(pWindow),
+    m_pInputManager(pInputManager),
+    m_pGameObjectManager(std::make_shared<GameObjectManager>()),
     m_shouldDrawGrid(true)
 {
     if( !m_pWindow->isValid() ) return;
+
+    pInputManager->regsiterEventHandler(m_pGameObjectManager);
 
     auto major = ogl_GetMajorVersion();
     auto minor = ogl_GetMinorVersion();
@@ -66,28 +73,17 @@ bool Engine::startup()
 {
     if( !m_pWindow->isValid() ) return false;
 
-    m_pInputManager = std::make_shared<InputManager>(m_pWindow->getWindow(), shared_from_this());
-
     // start the gizmo system that can draw basic shapes
     Gizmos::create();
 
-    for (auto& gameObject : m_gameObjects)
-    {
-        if (!gameObject->create())
-            return false;
-    }
+    m_pGameObjectManager->create();
 
     return true;
 }
 
 void Engine::shutdown()
 {
-
-    for (auto& gameObject : m_gameObjects)
-    {
-        gameObject->destroy();
-    }
-    m_gameObjects.clear();
+    m_pGameObjectManager->destroy();
 
     for (auto& renderPass : m_renderPasses)
     {
@@ -102,37 +98,25 @@ void Engine::shutdown()
 
 void Engine::run() {
 
-    double prevTime = glfwGetTime();
+    double prevTime = m_pWindow->getTime();
     double currTime = 0;
 
-    while ((currTime = glfwGetTime()) && update((float)(currTime - prevTime))) {
+    while ((currTime = m_pWindow->getTime()) && update((float)(currTime - prevTime))) {
 
-        glfwPollEvents();
+        m_pInputManager->pollEvents();
         draw();
-        glfwSwapBuffers(m_pWindow->getWindow());
+        m_pWindow->swapBuffers();
 
         prevTime = currTime;
     }
 }
 
 bool Engine::update(float deltaTime) {
-
-    // close the application if the window closes
-    if (glfwWindowShouldClose(m_pWindow->getWindow()) ||
-        glfwGetKey(m_pWindow->getWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        return false;
-
-    // update the camera's movement
-    m_pMainCamera->update(deltaTime);
-
     //TODO: Temp, make light's into components
     glm::quat rot = glm::angleAxis(1 * deltaTime, Transform::WORLD_UP);
     m_pLight->getTransform().rotate(rot);
 
-    for (auto& gameObject : m_gameObjects)
-    {
-        gameObject->update(deltaTime);
-    }
+    m_pGameObjectManager->update(deltaTime);
 
     // return true, else the application closes
     return true;
@@ -159,7 +143,7 @@ void Engine::draw()
     for (RenderPass& renderPass : m_renderPasses)
     {
         // Get the camera to render from
-        auto pCameraWeakPtr = renderPass.getCamera();
+        auto pCameraWeakPtr = renderPass.getCameraComponent();
         auto pCamera = pCameraWeakPtr.lock();
         if (pCamera == nullptr)
         {
@@ -176,13 +160,7 @@ void Engine::draw()
         glClearColor(clearColor.r, clearColor.g, clearColor.b, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-        for (auto& gameObject : m_gameObjects)
-        {
-            const size_t layer = gameObject->getLayer();
-            if( layer==0 || renderPass.getLayers()[layer] )
-                gameObject->draw(*pCamera, *m_pLight, renderPass.getProgram());
-        }
+        m_pGameObjectManager->draw(*pCamera, *m_pLight, renderPass.getProgram(), renderPass.getLayers());
     }
 
     if( m_shouldDrawGrid ) {

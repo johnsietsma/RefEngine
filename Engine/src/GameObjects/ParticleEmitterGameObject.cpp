@@ -1,6 +1,7 @@
 #include "ParticleEmitterGameObject.h"
 
-#include "engine/Camera.h"
+#include "components/CameraComponent.h"
+
 #include "engine/ResourceCreator.h"
 
 #include "GameObjects/Particle.h"
@@ -8,7 +9,7 @@
 #include <assert.h>
 
 
-ParticleEmitterGameObject::ParticleEmitterGameObject(const ParticleEmitterConfig& config, const std::weak_ptr<Camera> pBillboardCamera) :
+ParticleEmitterGameObject::ParticleEmitterGameObject(const ParticleEmitterConfig& config, const std::weak_ptr<CameraComponent> pBillboardCamera) :
     m_config(config),
     m_pBillboardCamera(pBillboardCamera),
     m_pParticles(nullptr),
@@ -146,7 +147,7 @@ void ParticleEmitterGameObject::update(float deltaTime)
         m_emitTimer -= timePerParticle;
     }
 
-    std::shared_ptr<Camera> pBillboardCamera = m_pBillboardCamera.lock();
+    std::shared_ptr<CameraComponent> pBillboardCamera = m_pBillboardCamera.lock();
     if (pBillboardCamera == nullptr) return;
     const Transform& camTransform = pBillboardCamera->getTransform();
 
@@ -232,7 +233,7 @@ void ParticleEmitterGameObject::positionBillboardParticle(unsigned int vertexInd
         + glm::vec4(particle->position, 0); // Move the vert to the particles position
 }
 
-void ParticleEmitterGameObject::preDraw(const Camera& camera, const Light& light)
+void ParticleEmitterGameObject::preDraw(const CameraComponent& camera, const Light& light)
 {
     assert(m_renderables.size() > 0);
 

@@ -4,7 +4,7 @@
 #include "graphics/Mesh.h"
 #include "graphics/Program.h"
 
-class Camera;
+class CameraComponent;
 struct Particle;
 
 struct ParticleEmitterConfig
@@ -35,7 +35,7 @@ struct ParticleEmitterConfig
 class ParticleEmitterGameObject : public GameObject
 {
 public:
-    ParticleEmitterGameObject(const ParticleEmitterConfig& config, const std::weak_ptr<Camera> pBillboardCamera);
+    ParticleEmitterGameObject(const ParticleEmitterConfig& config, const std::weak_ptr<CameraComponent> pBillboardCamera);
     ~ParticleEmitterGameObject();
 
     bool isValid() { return m_firstDeadIndex != -1; }
@@ -43,7 +43,7 @@ public:
     bool create() override;
     void destroy() override;
     void update(float deltaTime) override;
-    void preDraw(const Camera& camera, const Light& light) override;
+    void preDraw(const CameraComponent& camera, const Light& light) override;
 
     ParticleEmitterGameObject(const ParticleEmitterGameObject& rhs) = delete;
     void operator =(const ParticleEmitterGameObject& rhs) = delete;
@@ -53,7 +53,7 @@ private:
     void positionBillboardParticle(unsigned int vertexIndex, const glm::mat4& billboardMat, const Particle* particle);
 
     const ParticleEmitterConfig m_config;
-    const std::weak_ptr<Camera> m_pBillboardCamera;
+    const std::weak_ptr<CameraComponent> m_pBillboardCamera;
 
     glm::vec3 m_position;
     Particle* m_pParticles;

@@ -6,11 +6,14 @@
 
 #include "Engine.h"
 #include "GameObjects.h"
-#include "Window.h"
+
+#include "WindowGLFW.h"
+#include "InputManagerGLFW.h"
 
 #include "components/RenderModeComponent.h"
 
 #include "engine/Camera.h"
+#include "engine/GameObjectManager.h"
 #include "engine/ResourceCreator.h"
 
 #include "graphics/RenderPass.h"
@@ -33,7 +36,7 @@ void addParticles(std::shared_ptr<Engine> pEngine)
     config.endSize = 0.1f;
     config.velocityMin = 0.1f;
     config.velocityMax = 1.0f;
-    pEngine->addGameObject(std::make_shared<ParticleEmitterGameObject>(config, pEngine->getMainCamera()));
+    pEngine->getGameObjectManager().lock()->addGameObject(std::make_shared<ParticleEmitterGameObject>(config, pEngine->getMainCamera()));
 }
 
 bool addSoulSpear(std::shared_ptr<Engine> pEngine)
@@ -61,7 +64,7 @@ bool addSoulSpear(std::shared_ptr<Engine> pEngine)
 
     auto fbxGameObject = std::make_shared<FBXMeshGameObject>(Transform(), "./data/models/soulspear/soulspear.fbx", nullptr);
     fbxGameObject->addComponent(std::make_shared<RenderModeComponent>(fbxGameObject, renderPrograms));
-    pEngine->addGameObject(fbxGameObject);
+    pEngine->getGameObjectManager().lock()->addGameObject(fbxGameObject);
 
     return true;
 }
@@ -84,9 +87,11 @@ bool setup(std::shared_ptr<Engine> pEngine)
 
     pEngine->addRenderPass(fboRenderPass);
 
+    auto pGameObjectManager = pEngine->getGameObjectManager().lock();
+
     // Apply the FBO to a textured quad
     Transform fboQuadTrans(glm::vec3(0, 0, 0));
-    pEngine->addGameObject( std::make_shared<TexturedQuadGameObject>(fboQuadTrans, fboRenderPass.getTexture(), "diffuseSampler", "textured", "boxBlur") );
+    pGameObjectManager->addGameObject( std::make_shared<TexturedQuadGameObject>(fboQuadTrans, fboRenderPass.getTexture(), "diffuseSampler", "textured", "boxBlur") );
 
     // --- Soul spear
     if (!addSoulSpear(pEngine))
@@ -94,11 +99,11 @@ bool setup(std::shared_ptr<Engine> pEngine)
 
     // --- Pyro ---
     Transform pyroTransform = Transform(glm::vec3(-6, 0, -2), glm::quat(), glm::vec3(0.001f));
-    pEngine->addGameObject(std::make_shared<FBXMeshGameObject>(pyroTransform, "./data/models/Pyro/pyro.fbx", "PYRO_BASE"));
+    pGameObjectManager->addGameObject(std::make_shared<FBXMeshGameObject>(pyroTransform, "./data/models/Pyro/pyro.fbx", "PYRO_BASE"));
 
     // --- Sprite sheet ---
     Transform spriteSheetTrans(glm::vec3(-5, 2.5f, -5), glm::angleAxis(glm::radians(90.f), Transform::WORLD_RIGHT), glm::vec3(0.2f));
-    pEngine->addGameObject(std::make_shared<SpriteSheetQuadGameObject>(spriteSheetTrans, "./data/textures/spritesheet.png", 4, 4));
+    pGameObjectManager->addGameObject(std::make_shared<SpriteSheetQuadGameObject>(spriteSheetTrans, "./data/textures/spritesheet.png", 4, 4));
 
     // --- Crate ---
     Texture quadTexture = ResourceCreator::createTexture("./data/textures/crate.png");
@@ -106,14 +111,14 @@ bool setup(std::shared_ptr<Engine> pEngine)
         return false;
 
     Transform quadTrans(glm::vec3(0, 2.5f, -5), glm::angleAxis(glm::radians(90.f), Transform::WORLD_RIGHT), glm::vec3(0.2f));
-    pEngine->addGameObject(std::make_shared<TexturedQuadGameObject>(quadTrans, quadTexture));
+    pGameObjectManager->addGameObject(std::make_shared<TexturedQuadGameObject>(quadTrans, quadTexture));
 
     // --- Vert colored quad ---
     Transform vertColorTrans(glm::vec3(5, 2.5f, -5), glm::angleAxis(glm::radians(90.f), Transform::WORLD_RIGHT), glm::vec3(0.5f));
-    pEngine->addGameObject(std::make_shared<VertexColoredGridGameObject>(vertColorTrans, glm::ivec2(5, 5)));
+    pGameObjectManager->addGameObject(std::make_shared<VertexColoredGridGameObject>(vertColorTrans, glm::ivec2(5, 5)));
 
     // --- Terrain ---
-    pEngine->addGameObject(std::make_shared<ProceduralGenerationGameObject>(glm::vec3(10,0,0)));
+    pGameObjectManager->addGameObject(std::make_shared<ProceduralGenerationGameObject>(glm::vec3(10,0,0)));
 
 
     // --- Particles ---
@@ -121,7 +126,7 @@ bool setup(std::shared_ptr<Engine> pEngine)
 
     // --- Bunny ---
     Transform bunnyTransform = Transform(glm::vec3(-10, 0, 0), glm::quat(), glm::vec3(0.6f));
-    pEngine->addGameObject(std::make_shared<FBXMeshGameObject>(bunnyTransform, "./data/models/bunny/Bunny.fbx"));
+    pGameObjectManager->addGameObject(std::make_shared<FBXMeshGameObject>(bunnyTransform, "./data/models/bunny/Bunny.fbx"));
 
 
     // --- Shadow RenderPass, with only depth target ---
@@ -146,12 +151,23 @@ bool setup(std::shared_ptr<Engine> pEngine)
     // Ground plane for shadow result
     Transform groundTrans(bunnyTransform);
     groundTrans.translate(glm::vec3(0, 0, 0)); // Move the plane centrally under the bunny
-    pEngine->addGameObject(std::make_shared<TexturedQuadGameObject>(groundTrans, shadowRenderPass.getDepthBufferId(), "shadowMapSampler", "shadow", "shadow"));
+    pGameObjectManager->addGameObject(std::make_shared<TexturedQuadGameObject>(groundTrans, shadowRenderPass.getDepthBufferId(), "shadowMapSampler", "shadow", "shadow"));
     return true;
 }
 
 int main() {
-    auto pEng = std::make_shared<Engine>("TestBed");
+    /* TODO
+        // close the application if the window closes
+    if (glfwWindowShouldClose(m_pWindow->getWindow()) ||
+        glfwGetKey(m_pWindow->getWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        return false;
+
+    */
+
+    std::shared_ptr<WindowGLFW> pWindow = std::make_shared<WindowGLFW>("TestBed", 1024, 768);
+    std::shared_ptr<InputManager> pInputManager = std::make_shared<InputManagerGLFW>(pWindow->getWindow());
+
+    auto pEng = std::make_shared<Engine>(pWindow, pInputManager);
 
     if( !setup( pEng ) ) 
         return 2;

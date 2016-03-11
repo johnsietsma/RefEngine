@@ -24,7 +24,7 @@ function (GenerateEngineExecutable PROJECT_NAME)
     source_group(Shaders FILES ${SHADER_FILES})
 
     # Add the engine ilbrary as a dependency
-    target_link_libraries (${PROJECT_NAME} Engine)
+    target_link_libraries (${PROJECT_NAME} RefEngineGLFW)
 
     # --- Asset copying ---
     IF(APPLE)

@@ -9,28 +9,21 @@
 
 #include <memory>
 
-class Camera;
+class CameraComponent;
 class Light;
 struct Renderable;
 
 class GameObject
 {
 public:
-    const Transform& getTransform() const 
-    { 
-        return m_transform;
-    }
-
-    void setTransform(const Transform& transform) { m_transform = transform; }
-
     virtual bool create() = 0;
+    virtual void update(float deltaTime) {}; //no-op
+    void draw(const CameraComponent& camera, const Light& light, const Program& overrideProgram);
     virtual void destroy();
 
-    virtual void update(float deltaTime) {}; //no-op
-
-    void draw(const Camera& camera, const Light& light, Program overrideProgram);
-
-    void addComponent( std::shared_ptr<Component> component ) { m_components.push_back(component); }
+    // ---- Getters ----
+    const Transform& getTransform() const { return m_transform; }
+    size_t getLayer() const { return m_layer; }
 
     std::vector<std::shared_ptr<Component>>& getComponents() { return m_components; }
     const std::vector<std::shared_ptr<Component>>& getComponents() const { return m_components; }
@@ -38,7 +31,15 @@ public:
     std::vector<Renderable>& getRenderables() { return m_renderables; }
     const std::vector<Renderable>& getRenderables() const { return m_renderables; }
 
-    size_t getLayer() const { return m_layer; }
+
+    // ---- Setters ----
+    void setTransform(const Transform& transform) { m_transform = transform; }
+    void addComponent(std::shared_ptr<Component> component) { m_components.push_back(component); }
+
+
+    // ---- Input Events ----
+    virtual void onKeyEvent(Input::Key key, Input::Action action);
+    virtual void onMouseButton(Input::MouseButton button, Input::Action action);
 
 protected:
     GameObject() : GameObject(Transform()) {}; // GameObject can only be inherited
@@ -50,10 +51,9 @@ protected:
     }
 
     // Enables child classes to update render state before drawing.
-    virtual void preDraw(const Camera& camera, const Light& light) {}; // no-op
+    virtual void preDraw(const CameraComponent& camera, const Light& light) {}; // no-op
 
     std::vector<Renderable> m_renderables;
-
     BoundingVolume m_boundingVolume;
 
 private:

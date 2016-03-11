@@ -156,7 +156,7 @@ void FBXMeshGameObject::update(float deltaTime)
 
 }
 
-void FBXMeshGameObject::preDraw(const Camera& camera, const Light& light)
+void FBXMeshGameObject::preDraw(const CameraComponent& camera, const Light& light)
 {
     for( auto& renderable : m_renderables )
     {

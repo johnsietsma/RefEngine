@@ -1,12 +1,7 @@
 #pragma once
 
 #include "engine/GameObject.h"
-#include "graphics/Mesh.h"
-#include "graphics/Program.h"
-#include "graphics/Texture.h"
 
-#include <glm/mat4x4.hpp>
-#include <iostream>
 #include <string>
 
 class Camera;
@@ -21,7 +16,7 @@ public:
 
 	bool create() override;
     void update(float deltaTime) override;
-	void preDraw(const Camera& camera, const Light& light) override;
+	void preDraw(const CameraComponent& camera, const Light& light) override;
 
 private:
 	int m_cellCountX;

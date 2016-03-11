@@ -1,13 +1,14 @@
 #include "GameObject.h"
 
-#include "Camera.h"
 #include "Light.h"
+
+#include "components/CameraComponent.h"
 
 #include <algorithm>
 #include <iostream>
 
 
-void GameObject::draw(const Camera& camera, const Light& light, Program overrideProgram)
+void GameObject::draw(const CameraComponent& camera, const Light& light, const Program& overrideProgram)
 {
     glm::vec4 frustum[6];
     camera.getFrustumPlanes(frustum);
@@ -78,3 +79,18 @@ void GameObject::destroy()
     m_renderables.clear();
 }
 
+void GameObject::onKeyEvent(Input::Key key, Input::Action action)
+{
+    for (auto& component : getComponents())
+    {
+        component->onKeyEvent(key, action);
+    }
+}
+
+void GameObject::onMouseButton(Input::MouseButton button, Input::Action action)
+{
+    for (auto& component : getComponents())
+    {
+        component->onMouseButton(button, action);
+    }
+}

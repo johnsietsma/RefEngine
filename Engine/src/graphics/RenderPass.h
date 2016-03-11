@@ -12,7 +12,7 @@
 #include <bitset>
 #include <memory>
 
-class Camera;
+class CameraComponent;
 
 
 struct RenderPassConfig
@@ -29,14 +29,14 @@ class RenderPass
 {
 public:
     // The backbuffer
-    RenderPass(std::weak_ptr<Camera> pCamera, glm::vec3 clearColor, glm::ivec2 size) :
+    RenderPass(std::weak_ptr<CameraComponent> pCamera, glm::vec3 clearColor, glm::ivec2 size) :
         m_clearColor(clearColor),
         m_fboSize(size),
         m_pCamera(pCamera)
     {}
     
 
-    RenderPass( std::weak_ptr<Camera> pCamera, const RenderPassConfig& config ) :
+    RenderPass( std::weak_ptr<CameraComponent> pCamera, const RenderPassConfig& config ) :
         m_fboId(0),
         m_clearColor(config.clearColor),
         m_fboSize(config.fboSize),
@@ -52,7 +52,7 @@ public:
     bool create();
     void destroy();
 
-    std::weak_ptr<Camera> getCamera() const { return m_pCamera; }
+    std::weak_ptr<CameraComponent> getCameraComponent() const { return m_pCamera; }
     GLuint getId() const { return m_fboId; }
     const Texture& getTexture() const { return m_fboTexture; }
     const GLuint getDepthBufferId() const { return m_fboDepth;  }
@@ -69,7 +69,7 @@ private:
     GLuint m_fboDepth = -1;
     bool m_createColorBuffer;
     bool m_createDepthBuffer;
-    std::weak_ptr<Camera> m_pCamera;
+    std::weak_ptr<CameraComponent> m_pCamera;
     Program m_fboProgram; // Everything in this RenderPass will be rendered with the Program if it is set.
     std::bitset<8> m_layers = 0xFF;
 };

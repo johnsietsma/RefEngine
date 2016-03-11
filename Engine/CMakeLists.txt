@@ -1,15 +1,8 @@
-set(PROJECT_NAME Engine)
+set(PROJECT_NAME RefEngine)
 project(${PROJECT_NAME})
 
-# --- Platform setup ---
-IF(APPLE)
-ELSE(APPLE)
-    set( MSVC_ARCH x86 )
-    if( CMAKE_CL_64 )
-        set( MSVC_ARCH x64 )
-    endif()
-ENDIF()
 
+# --- Project setup ---
 include_directories(src/)
 
 file(GLOB_RECURSE SOURCES "src/*.c*")
@@ -34,16 +27,6 @@ target_link_libraries(${PROJECT_NAME} optimized ${FBX_LIBRARY})
 target_link_libraries(${PROJECT_NAME} debug ${FBX_LIBRARY_DEBUG})
 
 
-# --- GFLW ---
-option(GLFW_BUILD_EXAMPLES "Build the GLFW example programs" OFF)
-option(GLFW_BUILD_TESTS "Build the GLFW test programs" OFF)
-option(GLFW_BUILD_DOCS "Build the GLFW documentation" ON)
-option(GLFW_INSTALL "Generate installation target" OFF)
-option(GLFW_DOCUMENT_INTERNALS "Include internals in documentation" OFF)
-add_subdirectory(${CMAKE_SOURCE_DIR}/dep/glfw ${CMAKE_BINARY_DIR}/dep/glfw)
-set_property(TARGET glfw APPEND_STRING PROPERTY COMPILE_FLAGS " -w")
-
-target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
 
 target_include_directories (${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
