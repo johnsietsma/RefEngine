@@ -1,6 +1,6 @@
 #include "Engine.h"
 
-#include "components/CameraComponent.h"
+#include "gameObjects/FlyCameraGameObject.h"
 
 #include "engine/Camera.h"
 #include "engine/GameObject.h"
@@ -51,7 +51,10 @@ Engine::Engine(std::shared_ptr<Window> pWindow, std::shared_ptr<InputManager> pI
     // create a default camera
     Transform camTransform(vec3(2, 6, 13), vec3(0));
     glm::ivec2 size = m_pWindow->getFramebufferSize();
-    m_pMainCamera = std::make_shared<CameraComponent>(camTransform, glm::radians(45.f), size.x/(float)size.y, 0.1f, 1000.f);
+    
+    m_pMainCamera = std::make_shared<FlyCameraGameObject>( camTransform, pInputManager,
+        glm::radians(45.f), size.x/(float)size.y, 0.1f, 1000.f);
+    m_pGameObjectManager->addGameObject( m_pMainCamera );
     m_cameras.push_back( m_pMainCamera );
 
     // Setup a default render pass that uses the main camera and renders to the backbuffer
@@ -143,7 +146,7 @@ void Engine::draw()
     for (RenderPass& renderPass : m_renderPasses)
     {
         // Get the camera to render from
-        auto pCameraWeakPtr = renderPass.getCameraComponent();
+        auto pCameraWeakPtr = renderPass.getCamera();
         auto pCamera = pCameraWeakPtr.lock();
         if (pCamera == nullptr)
         {

@@ -63,7 +63,7 @@ bool addSoulSpear(std::shared_ptr<Engine> pEngine)
     };
 
     auto fbxGameObject = std::make_shared<FBXMeshGameObject>(Transform(), "./data/models/soulspear/soulspear.fbx", nullptr);
-    fbxGameObject->addComponent(std::make_shared<RenderModeComponent>(fbxGameObject, renderPrograms));
+    fbxGameObject->addComponent<RenderModeComponent>(renderPrograms);
     pEngine->getGameObjectManager().lock()->addGameObject(fbxGameObject);
 
     return true;

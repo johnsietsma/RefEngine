@@ -6,9 +6,9 @@
 using glm::vec3;
 using glm::vec4;
 
-Camera::Camera(float fovY, float aspectRatio, float near, float far)
+Camera::Camera( CameraConfig config )
 {
-    setPerspective(fovY, aspectRatio, near, far);
+    setPerspective(config.fovY, config.aspectRatio, config.near, config.far);
 }
 
 Camera::~Camera()

@@ -4,7 +4,7 @@
 
 #include <string>
 
-class Camera;
+class CameraGameObject;
 
 /*
 	A class that generates a simple quad with a shader that runs through frames of a sprite sheet.
@@ -16,7 +16,7 @@ public:
 
 	bool create() override;
     void update(float deltaTime) override;
-	void preDraw(const CameraComponent& camera, const Light& light) override;
+	void preDraw(const CameraGameObject& camera, const Light& light) override;
 
 private:
 	int m_cellCountX;

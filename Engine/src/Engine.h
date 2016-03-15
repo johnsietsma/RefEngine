@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 
-class CameraComponent;
+class CameraGameObject;
 class GameObjectManager;
 class InputManager;
 class Light;
@@ -32,19 +32,19 @@ public:
     bool update(float deltaTime);
     void draw();
 
-    const std::weak_ptr<CameraComponent> getMainCamera() const { return m_pMainCamera;  }
+    const std::weak_ptr<CameraGameObject> getMainCamera() const { return m_pMainCamera;  }
     const std::weak_ptr<Window> getWindow() const { return m_pWindow; }
 
     std::weak_ptr<GameObjectManager> getGameObjectManager() { return m_pGameObjectManager; }
 
-    void addCamera( std::shared_ptr<CameraComponent> pCamera ) { m_cameras.push_back( pCamera); }
+    void addCamera( std::shared_ptr<CameraGameObject> pCamera ) { m_cameras.push_back( pCamera ); }
     void addRenderPass(const RenderPass& renderPass);
 
 
 private:
-    std::shared_ptr<CameraComponent> m_pMainCamera;
+    std::shared_ptr<CameraGameObject> m_pMainCamera;
 
-    sp_vector<CameraComponent> m_cameras;
+    sp_vector<CameraGameObject> m_cameras; // Cache for camera GOs
     std::vector<RenderPass> m_renderPasses;
 
     std::shared_ptr<Window> m_pWindow;

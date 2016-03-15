@@ -9,16 +9,16 @@
 
 #include <memory>
 
-class CameraComponent;
+class CameraGameObject;
 class Light;
 struct Renderable;
 
-class GameObject
+class GameObject : public std::enable_shared_from_this<GameObject>
 {
 public:
     virtual bool create() = 0;
     virtual void update(float deltaTime) {}; //no-op
-    void draw(const CameraComponent& camera, const Light& light, const Program& overrideProgram);
+    void draw(const CameraGameObject& camera, const Light& light, const Program& overrideProgram);
     virtual void destroy();
 
     // ---- Getters ----
@@ -34,7 +34,13 @@ public:
 
     // ---- Setters ----
     void setTransform(const Transform& transform) { m_transform = transform; }
-    void addComponent(std::shared_ptr<Component> component) { m_components.push_back(component); }
+    
+    template<typename T, typename... TArgs>
+    std::shared_ptr<T> addComponent(TArgs... args) {
+        auto ptr = std::make_shared<T>(shared_from_this(), args...);
+        m_components.push_back( ptr );
+        return ptr;
+    }
 
 
     // ---- Input Events ----
@@ -51,7 +57,7 @@ protected:
     }
 
     // Enables child classes to update render state before drawing.
-    virtual void preDraw(const CameraComponent& camera, const Light& light) {}; // no-op
+    virtual void preDraw(const CameraGameObject& camera, const Light& light) {}; // no-op
 
     std::vector<Renderable> m_renderables;
     BoundingVolume m_boundingVolume;

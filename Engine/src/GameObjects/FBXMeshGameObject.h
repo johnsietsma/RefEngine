@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-class Camera;
+class CameraGameObject;
 class Transform;
 /*
     A class that loads and renders a FBX model.
@@ -22,7 +22,7 @@ public:
     void destroy() override;
 
     void update(float deltaTime) override;
-    void preDraw(const CameraComponent& camera, const Light& light) override;
+    void preDraw(const CameraGameObject& camera, const Light& light) override;
 
 
 private:

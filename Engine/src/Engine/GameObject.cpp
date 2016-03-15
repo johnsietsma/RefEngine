@@ -2,13 +2,13 @@
 
 #include "Light.h"
 
-#include "components/CameraComponent.h"
+#include "gameObjects/CameraGameObject.h"
 
 #include <algorithm>
 #include <iostream>
 
 
-void GameObject::draw(const CameraComponent& camera, const Light& light, const Program& overrideProgram)
+void GameObject::draw(const CameraGameObject& camera, const Light& light, const Program& overrideProgram)
 {
     glm::vec4 frustum[6];
     camera.getFrustumPlanes(frustum);

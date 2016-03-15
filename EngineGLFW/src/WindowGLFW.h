@@ -12,7 +12,7 @@ public:
 
     GLFWwindow* getWindow() const { return m_pWindow; }
 
-    bool isValid() const { return m_pWindow!=nullptr; }
+    bool isValid() const override { return m_pWindow!=nullptr; }
 
     float getTime() const override;
     void swapBuffers() const override;

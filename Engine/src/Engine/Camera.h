@@ -8,10 +8,25 @@
 
 #include <memory>
 
+struct CameraConfig
+{
+    CameraConfig( float a_fovY, float a_aspectRatio, float a_near, float a_far ) :
+        fovY( a_fovY ),
+        aspectRatio( a_aspectRatio ),
+        near( a_near ),
+        far( a_far )
+    {}
+    
+    float fovY;
+    float aspectRatio;
+    float near;
+    float far;
+};
+
 class Camera {
 public:
 
-    Camera(float fovY, float aspectRatio, float near, float far);
+    Camera( CameraConfig config );
     virtual ~Camera();
 
     void                setPerspective(float fovY, float aspectRatio, float near, float far);

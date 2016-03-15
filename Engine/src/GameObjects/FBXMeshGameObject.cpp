@@ -4,6 +4,9 @@
 #include "engine/Material.h"
 #include "engine/ResourceCreator.h"
 #include "data/Primitive.h"
+
+#include "gameObjects/CameraGameObject.h"
+
 #include "graphics/Sampler.h"
 #include "graphics/Texture.h"
 
@@ -156,7 +159,7 @@ void FBXMeshGameObject::update(float deltaTime)
 
 }
 
-void FBXMeshGameObject::preDraw(const CameraComponent& camera, const Light& light)
+void FBXMeshGameObject::preDraw(const CameraGameObject& camera, const Light& light)
 {
     for( auto& renderable : m_renderables )
     {

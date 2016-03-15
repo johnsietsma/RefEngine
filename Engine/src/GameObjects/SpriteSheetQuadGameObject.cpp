@@ -3,7 +3,10 @@
 #include "engine/Camera.h"
 #include "engine/GeometryCreator.h"
 #include "engine/ResourceCreator.h"
+
 #include "data/Vertex.h"
+
+#include "gameObjects/CameraGameObject.h"
 
 #include "gl_core_4_4.h"
 
@@ -60,7 +63,7 @@ void SpriteSheetQuadGameObject::update(float deltaTime)
 }
 
 
-void SpriteSheetQuadGameObject::preDraw( const CameraComponent& camera, const Light& light )
+void SpriteSheetQuadGameObject::preDraw( const CameraGameObject& camera, const Light& light )
 {
     Program program = m_renderables[0].program;
 

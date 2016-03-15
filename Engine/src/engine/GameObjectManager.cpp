@@ -1,6 +1,6 @@
 #include "GameObjectManager.h"
 
-#include "GameObject.h"
+#include "gameObjects/CameraGameObject.h"
 
 bool GameObjectManager::create()
 {
@@ -20,7 +20,7 @@ void GameObjectManager::update( float deltaTime )
     }
 }
 
-void GameObjectManager::draw(const CameraComponent& camera, const Light& light, const Program& overrideProgram, const std::bitset<8>& layers)
+void GameObjectManager::draw(const CameraGameObject& camera, const Light& light, const Program& overrideProgram, const std::bitset<8>& layers)
 {
     for (auto& gameObject : m_gameObjects)
     {
