@@ -40,10 +40,16 @@ WindowGLFW::WindowGLFW(const char* title, int width, int height) :
 
 WindowGLFW::~WindowGLFW()
 {
-    glfwDestroyWindow(m_pWindow);
+    if( m_pWindow!=nullptr ) glfwDestroyWindow(m_pWindow);
     glfwTerminate();
     m_pWindow = nullptr;
 }
+
+bool WindowGLFW::shouldClose() const 
+{ 
+    return glfwWindowShouldClose(m_pWindow); 
+}
+
 
 float WindowGLFW::getTime() const
 {

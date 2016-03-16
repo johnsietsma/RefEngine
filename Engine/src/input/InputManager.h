@@ -24,7 +24,9 @@ public:
     // To recieve input event callbacks
     void regsiterEventHandler(std::shared_ptr<InputEventHandler> pInputHandler) { m_eventHanders.push_back(pInputHandler); }
 
-    bool isKeyDown( Input::Key key ) const { return m_currentKeys[(int)key]; }
+    bool isKeyDown( Input::Key key ) const {
+        return m_currentKeys[(int)key];
+    }
     bool isMouseButtonDown( Input::MouseButton buton ) const { return m_currentMouseButtons[(int)buton]; }
     glm::vec2 getMousePosition() const { return m_mousePos; }
 

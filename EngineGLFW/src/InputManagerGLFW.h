@@ -13,6 +13,4 @@ public:
     InputManagerGLFW( GLFWwindow* pWindow );
 
     void pollEvents() const;
-
-private:
 };

@@ -156,14 +156,6 @@ bool setup(std::shared_ptr<Engine> pEngine)
 }
 
 int main() {
-    /* TODO
-        // close the application if the window closes
-    if (glfwWindowShouldClose(m_pWindow->getWindow()) ||
-        glfwGetKey(m_pWindow->getWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        return false;
-
-    */
-
     std::shared_ptr<WindowGLFW> pWindow = std::make_shared<WindowGLFW>("TestBed", 1024, 768);
     std::shared_ptr<InputManager> pInputManager = std::make_shared<InputManagerGLFW>(pWindow->getWindow());
 

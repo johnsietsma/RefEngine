@@ -35,6 +35,10 @@ Engine::Engine(std::shared_ptr<Window> pWindow, std::shared_ptr<InputManager> pI
 
     pInputManager->regsiterEventHandler(m_pGameObjectManager);
 
+    if (ogl_LoadFunctions() == ogl_LOAD_FAILED) {
+        return;
+    }
+
     auto major = ogl_GetMajorVersion();
     auto minor = ogl_GetMinorVersion();
     std::cout << "GL: " << major << "." << minor << std::endl;
@@ -103,8 +107,12 @@ void Engine::run() {
 
     double prevTime = m_pWindow->getTime();
     double currTime = 0;
-
-    while ((currTime = m_pWindow->getTime()) && update((float)(currTime - prevTime))) {
+    
+    while ( !m_pWindow->shouldClose() && !m_pInputManager->isKeyDown( Input::Key::Escape ) ) {
+        currTime = m_pWindow->getTime();
+        float deltaTime = (float)(currTime - prevTime);
+        
+        update( deltaTime );
 
         m_pInputManager->pollEvents();
         draw();
@@ -114,15 +122,12 @@ void Engine::run() {
     }
 }
 
-bool Engine::update(float deltaTime) {
+void Engine::update(float deltaTime) {
     //TODO: Temp, make light's into components
     glm::quat rot = glm::angleAxis(1 * deltaTime, Transform::WORLD_UP);
     m_pLight->getTransform().rotate(rot);
 
     m_pGameObjectManager->update(deltaTime);
-
-    // return true, else the application closes
-    return true;
 }
 
 void Engine::draw()

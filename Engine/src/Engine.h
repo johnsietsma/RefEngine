@@ -29,7 +29,7 @@ public:
     bool startup();
     void shutdown();
 
-    bool update(float deltaTime);
+    void update(float deltaTime);
     void draw();
 
     const std::weak_ptr<CameraGameObject> getMainCamera() const { return m_pMainCamera;  }

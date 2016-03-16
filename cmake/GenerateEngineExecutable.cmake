@@ -23,7 +23,7 @@ function (GenerateEngineExecutable PROJECT_NAME)
     source_group(Assets ${ASSETS_DIR})
     source_group(Shaders FILES ${SHADER_FILES})
 
-    # Add the engine ilbrary as a dependency
+    # Add the engine library as a dependency
     target_link_libraries (${PROJECT_NAME} RefEngineGLFW)
 
     # --- Asset copying ---

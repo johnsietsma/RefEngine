@@ -44,4 +44,5 @@ file(GLOB SHADER_FILES ${SHADERS_DIR}/*.*)
 # -----
 add_subdirectory(Engine)
 add_subdirectory(EngineGLFW)
+add_subdirectory(EngineQT)
 add_subdirectory(TestBed)
