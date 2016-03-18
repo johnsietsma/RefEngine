@@ -12,7 +12,6 @@ public:
     virtual bool isValid() const = 0;
     virtual bool shouldClose() const = 0;
 
-    virtual float getTime() const = 0;
     virtual void swapBuffers() const = 0;
    
     // The frame buffer size in pixels.

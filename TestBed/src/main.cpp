@@ -7,16 +7,19 @@
 #include "Engine.h"
 #include "GameObjects.h"
 
-#include "WindowGLFW.h"
+#include "ApplicationGLFW.h"
 #include "InputManagerGLFW.h"
+#include "WindowGLFW.h"
 
 #include "components/RenderModeComponent.h"
 
 #include "engine/Camera.h"
+#include "engine/Light.h"
 #include "engine/GameObjectManager.h"
 #include "engine/ResourceCreator.h"
 
 #include "graphics/RenderPass.h"
+
 
 #include <glm/vec3.hpp>
 #include <memory>
@@ -69,8 +72,25 @@ bool addSoulSpear(std::shared_ptr<Engine> pEngine)
     return true;
 }
 
-bool setup(std::shared_ptr<Engine> pEngine)
+bool setup(std::shared_ptr<Application> pApplication)
 {
+    auto pEngine = pApplication->getEngine();
+    auto pGameObjectManager = pEngine->getGameObjectManager().lock();
+    auto pInputManager = pApplication->getInputManager();
+
+    // create a default camera
+    Transform camTransform(vec3(2, 6, 13), vec3(0));
+
+    glm::ivec2 size = pApplication->getWindow()->getFramebufferSize();
+    auto& mainCamera = std::make_shared<FlyCameraGameObject>(camTransform, pInputManager,
+        glm::radians(45.f), size.x / (float)size.y, 0.1f, 1000.f);
+    pGameObjectManager->addGameObject(mainCamera);
+    pEngine->addCamera(mainCamera);
+
+    // Add a single, hard-coded light
+    Transform lightTransform(glm::vec3(1, 1, 0), glm::vec3(0));
+    auto light = std::make_shared<Light>(lightTransform);
+    pEngine->setLight(light);
 
     // Setup a RenderPass
     RenderPassConfig passConfig{
@@ -87,7 +107,6 @@ bool setup(std::shared_ptr<Engine> pEngine)
 
     pEngine->addRenderPass(fboRenderPass);
 
-    auto pGameObjectManager = pEngine->getGameObjectManager().lock();
 
     // Apply the FBO to a textured quad
     Transform fboQuadTrans(glm::vec3(0, 0, 0));
@@ -152,24 +171,27 @@ bool setup(std::shared_ptr<Engine> pEngine)
     Transform groundTrans(bunnyTransform);
     groundTrans.translate(glm::vec3(0, 0, 0)); // Move the plane centrally under the bunny
     pGameObjectManager->addGameObject(std::make_shared<TexturedQuadGameObject>(groundTrans, shadowRenderPass.getDepthBufferId(), "shadowMapSampler", "shadow", "shadow"));
+
+    // Setup a default render pass that uses the main camera and renders to the backbuffer
+    RenderPass renderPass(mainCamera, glm::vec3(0.25f, 0.25f, 0.25f), size);
+    pEngine->addRenderPass(renderPass);
+
     return true;
 }
 
-int main() {
-    std::shared_ptr<WindowGLFW> pWindow = std::make_shared<WindowGLFW>("TestBed", 1024, 768);
-    std::shared_ptr<InputManager> pInputManager = std::make_shared<InputManagerGLFW>(pWindow->getWindow());
+int main() 
+{
+    auto pApplication = std::make_shared<ApplicationGLFW>("TestBed", 1024, 768);
 
-    auto pEng = std::make_shared<Engine>(pWindow, pInputManager);
-
-    if( !setup( pEng ) ) 
+    if( !setup( pApplication ) ) 
         return 2;
 
-    if (!pEng->startup()) 
+    if (!pApplication->startup()) 
         return 1;
      
-    pEng->run();
+    pApplication->run();
 
-    pEng->shutdown();
+    pApplication->shutdown();
 
     return 0;
 }

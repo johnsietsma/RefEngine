@@ -1,10 +1,11 @@
 #pragma once
 
-#include "GameObjects/FBXMeshGameObject.h"
-#include "GameObjects/ParticleEmitterGameObject.h"
-#include "GameObjects/ProceduralGenerationGameObject.h"
-#include "GameObjects/SpriteSheetQuadGameObject.h"
-#include "GameObjects/TexturedQuadGameObject.h"
-#include "GameObjects/TexturedQuadGameObject.h"
-#include "GameObjects/VertexColoredGridGameObject.h"
+#include "gameobjects/FlyCameraGameObject.h"
+#include "gameobjects/FBXMeshGameObject.h"
+#include "gameobjects/ParticleEmitterGameObject.h"
+#include "gameobjects/ProceduralGenerationGameObject.h"
+#include "gameobjects/SpriteSheetQuadGameObject.h"
+#include "gameobjects/TexturedQuadGameObject.h"
+#include "gameobjects/TexturedQuadGameObject.h"
+#include "gameobjects/VertexColoredGridGameObject.h"
 

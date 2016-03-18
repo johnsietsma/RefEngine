@@ -14,7 +14,6 @@ public:
     FlyComponent(std::shared_ptr<GameObject> pGameObject, std::shared_ptr<InputManager> pInputManager ) :
         Component(pGameObject),
         m_speedMultiplier(1),
-        m_moveDir(0),
         m_pInputManager(pInputManager)
     {
     }
@@ -23,6 +22,5 @@ public:
     
 private:
     float m_speedMultiplier;
-    glm::vec3 m_moveDir;
     std::shared_ptr<InputManager> m_pInputManager;
 };

@@ -25,16 +25,10 @@
 using glm::vec3;
 using glm::vec4;
 
-Engine::Engine(std::shared_ptr<Window> pWindow, std::shared_ptr<InputManager> pInputManager) :
-    m_pWindow(pWindow),
-    m_pInputManager(pInputManager),
+Engine::Engine() :
     m_pGameObjectManager(std::make_shared<GameObjectManager>()),
     m_shouldDrawGrid(true)
 {
-    if( !m_pWindow->isValid() ) return;
-
-    pInputManager->regsiterEventHandler(m_pGameObjectManager);
-
     if (ogl_LoadFunctions() == ogl_LOAD_FAILED) {
         return;
     }
@@ -52,21 +46,7 @@ Engine::Engine(std::shared_ptr<Window> pWindow, std::shared_ptr<InputManager> pI
     TurnOnOpenGLDebugLogging();
 #endif
 
-    // create a default camera
-    Transform camTransform(vec3(2, 6, 13), vec3(0));
-    glm::ivec2 size = m_pWindow->getFramebufferSize();
-    
-    m_pMainCamera = std::make_shared<FlyCameraGameObject>( camTransform, pInputManager,
-        glm::radians(45.f), size.x/(float)size.y, 0.1f, 1000.f);
-    m_pGameObjectManager->addGameObject( m_pMainCamera );
-    m_cameras.push_back( m_pMainCamera );
 
-    // Setup a default render pass that uses the main camera and renders to the backbuffer
-    m_renderPasses.emplace_back(m_pMainCamera, glm::vec3(0.25f, 0.25f, 0.25f), size);
-
-    // Add a single, hard-coded light
-    Transform lightTransform( glm::vec3(1,1,0), glm::vec3(0) );
-    m_pLight = std::make_shared<Light>( lightTransform );
 }
 
 
@@ -75,11 +55,8 @@ Engine::~Engine()
 }
 
 
-
 bool Engine::startup()
 {
-    if( !m_pWindow->isValid() ) return false;
-
     // start the gizmo system that can draw basic shapes
     Gizmos::create();
 
@@ -101,25 +78,6 @@ void Engine::shutdown()
     // delete our camera and cleanup gizmos
     Gizmos::destroy();
 
-}
-
-void Engine::run() {
-
-    double prevTime = m_pWindow->getTime();
-    double currTime = 0;
-    
-    while ( !m_pWindow->shouldClose() && !m_pInputManager->isKeyDown( Input::Key::Escape ) ) {
-        currTime = m_pWindow->getTime();
-        float deltaTime = (float)(currTime - prevTime);
-        
-        update( deltaTime );
-
-        m_pInputManager->pollEvents();
-        draw();
-        m_pWindow->swapBuffers();
-
-        prevTime = currTime;
-    }
 }
 
 void Engine::update(float deltaTime) {
@@ -173,13 +131,11 @@ void Engine::draw()
 
     if( m_shouldDrawGrid ) {
         // display the 3D gizmos
-        Gizmos::draw(m_pMainCamera->getProjectionViewTransform());
+        Gizmos::draw(getMainCamera()->getProjectionViewTransform());
     }
 }
 
 void Engine::addRenderPass(const RenderPass& renderPass)
 {
-    assert(m_renderPasses.size() > 0);
-    // Leave the default RenderPass at the end, insert at 1 before the end
-    m_renderPasses.insert(m_renderPasses.begin() + m_renderPasses.size() - 1, renderPass);
+    m_renderPasses.push_back(renderPass);
 }

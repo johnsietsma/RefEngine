@@ -178,11 +178,16 @@ void makeKeyCodeMap()
     keyCodeMap[GLFW_KEY_MENU] = Input::Key::Menu;
 }
 
-InputManagerGLFW::InputManagerGLFW( GLFWwindow* pWindow )
+InputManagerGLFW::InputManagerGLFW()
+{
+    makeKeyCodeMap();
+}
+
+
+void InputManagerGLFW::setWindowCallbacks(GLFWwindow* pWindow)
 {
     windowManagerMap[pWindow] = this;
-    makeKeyCodeMap();
-    glfwSetKeyCallback( pWindow, key_callback );
+    glfwSetKeyCallback(pWindow, key_callback);
     glfwSetMouseButtonCallback(pWindow, mouse_button_callback);
     glfwSetCursorPosCallback(pWindow, cursor_position_callback);
 }

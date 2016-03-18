@@ -15,12 +15,17 @@ void  FlyComponent::update(float deltaTime)
     Transform transform = pGameObject->getTransform();
 
     // translate
-    if( m_pInputManager->isKeyDown(Input::Key::W) ) m_moveDir =  transform.getForward();
-    if( m_pInputManager->isKeyDown(Input::Key::S) ) m_moveDir = -transform.getForward();
-    if( m_pInputManager->isKeyDown(Input::Key::D) ) m_moveDir =  transform.getRight();
-    if( m_pInputManager->isKeyDown(Input::Key::A) ) m_moveDir = -transform.getRight();
-    if( m_pInputManager->isKeyDown(Input::Key::Q) ) m_moveDir =  transform.getUp();
-    if( m_pInputManager->isKeyDown(Input::Key::E) ) m_moveDir = -transform.getUp();
+    glm::vec3 moveDir(0);
+    if( m_pInputManager->isKeyDown(Input::Key::W) ) moveDir = -transform.getForward();
+    if( m_pInputManager->isKeyDown(Input::Key::S) ) moveDir =  transform.getForward();
+    if( m_pInputManager->isKeyDown(Input::Key::D) ) moveDir =  transform.getRight();
+    if( m_pInputManager->isKeyDown(Input::Key::A) ) moveDir = -transform.getRight();
+    if( m_pInputManager->isKeyDown(Input::Key::Q) ) moveDir =  transform.getUp();
+    if( m_pInputManager->isKeyDown(Input::Key::E) ) moveDir = -transform.getUp();
+    if (moveDir != glm::vec3(0))
+    {
+        transform.translate(moveDir * m_speedMultiplier * deltaTime);
+    }
 
 
     // check for rotation

@@ -17,7 +17,7 @@ class GameObject : public std::enable_shared_from_this<GameObject>
 {
 public:
     virtual bool create() = 0;
-    virtual void update(float deltaTime) {}; //no-op
+    virtual void update(float deltaTime);
     void draw(const CameraGameObject& camera, const Light& light, const Program& overrideProgram);
     virtual void destroy();
 

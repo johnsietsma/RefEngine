@@ -3,7 +3,6 @@
 #include <glm/vec2.hpp>
 
 #include <QOpenGLWidget>
-#include <QTime>
 
 class WindowQT : public Window, public QOpenGLWidget
 {
@@ -13,7 +12,6 @@ public:
     WindowQT(QWidget *parent);
     ~WindowQT();
 
-    float getTime() const override;
     void swapBuffers() const override;
 
     // The frame buffer size in pixels.
@@ -45,7 +43,5 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
-private:
-    QTime m_timer;
     
 };

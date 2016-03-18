@@ -51,11 +51,6 @@ bool WindowGLFW::shouldClose() const
 }
 
 
-float WindowGLFW::getTime() const
-{
-    return (float)glfwGetTime();
-}
-
 void WindowGLFW::swapBuffers() const
 {
     glfwSwapBuffers( m_pWindow );

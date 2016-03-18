@@ -8,6 +8,15 @@
 #include <iostream>
 
 
+void GameObject::update(float deltaTime) 
+{
+    for (auto& comp : m_components)
+    {
+        comp->update(deltaTime);
+    }
+};
+
+
 void GameObject::draw(const CameraGameObject& camera, const Light& light, const Program& overrideProgram)
 {
     glm::vec4 frustum[6];

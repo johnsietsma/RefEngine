@@ -10,7 +10,9 @@ struct GLFWwindow;
 class InputManagerGLFW : public InputManager
 {
 public:
-    InputManagerGLFW( GLFWwindow* pWindow );
+    InputManagerGLFW();
+
+    void setWindowCallbacks( GLFWwindow* pWindow );
 
     void pollEvents() const;
 };

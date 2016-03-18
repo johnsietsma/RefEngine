@@ -5,8 +5,6 @@
 WindowQT::WindowQT(QWidget *parent) :
     QOpenGLWidget(parent)
 {
-    m_timer.start();
-
     // Specify the format and create platform-specific surface
     QSurfaceFormat format;
     format.setDepthBufferSize( 24 );
@@ -20,11 +18,6 @@ WindowQT::WindowQT(QWidget *parent) :
 
 WindowQT::~WindowQT()
 {
-}
-
-float WindowQT::getTime() const
-{
-    return m_timer.elapsed();
 }
 
 void WindowQT::swapBuffers() const

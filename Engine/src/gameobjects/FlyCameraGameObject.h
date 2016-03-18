@@ -13,7 +13,8 @@ class FlyCameraGameObject : public CameraGameObject
 public:
     FlyCameraGameObject(const Transform& trans, std::shared_ptr<InputManager> pInputManager,
             float fovY, float aspectRatio, float nearClip, float farClip) :
-        CameraGameObject(trans, fovY, aspectRatio, nearClip, farClip)
+        CameraGameObject(trans, fovY, aspectRatio, nearClip, farClip),
+        m_pInputManager( pInputManager )
     {
     }
     
