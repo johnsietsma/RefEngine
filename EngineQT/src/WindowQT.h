@@ -3,6 +3,7 @@
 #include <glm/vec2.hpp>
 
 #include <QOpenGLWidget>
+#include <QTime>
 
 class WindowQT : public Window, public QOpenGLWidget
 {
@@ -36,8 +37,15 @@ protected:
     void initializeGL() Q_DECL_OVERRIDE;
     void paintGL() Q_DECL_OVERRIDE;
     void resizeGL(int width, int height) Q_DECL_OVERRIDE;
+
+    void keyPressEvent(QKeyEvent *) Q_DECL_OVERRIDE;
+    void keyReleaseEvent(QKeyEvent *) Q_DECL_OVERRIDE;
+
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+
+private:
+    QTime m_timer;
     
 };

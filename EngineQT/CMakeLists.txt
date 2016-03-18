@@ -7,12 +7,6 @@ project(${PROJECT_NAME})
 # http://doc.qt.io/qt-5/cmake-manual.html 
 
 
-if( APPLE )
-    set (CMAKE_PREFIX_PATH "/Users/$ENV{USER}/Qt5.6.0/5.6/clang_64/")
-elseif()
-    set (CMAKE_PREFIX_PATH "C:\\Qt\\Qt5.6.0\\5.6\\msvc2015_64\\")
-endif()
-
 find_package(Qt5Widgets REQUIRED)
 
 # --- Project setup ---

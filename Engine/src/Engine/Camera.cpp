@@ -8,7 +8,7 @@ using glm::vec4;
 
 Camera::Camera( CameraConfig config )
 {
-    setPerspective(config.fovY, config.aspectRatio, config.near, config.far);
+    setPerspective(config.fovY, config.aspectRatio, config.nearClip, config.farClip);
 }
 
 Camera::~Camera()

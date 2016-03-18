@@ -1,11 +1,12 @@
 #include "WindowQT.h"
 
-#include "gl_core_4_4.h"
+#include <QKeyEvent>
 
 WindowQT::WindowQT(QWidget *parent) :
-    QOpenGLWidget(parent),
-    m_pWindow(nullptr)
+    QOpenGLWidget(parent)
 {
+    m_timer.start();
+
     // Specify the format and create platform-specific surface
     QSurfaceFormat format;
     format.setDepthBufferSize( 24 );
@@ -23,7 +24,7 @@ WindowQT::~WindowQT()
 
 float WindowQT::getTime() const
 {
-    return (float)glfwGetTime();
+    return m_timer.elapsed();
 }
 
 void WindowQT::swapBuffers() const
@@ -44,3 +45,16 @@ float WindowQT::getAspectRatio() const
 {
     return 0;
 }
+
+void WindowQT::keyPressEvent(QKeyEvent * pEvent)
+{
+    Qt::Key key = (Qt::Key)pEvent->key();
+}
+
+void WindowQT::keyReleaseEvent(QKeyEvent *pEvent)
+{
+}
+
+void WindowQT::mousePressEvent(QMouseEvent *event){}
+void WindowQT::mouseMoveEvent(QMouseEvent *event){}
+void WindowQT::mouseReleaseEvent(QMouseEvent *event){}

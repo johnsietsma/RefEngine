@@ -10,17 +10,17 @@
 
 struct CameraConfig
 {
-    CameraConfig( float a_fovY, float a_aspectRatio, float a_near, float a_far ) :
+    CameraConfig( float a_fovY, float a_aspectRatio, float a_nearClip, float a_farClip ) :
         fovY( a_fovY ),
         aspectRatio( a_aspectRatio ),
-        near( a_near ),
-        far( a_far )
+        nearClip( a_nearClip ),
+        farClip( a_farClip )
     {}
     
     float fovY;
     float aspectRatio;
-    float near;
-    float far;
+    float nearClip;
+    float farClip;
 };
 
 class Camera {
@@ -29,7 +29,7 @@ public:
     Camera( CameraConfig config );
     virtual ~Camera();
 
-    void                setPerspective(float fovY, float aspectRatio, float near, float far);
+    void                setPerspective(float fovY, float aspectRatio, float nearClip, float farClip);
 
     const glm::mat4&    getProjectionTransform() const { return m_projection; }
     void                getFrustumPlanes( const glm::mat4& viewTransform, glm::vec4 (&pPlanes)[6] ) const;

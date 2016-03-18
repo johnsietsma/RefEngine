@@ -10,9 +10,9 @@ class Camera;
 class CameraGameObject : public GameObject
 {
 public:
-    CameraGameObject(const Transform& trans, float fovY, float aspectRatio, float near, float far) :
+    CameraGameObject(const Transform& trans, float fovY, float aspectRatio, float nearClip, float farClip) :
         GameObject(trans),
-        m_config( fovY, aspectRatio, near, far ),
+        m_config( fovY, aspectRatio, nearClip, farClip ),
         m_cameraComponent(nullptr)
     {
     }
