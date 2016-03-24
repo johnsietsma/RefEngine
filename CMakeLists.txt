@@ -44,5 +44,9 @@ file(GLOB SHADER_FILES ${SHADERS_DIR}/*.*)
 # -----
 add_subdirectory(Engine)
 add_subdirectory(EngineGLFW)
-add_subdirectory(EngineQT)
+
+find_package(Qt5Widgets REQUIRED)
+if( ${QT_FOUND} ) 
+    add_subdirectory(EngineQT)
+endif()
 add_subdirectory(TestBed)

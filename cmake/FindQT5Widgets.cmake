@@ -42,11 +42,13 @@ SET( QT_SEARCH_PATHS
     "/Users/$ENV{USER}/Qt5.6.0/5.6/${QT_LIB_DIR}"
 )
 
-MESSAGE( "Finding QT " ${QT_SEARCH_PATHS}  )
-
-
-find_package(Qt5Widgets REQUIRED 
+find_package(Qt5Widgets 
     PATHS ${QT_SEARCH_PATHS}
 )
 
 
+IF( ${Qt5Widgets_FOUND} )
+    SET(QT_FOUND "YES")
+ELSE()
+    SET(QT_FOUND "NO")
+ENDIF()

@@ -6,9 +6,6 @@ project(${PROJECT_NAME})
 # http://stackoverflow.com/questions/25989448/implementing-qt-project-through-cmake
 # http://doc.qt.io/qt-5/cmake-manual.html 
 
-
-find_package(Qt5Widgets REQUIRED)
-
 # --- Project setup ---
 include_directories(src/)
 
