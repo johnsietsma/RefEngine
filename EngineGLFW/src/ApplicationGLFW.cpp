@@ -8,13 +8,16 @@
 #include <GLFW/glfw3.h>
 
 
-ApplicationGLFW::ApplicationGLFW(const char* title, int width, int height) :
-    Application(std::make_shared<WindowGLFW>("TestBed", 1024, 768), std::make_shared<InputManagerGLFW>())
+ApplicationGLFW::ApplicationGLFW(const char* title, int width, int height)
 {
-    auto pInputManagerGLFW = static_cast<InputManagerGLFW*>(m_pInputManager.get());
-    auto pWindowGLFW = static_cast<WindowGLFW*>(m_pWindow.get());
+    m_pEngine = std::make_shared<Engine>();
 
-    pInputManagerGLFW->regsiterEventHandler(m_pEngine->getGameObjectManager().lock());
+    std::shared_ptr<InputManagerGLFW> pInputManagerGLFW = std::make_shared<InputManagerGLFW>(m_pEngine->getGameObjectManager().lock());
+    m_pInputManager = pInputManagerGLFW;
+
+    std::shared_ptr<WindowGLFW> pWindowGLFW = std::make_shared<WindowGLFW>(title, width, height);
+    m_pWindow = pWindowGLFW;
+
     pInputManagerGLFW->setWindowCallbacks(pWindowGLFW->getWindow());
 }
 
@@ -23,21 +26,34 @@ float ApplicationGLFW::getTime() const
     return (float)glfwGetTime();
 }
 
+bool ApplicationGLFW::startup()
+{
+    return m_pEngine->startup();
+}
+
+void ApplicationGLFW::shutdown()
+{
+    return m_pEngine->shutdown();
+}
+
 
 void ApplicationGLFW::run() {
 
     double prevTime = getTime();
     double currTime = 0;
 
-    while (!m_pWindow->shouldClose() && !m_pInputManager->isKeyDown(Input::Key::Escape)) {
+    auto pWindowGLFW = static_cast<WindowGLFW*>(m_pWindow.get());
+    auto pInputManagerGLFW = static_cast<InputManagerGLFW*>(m_pInputManager.get());
+
+    while (!pWindowGLFW->shouldClose() && !m_pInputManager->isKeyDown(Input::Key::Escape)) {
         currTime = getTime();
         float deltaTime = (float)(currTime - prevTime);
 
         m_pEngine->update(deltaTime);
-
-        m_pInputManager->pollEvents();
         m_pEngine->draw();
-        m_pWindow->swapBuffers();
+
+        pInputManagerGLFW->pollEvents();
+        pWindowGLFW->swapBuffers();
 
         prevTime = currTime;
     }

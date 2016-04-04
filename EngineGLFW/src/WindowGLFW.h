@@ -13,9 +13,9 @@ public:
     GLFWwindow* getWindow() const { return m_pWindow; }
 
     bool isValid() const override { return m_pWindow!=nullptr; }
-    bool shouldClose() const override;
 
-    void swapBuffers() const override;
+    bool shouldClose() const;
+    void swapBuffers() const;
 
     // The frame buffer size in pixels.
     // Can be bigger then the screen on Retina displays.

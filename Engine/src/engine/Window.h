@@ -1,7 +1,6 @@
+#pragma once
 
 #include <glm/vec2.hpp>
-
-struct GLFWwindow;
 
 class Window
 {
@@ -10,12 +9,9 @@ public:
     virtual ~Window() = default;
 
     virtual bool isValid() const = 0;
-    virtual bool shouldClose() const = 0;
 
-    virtual void swapBuffers() const = 0;
-   
     // The frame buffer size in pixels.
-    // Can be bigger then the screen on Retina displays.
+    // Can be bigger then the window size on Retina displays.
     virtual glm::ivec2 getFramebufferSize() const = 0;
     
     // The window size in pixels

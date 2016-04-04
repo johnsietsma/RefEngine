@@ -1,6 +1,7 @@
 #include "WindowQT.h"
 
 #include <QKeyEvent>
+#include <QMainWindow>
 
 WindowQT::WindowQT(QWidget *parent) :
     QOpenGLWidget(parent)
@@ -17,10 +18,6 @@ WindowQT::WindowQT(QWidget *parent) :
 }
 
 WindowQT::~WindowQT()
-{
-}
-
-void WindowQT::swapBuffers() const
 {
 }
 

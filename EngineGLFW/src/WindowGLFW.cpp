@@ -47,7 +47,7 @@ WindowGLFW::~WindowGLFW()
 
 bool WindowGLFW::shouldClose() const 
 { 
-    return glfwWindowShouldClose(m_pWindow); 
+    return glfwWindowShouldClose(m_pWindow)!=FALSE; 
 }
 
 

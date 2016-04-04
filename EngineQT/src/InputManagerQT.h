@@ -5,5 +5,6 @@
 class InputManagerQT : public InputManager
 {
 public:
-    InputManagerQT( );
+    InputManagerQT(std::shared_ptr<InputEventHandler> pInputHandler);
+    ~InputManagerQT() = default;
 };

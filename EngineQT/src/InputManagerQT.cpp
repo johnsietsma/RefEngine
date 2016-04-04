@@ -110,7 +110,8 @@ void makeKeyCodeMap()
     keyCodeMap[Qt::Key_Menu] = Input::Key::Menu;
 }
 
-InputManagerQT::InputManagerQT( )
+InputManagerQT::InputManagerQT(std::shared_ptr<InputEventHandler> pInputHandler) :
+    InputManager(pInputHandler)
 {
     makeKeyCodeMap();
 }

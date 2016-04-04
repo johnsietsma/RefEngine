@@ -4,15 +4,18 @@
 
 #include <QOpenGLWidget>
 
+class QWidget;
+
 class WindowQT : public Window, public QOpenGLWidget
 {
     Q_OBJECT
 
 public:
-    WindowQT(QWidget *parent);
+    WindowQT(QWidget* pQMainWindow);
     ~WindowQT();
 
-    void swapBuffers() const override;
+    // ---- Window overrides ----
+    bool isValid() const { return true; }
 
     // The frame buffer size in pixels.
     // Can be bigger then the screen on Retina displays.
@@ -43,5 +46,6 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
-    
+private:
+    //QMainWindow* pMainWindow;
 };

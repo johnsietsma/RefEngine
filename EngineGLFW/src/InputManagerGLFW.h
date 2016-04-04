@@ -10,7 +10,7 @@ struct GLFWwindow;
 class InputManagerGLFW : public InputManager
 {
 public:
-    InputManagerGLFW();
+    InputManagerGLFW(std::shared_ptr<InputEventHandler> pInputHandler);
 
     void setWindowCallbacks( GLFWwindow* pWindow );
 

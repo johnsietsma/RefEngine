@@ -178,7 +178,8 @@ void makeKeyCodeMap()
     keyCodeMap[GLFW_KEY_MENU] = Input::Key::Menu;
 }
 
-InputManagerGLFW::InputManagerGLFW()
+InputManagerGLFW::InputManagerGLFW(std::shared_ptr<InputEventHandler> pInputHandler) :
+    InputManager(pInputHandler)
 {
     makeKeyCodeMap();
 }

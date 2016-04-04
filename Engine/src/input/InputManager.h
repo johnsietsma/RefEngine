@@ -12,17 +12,14 @@ class InputEventHandler;
 class InputManager
 {
 public:
-    InputManager() :
+    InputManager(std::shared_ptr<InputEventHandler> pInputHandler) :
         m_currentKeys{ false },
         m_currentMouseButtons{ false }
-    {}
+    {
+        regsiterEventHandler(pInputHandler);
+    }
 
     virtual ~InputManager() = default;
-
-    virtual void pollEvents() const = 0;
-
-    // To recieve input event callbacks
-    void regsiterEventHandler(std::shared_ptr<InputEventHandler> pInputHandler) { m_eventHanders.push_back(pInputHandler); }
 
     bool isKeyDown( Input::Key key ) const {
         return m_currentKeys[(int)key];
@@ -35,6 +32,9 @@ public:
     void onMouseMove(float xPos, float yPos);
 
 private:
+    // To recieve input event callbacks
+    void regsiterEventHandler(std::shared_ptr<InputEventHandler> pInputHandler) { m_eventHanders.push_back(pInputHandler); }
+
     std::vector< std::shared_ptr<InputEventHandler> > m_eventHanders;
     glm::vec2 m_mousePos;
     bool m_currentKeys[(int)Input::Key::Count];

@@ -25,6 +25,10 @@ function (GenerateEngineExecutable PROJECT_NAME)
 
     # Add the engine library as a dependency
     target_link_libraries (${PROJECT_NAME} RefEngineGLFW)
+    
+    if(${QT_FOUND})
+        target_link_libraries (${PROJECT_NAME} RefEngineQT)
+    endif(${QT_FOUND})
 
     # --- Asset copying ---
     IF(APPLE)

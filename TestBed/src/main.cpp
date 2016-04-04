@@ -11,6 +11,11 @@
 #include "InputManagerGLFW.h"
 #include "WindowGLFW.h"
 
+
+#include "ApplicationQT.h"
+#include "InputManagerQT.h"
+#include "WindowQT.h"
+
 #include "components/RenderModeComponent.h"
 
 #include "engine/Camera.h"
@@ -72,16 +77,14 @@ bool addSoulSpear(std::shared_ptr<Engine> pEngine)
     return true;
 }
 
-bool setup(std::shared_ptr<Application> pApplication)
+bool setup(std::shared_ptr<Engine> pEngine, std::shared_ptr<InputManager> pInputManager, std::shared_ptr<Window> pWindow)
 {
-    auto pEngine = pApplication->getEngine();
     auto pGameObjectManager = pEngine->getGameObjectManager().lock();
-    auto pInputManager = pApplication->getInputManager();
 
     // create a default camera
     Transform camTransform(vec3(2, 6, 13), vec3(0));
 
-    glm::ivec2 size = pApplication->getWindow()->getFramebufferSize();
+    glm::ivec2 size = pWindow->getFramebufferSize();
     auto& mainCamera = std::make_shared<FlyCameraGameObject>(camTransform, pInputManager,
         glm::radians(45.f), size.x / (float)size.y, 0.1f, 1000.f);
     pGameObjectManager->addGameObject(mainCamera);
@@ -179,11 +182,11 @@ bool setup(std::shared_ptr<Application> pApplication)
     return true;
 }
 
-int main() 
+int main(int argc, char** argv) 
 {
-    auto pApplication = std::make_shared<ApplicationGLFW>("TestBed", 1024, 768);
+    std::shared_ptr<ApplicationGLFW> pApplication = std::make_shared<ApplicationGLFW>("TestBed", 1024, 768);
 
-    if( !setup( pApplication ) ) 
+    if (!setup(pApplication->getEngine(), pApplication->getInputManager(), pApplication->getWindow()))
         return 2;
 
     if (!pApplication->startup()) 

@@ -1,22 +1,18 @@
-#include <Application.h>
 
-#include <glm/vec2.hpp>
-
+#include <QApplication>
 #include <QTime>
 
-class Window;
-class InputManager;
-
-class ApplicationQT : public Application
+class ApplicationQT
 {
 public:
-    ApplicationQT(std::shared_ptr<Window> pWindow, std::shared_ptr<InputManager> pInputManager);
+    ApplicationQT(int& argc, char** argv);
 
-    float getTime() const override;
+    float getTime() const;
 
-    void run() override;
+    void run();
 
 private:
+    QApplication m_pApplication;
     QTime m_timer;
 
 };
