@@ -1,0 +1,2 @@
+#cmakedefine USE_VLD @USE_VLD@
+

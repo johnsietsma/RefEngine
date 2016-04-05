@@ -11,11 +11,6 @@
 #include "InputManagerGLFW.h"
 #include "WindowGLFW.h"
 
-
-#include "ApplicationQT.h"
-#include "InputManagerQT.h"
-#include "WindowQT.h"
-
 #include "components/RenderModeComponent.h"
 
 #include "engine/Camera.h"

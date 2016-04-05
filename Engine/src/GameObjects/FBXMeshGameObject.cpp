@@ -62,7 +62,7 @@ bool FBXMeshGameObject::create()
         std::vector<BufferAccessor> fbxVertexBufferAccessors = VertexAttributes::create<Vertices_FBX>();
         
         std::vector<Primitive> fbxVertexPrimitives;
-        for( int i=0; i< fbxVertexBuffers.size(); i++ )
+        for( size_t i=0; i< fbxVertexBuffers.size(); i++ )
         {
             fbxVertexPrimitives.emplace_back( fbxVertexBuffers[i], fbxVertexBufferAccessors[i] );
         }
