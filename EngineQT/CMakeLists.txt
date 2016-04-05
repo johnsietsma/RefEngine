@@ -17,10 +17,9 @@ file(GLOB_RECURSE UIS "src/*.ui")
 qt5_wrap_cpp(Window_hdr_moc ${SOURCES})
 qt5_wrap_ui (Window_ui_moc  ${UIS})
 
-
-add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
-source_group(Headers FILES ${HEADERS})
-source_group(Source FILES ${SOURCES})
+add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${Window_hdr_moc} ${Window_ui_moc})
+source_group(Headers FILES ${HEADERS} ${Window_ui_moc})
+source_group(Source FILES ${SOURCES} ${Window_hdr_moc})
 
 target_include_directories (${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries (${PROJECT_NAME} RefEngine)
@@ -31,13 +30,3 @@ get_target_property(QtWidgets_location Qt5::Widgets LOCATION_Debug)
 
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets)
 
-# Hmm, can't figure out how to do per-config commands, copying all the dlls.
-add_custom_command(
-    TARGET ${PROJECT_NAME}
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Core,LOCATION> $<TARGET_FILE_DIR:RefEngineQT>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Widgets,LOCATION> $<TARGET_FILE_DIR:RefEngineQT>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Core,LOCATION_Debug> $<TARGET_FILE_DIR:RefEngineQT>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Gui,LOCATION_Debug> $<TARGET_FILE_DIR:RefEngineQT>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Widgets,LOCATION_Debug> $<TARGET_FILE_DIR:RefEngineQT>
-    COMMENT "Copying Qt dlls" 
-)

@@ -7,12 +7,6 @@
 #include "Engine.h"
 #include "GameObjects.h"
 
-#include "ApplicationGLFW.h"
-#include "InputManagerGLFW.h"
-#include "WindowGLFW.h"
-
-
-#include "ApplicationQT.h"
 #include "InputManagerQT.h"
 #include "WindowQT.h"
 
@@ -85,7 +79,7 @@ bool setup(std::shared_ptr<Engine> pEngine, std::shared_ptr<InputManager> pInput
     Transform camTransform(vec3(2, 6, 13), vec3(0));
 
     glm::ivec2 size = pWindow->getFramebufferSize();
-    auto mainCamera = std::make_shared<FlyCameraGameObject>(camTransform, pInputManager,
+    auto& mainCamera = std::make_shared<FlyCameraGameObject>(camTransform, pInputManager,
         glm::radians(45.f), size.x / (float)size.y, 0.1f, 1000.f);
     pGameObjectManager->addGameObject(mainCamera);
     pEngine->addCamera(mainCamera);
@@ -184,18 +178,10 @@ bool setup(std::shared_ptr<Engine> pEngine, std::shared_ptr<InputManager> pInput
 
 int main(int argc, char** argv) 
 {
-    std::shared_ptr<ApplicationGLFW> pApplication = std::make_shared<ApplicationGLFW>("TestBed", 1024, 768);
+    //QApplication a(argc, argv);
+    //MainWindow w;
+    //w.show();
 
-    if (!setup(pApplication->getEngine(), pApplication->getInputManager(), pApplication->getWindow()))
-        return 2;
-
-    if (!pApplication->startup()) 
-        return 1;
-     
-    pApplication->run();
-
-    pApplication->shutdown();
-
-    return 0;
+    return 0; // a.exec();
 }
 

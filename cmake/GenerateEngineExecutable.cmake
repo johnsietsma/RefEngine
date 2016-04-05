@@ -14,21 +14,42 @@ function (GenerateEngineExecutable PROJECT_NAME)
 
     file(GLOB_RECURSE SOURCES "src/*.cpp")
     file(GLOB_RECURSE HEADERS "src/*.h")
+    
+    if(${USE_QT})
+		# AUTO_MOC/AUTO_UIC fails in subdirs! Do it manually
+		file(GLOB_RECURSE UIS "src/*.ui")
+		qt5_wrap_cpp(Window_hdr_moc ${HEADERS})
+		qt5_wrap_ui(Window_ui_moc  ${UIS})
+		include_directories("${PROJECT_BINARY_DIR}")
+    endif(${USE_QT})
 
-    add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${SHADER_FILES})
+    add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${SHADER_FILES} ${Window_hdr_moc} ${Window_ui_moc})
 
     # Group the files in Visual Studio
-    source_group(Headers FILES ${HEADERS})
+    source_group(Headers FILES ${HEADERS} ${Window_hdr_moc} ${Window_ui_moc})
     source_group(Source FILES ${SOURCES})
     source_group(Assets ${ASSETS_DIR})
     source_group(Shaders FILES ${SHADER_FILES})
 
     # Add the engine library as a dependency
-    target_link_libraries (${PROJECT_NAME} RefEngineGLFW)
+    if(${USE_GLFW})
+		target_link_libraries (${PROJECT_NAME} RefEngineGLFW)
+    endif()
     
-    if(${QT_FOUND})
+    if(${USE_QT})
         target_link_libraries (${PROJECT_NAME} RefEngineQT)
-    endif(${QT_FOUND})
+
+		# Hmm, can't figure out how to do per-config commands, copying all the dlls.
+		add_custom_command(
+			TARGET ${PROJECT_NAME}
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Core,LOCATION> $<TARGET_FILE_DIR:RefEngineQT>
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Widgets,LOCATION> $<TARGET_FILE_DIR:RefEngineQT>
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Core,LOCATION_Debug> $<TARGET_FILE_DIR:RefEngineQT>
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Gui,LOCATION_Debug> $<TARGET_FILE_DIR:RefEngineQT>
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Widgets,LOCATION_Debug> $<TARGET_FILE_DIR:RefEngineQT>
+			COMMENT "Copying Qt dlls" 
+		)
+    endif()
 
     # --- Asset copying ---
     IF(APPLE)

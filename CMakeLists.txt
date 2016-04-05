@@ -46,7 +46,10 @@ add_subdirectory(Engine)
 add_subdirectory(EngineGLFW)
 
 find_package(Qt5Widgets REQUIRED)
+
+add_subdirectory(TestBedGLFW)
+
 if( ${QT_FOUND} ) 
     add_subdirectory(EngineQT)
+    add_subdirectory(TestBedQT)
 endif()
-add_subdirectory(TestBed)
