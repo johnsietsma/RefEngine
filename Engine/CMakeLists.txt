@@ -12,6 +12,8 @@ add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 source_group(Headers FILES ${HEADERS})
 source_group(Source FILES ${SOURCES})
 
+# --- GLEW ---
+#target_link_libraries(${PROJECT_NAME} ${GLEW_LIBRARIES})
 
 # --- OpenGL ---
 find_package(OpenGL REQUIRED)

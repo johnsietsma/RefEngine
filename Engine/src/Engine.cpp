@@ -14,7 +14,7 @@
 #include "input/InputManager.h"
 
 #include "Gizmos.h"
-#include "gl_core_4_4.h"
+#include "graphics/RefOpenGL.h"
 
 #include <glm/glm.hpp>
 #include <glm/geometric.hpp>

@@ -75,7 +75,7 @@ bool ProceduralGenerationGameObject::create()
     glUseProgram(program.getId());
     program.setUniform("heightMapSampler", m_heightMapTextureUnit);
 
-    delete pPerlinData;
+    delete[] pPerlinData;
 
     m_diffuseTexture = ResourceCreator::createTexture("./data/textures/Bowling_grass_pxr128.png");
     assert(m_diffuseTexture.isValid());

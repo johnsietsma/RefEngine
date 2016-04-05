@@ -1,6 +1,6 @@
 #include "WindowGLFW.h"
 
-#include "gl_core_4_4.h"
+#include "graphics/RefOpenGL.h"
 
 #include <GLFW/glfw3.h>
 
@@ -31,6 +31,17 @@ WindowGLFW::WindowGLFW(const char* title, int width, int height) :
         m_pWindow = nullptr;
         return;
     }
+        
+    /*glutInit(&argc, argv);
+    glutCreateWindow("GLEW Test");
+    GLenum err = glewInit();
+    if (GLEW_OK != err)
+    {
+        // Problem: glewInit failed, something is seriously wrong.
+        fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+    }
+    fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
+    */    
 
     glfwSetWindowSizeCallback(m_pWindow, [](GLFWwindow*, int w, int h)
         {

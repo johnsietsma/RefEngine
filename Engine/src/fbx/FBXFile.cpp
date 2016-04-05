@@ -7,7 +7,7 @@
 #include "data/Vertex.h"
 #include "engine/Material.h"
 
-#include "gl_core_4_4.h"
+#include "graphics/RefOpenGL.h"
 
 #include <fbxsdk.h>
 

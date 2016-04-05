@@ -30,6 +30,16 @@ add_definitions(-DGLM_SWIZZLE)
 
 include_directories(dep/stb)
 
+#set(CMAKE_PREFIX_PATH "d:/libs/glew-1.10.0")
+#set(CMAKE_LIBRARY_PATH "d:/libs/glew-1.10.0/lib/Release/Win32/")
+#find_package(GLEW)
+#if (GLEW_FOUND)
+#    include_directories(${GLEW_INCLUDE_DIRS})
+#    link_libraries(${GLEW_LIBRARIES})
+#endif()
+
+find_package(Qt5Widgets)
+
 
 
 # --- Assets ---
@@ -45,7 +55,6 @@ file(GLOB SHADER_FILES ${SHADERS_DIR}/*.*)
 add_subdirectory(Engine)
 add_subdirectory(EngineGLFW)
 
-find_package(Qt5Widgets REQUIRED)
 
 add_subdirectory(TestBedGLFW)
 

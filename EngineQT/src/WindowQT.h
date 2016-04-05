@@ -4,6 +4,7 @@
 
 #include <glm/vec2.hpp>
 
+#undef QT_OPENGL_ES_3
 #include <QOpenGLWidget>
 
 class QWidget;
@@ -17,7 +18,7 @@ public:
     ~WindowQT();
 
     // ---- Window overrides ----
-    bool isValid() const { return true; }
+    bool isValid() const override { return true; }
 
     // The frame buffer size in pixels.
     // Can be bigger then the screen on Retina displays.

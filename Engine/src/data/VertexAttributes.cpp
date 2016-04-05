@@ -1,6 +1,6 @@
 #include "VertexAttributes.h"
 
-#include "gl_core_4_4.h"
+#include "graphics/RefOpenGL.h"
 
 template<>
 std::vector<BufferAccessor> VertexAttributes::create<Vertex_PositionColor>()

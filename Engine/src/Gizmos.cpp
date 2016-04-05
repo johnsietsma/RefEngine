@@ -1,5 +1,5 @@
 #include "Gizmos.h"
-#include "gl_core_4_4.h"
+#include "graphics/RefOpenGL.h"
 
 #ifndef GLM_SWIZZLE
 #define GLM_SWIZZLE

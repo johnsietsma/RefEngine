@@ -5,7 +5,7 @@
 #include "engine/ResourceCreator.h"
 #include "data/Vertex.h"
 
-#include "gl_core_4_4.h"
+#include "graphics/RefOpenGL.h"
 
 #include <assert.h>
 

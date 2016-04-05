@@ -76,7 +76,7 @@ bool ParticleEmitterGameObject::create()
     m_renderables.push_back(renderable);
 
     // We've given the indcies to OpenGL, it's safe to delete them now.
-    delete pIndexData;
+    delete[] pIndexData;
 
     return true;
 }
