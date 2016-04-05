@@ -85,7 +85,7 @@ bool setup(std::shared_ptr<Engine> pEngine, std::shared_ptr<InputManager> pInput
     Transform camTransform(vec3(2, 6, 13), vec3(0));
 
     glm::ivec2 size = pWindow->getFramebufferSize();
-    auto& mainCamera = std::make_shared<FlyCameraGameObject>(camTransform, pInputManager,
+    auto mainCamera = std::make_shared<FlyCameraGameObject>(camTransform, pInputManager,
         glm::radians(45.f), size.x / (float)size.y, 0.1f, 1000.f);
     pGameObjectManager->addGameObject(mainCamera);
     pEngine->addCamera(mainCamera);
