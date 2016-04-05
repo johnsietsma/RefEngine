@@ -29,24 +29,6 @@ Engine::Engine() :
     m_pGameObjectManager(std::make_shared<GameObjectManager>()),
     m_shouldDrawGrid(true)
 {
-    if (ogl_LoadFunctions() == ogl_LOAD_FAILED) {
-        return;
-    }
-
-    auto major = ogl_GetMajorVersion();
-    auto minor = ogl_GetMinorVersion();
-    std::cout << "GL: " << major << "." << minor << std::endl;
-
-    glClearColor(0.25f, 0.25f, 0.25f, 1);
-
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-
-#ifdef _DEBUG
-    TurnOnOpenGLDebugLogging();
-#endif
-
-
 }
 
 
@@ -57,6 +39,16 @@ Engine::~Engine()
 
 bool Engine::startup()
 {
+    glClearColor(0.25f, 0.25f, 0.25f, 1);
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+
+#ifdef _DEBUG
+    TurnOnOpenGLDebugLogging();
+#endif
+
+
     // start the gizmo system that can draw basic shapes
     Gizmos::create();
 

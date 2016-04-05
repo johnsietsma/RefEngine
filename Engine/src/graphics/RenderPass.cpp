@@ -13,7 +13,7 @@ bool RenderPass::create()
         glGenTextures(1, &fboTextureId);
         glBindTexture(GL_TEXTURE_2D, fboTextureId);
         //glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8, m_fboSize.x, m_fboSize.y);
-        glTexImage2D (GL_TEXTURE_2D_ARRAY, 0, GL_RGBA8, m_fboSize.x, m_fboSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB8, m_fboSize.x, m_fboSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 

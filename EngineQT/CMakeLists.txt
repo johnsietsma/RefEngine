@@ -14,7 +14,7 @@ file(GLOB_RECURSE HEADERS "src/*.h")
 file(GLOB_RECURSE UIS "src/*.ui")
 
 # AUTO_MOC/AUTO_UIC fails in subdirs! Do it manually
-qt5_wrap_cpp(Window_hdr_moc ${SOURCES})
+qt5_wrap_cpp(Window_hdr_moc ${HEADERS})
 qt5_wrap_ui (Window_ui_moc  ${UIS})
 
 add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${Window_hdr_moc} ${Window_ui_moc})
