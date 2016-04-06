@@ -23,7 +23,7 @@ std::string ReadFile(const char* fileName)
 }
 
 
-void APIENTRY openglCallbackFunction(GLenum source,
+void openglCallbackFunction(GLenum source,
     GLenum type,
     GLuint id,
     GLenum severity,
