@@ -20,13 +20,13 @@ void GameObjectManager::update( float deltaTime )
     }
 }
 
-void GameObjectManager::draw(const CameraGameObject& camera, const Light& light, const Program& overrideProgram, const std::bitset<8>& layers)
+void GameObjectManager::draw(const CameraGameObject& camera, const Light* pLight, const Program& overrideProgram, const std::bitset<8>& layers)
 {
     for (auto& gameObject : m_gameObjects)
     {
         const size_t layer = gameObject->getLayer();
         if (layer == 0 || layers[layer]) {
-            gameObject->draw(camera, light, overrideProgram);
+            gameObject->draw(camera, pLight, overrideProgram);
         }
     }
 }

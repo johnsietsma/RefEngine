@@ -18,7 +18,7 @@ class GameObject : public std::enable_shared_from_this<GameObject>
 public:
     virtual bool create() = 0;
     virtual void update(float deltaTime);
-    void draw(const CameraGameObject& camera, const Light& light, const Program& overrideProgram);
+    void draw(const CameraGameObject& camera, const Light* pLight, const Program& overrideProgram);
     virtual void destroy();
 
     // ---- Getters ----
@@ -57,7 +57,7 @@ protected:
     }
 
     // Enables child classes to update render state before drawing.
-    virtual void preDraw(const CameraGameObject& camera, const Light& light) {}; // no-op
+    virtual void preDraw(const CameraGameObject& camera, const Light* pLight) {}; // no-op
 
     std::vector<Renderable> m_renderables;
     BoundingVolume m_boundingVolume;

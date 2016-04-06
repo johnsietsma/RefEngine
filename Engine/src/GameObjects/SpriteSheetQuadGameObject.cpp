@@ -63,7 +63,7 @@ void SpriteSheetQuadGameObject::update(float deltaTime)
 }
 
 
-void SpriteSheetQuadGameObject::preDraw( const CameraGameObject& camera, const Light& light )
+void SpriteSheetQuadGameObject::preDraw( const CameraGameObject& camera, const Light* pLight )
 {
     Program program = m_renderables[0].program;
 

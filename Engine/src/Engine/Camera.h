@@ -26,6 +26,7 @@ struct CameraConfig
 class Camera {
 public:
 
+    Camera(float a_fovY, float a_aspectRatio, float a_nearClip, float a_farClip);
     Camera( CameraConfig config );
     virtual ~Camera();
 

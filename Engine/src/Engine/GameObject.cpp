@@ -17,7 +17,7 @@ void GameObject::update(float deltaTime)
 };
 
 
-void GameObject::draw(const CameraGameObject& camera, const Light& light, const Program& overrideProgram)
+void GameObject::draw(const CameraGameObject& camera, const Light* pLight, const Program& overrideProgram)
 {
     glm::vec4 frustum[6];
     camera.getFrustumPlanes(frustum);
@@ -28,17 +28,24 @@ void GameObject::draw(const CameraGameObject& camera, const Light& light, const 
         return;
     }
 
-    const float lightOrthoSize = 15;
-    glm::mat4 lightProjection = glm::ortho(-lightOrthoSize, lightOrthoSize, -lightOrthoSize, lightOrthoSize, -lightOrthoSize, lightOrthoSize);
-    glm::mat4 lightViewInverse = light.getTransform().getInverseMatrix();
-    glm::mat4 textureOffsetTransform(0.5f);
-    textureOffsetTransform[3] = glm::vec4(0.5f, 0.5f, 0.5f, 1.f);
-    glm::mat4 lightProjectionViewNDC = lightProjection * lightViewInverse;
-    glm::mat4 lightProjectionView = textureOffsetTransform * lightProjectionViewNDC;
+    glm::mat4 textureOffsetTransform(1);
+    glm::mat4 lightProjectionViewNDC(1);
+    glm::mat4 lightProjectionView(1);
+
+
+    if (pLight != nullptr) {
+        const float lightOrthoSize = 15;
+        glm::mat4 lightProjection = glm::ortho(-lightOrthoSize, lightOrthoSize, -lightOrthoSize, lightOrthoSize, -lightOrthoSize, lightOrthoSize);
+        glm::mat4 lightViewInverse = pLight->getTransform().getInverseMatrix();
+        glm::mat4 textureOffsetTransform(0.5f);
+        textureOffsetTransform[3] = glm::vec4(0.5f, 0.5f, 0.5f, 1.f);
+        glm::mat4 lightProjectionViewNDC = lightProjection * lightViewInverse;
+        glm::mat4 lightProjectionView = textureOffsetTransform * lightProjectionViewNDC;
+    }
 
     for (auto& renderable : m_renderables)
     {
-        preDraw(camera, light);
+        preDraw(camera, pLight);
 
         Program program = overrideProgram.isValid() ? overrideProgram : renderable.program;
 
@@ -52,13 +59,17 @@ void GameObject::draw(const CameraGameObject& camera, const Light& light, const 
         program.setUniform("viewTransform", camera.getViewTransform());
         program.setUniform("projectionTransform", camera.getProjectionTransform());
         program.setUniform("projectionViewTransform", camera.getProjectionViewTransform());
-        program.setUniform("textureOffsetTransform", textureOffsetTransform);
-        program.setUniform("lightDirection", light.getTransform().getForward() );
-        program.setUniform("lightColor", light.getColor());
-        program.setUniform("lightProjectionViewNDC", lightProjectionViewNDC);
-        program.setUniform("lightProjectionView", lightProjectionView);
+        program.setUniform("lightDirection", pLight->getTransform().getForward() );
+        program.setUniform("lightColor", pLight->getColor());
         program.setUniform("cameraPosition", camera.getTransform().getPosition() );
         program.setUniform("specularPower", 5);
+
+        if (pLight != nullptr) {
+            program.setUniform("textureOffsetTransform", textureOffsetTransform);
+            program.setUniform("lightProjectionViewNDC", lightProjectionViewNDC);
+            program.setUniform("lightProjectionView", lightProjectionView);
+        }
+
 
         glBindVertexArray(renderable.mesh.getVAO());
 

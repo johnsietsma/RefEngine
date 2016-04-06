@@ -22,7 +22,7 @@ public:
     void destroy() override;
 
     void update(float deltaTime) override;
-    void preDraw(const CameraGameObject& camera, const Light& light) override;
+    void preDraw(const CameraGameObject& camera, const Light* pLight) override;
 
 
 private:

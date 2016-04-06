@@ -12,9 +12,13 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    Q_PROPERTY(bool TestProp READ getTestBool)
+
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+    bool getTestBool() { return true; }
 
 private:
     Ui::MainWindow *ui;

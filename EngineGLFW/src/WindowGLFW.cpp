@@ -7,8 +7,7 @@
 #include <stdio.h>
 
 
-WindowGLFW::WindowGLFW(const char* title, int width, int height) :
-    m_pWindow(nullptr)
+WindowGLFW::WindowGLFW(const char* title, int width, int height)
 {
     if (glfwInit() == GL_FALSE)
         return;
@@ -27,26 +26,11 @@ WindowGLFW::WindowGLFW(const char* title, int width, int height) :
 
     glfwMakeContextCurrent(m_pWindow);
 
-    /*GLenum err = glewInit();
-    if (GLEW_OK != err)
-    {
-        // Problem: glewInit failed, something is seriously wrong.
-        fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-    }
-    fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));*/
-
-
-    if (ogl_LoadFunctions() == ogl_LOAD_FAILED) {
-        glfwDestroyWindow( m_pWindow );
-        glfwTerminate();
-        m_pWindow = nullptr;
-        return;
-    }
-
     glfwSetWindowSizeCallback(m_pWindow, [](GLFWwindow*, int w, int h)
         {
             glViewport(0, 0, w, h);
-        });
+        }
+    );
 }
 
 WindowGLFW::~WindowGLFW()

@@ -27,6 +27,7 @@ using glm::vec4;
 
 Engine::Engine() :
     m_pGameObjectManager(std::make_shared<GameObjectManager>()),
+    m_pLight(nullptr),
     m_shouldDrawGrid(true)
 {
 }
@@ -39,6 +40,10 @@ Engine::~Engine()
 
 bool Engine::startup()
 {
+    if (ogl_LoadFunctions() == ogl_LOAD_FAILED) {
+        return false;
+    }
+
     glClearColor(0.25f, 0.25f, 0.25f, 1);
 
     glEnable(GL_DEPTH_TEST);
@@ -73,15 +78,24 @@ void Engine::shutdown()
 }
 
 void Engine::update(float deltaTime) {
-    //TODO: Temp, make light's into components
-    glm::quat rot = glm::angleAxis(1 * deltaTime, Transform::WORLD_UP);
-    m_pLight->getTransform().rotate(rot);
+
+    if (m_pLight != nullptr) {
+        //TODO: Temp, make light's into components
+        glm::quat rot = glm::angleAxis(1 * deltaTime, Transform::WORLD_UP);
+        m_pLight->getTransform().rotate(rot);
+    }
 
     m_pGameObjectManager->update(deltaTime);
 }
 
 void Engine::draw()
 {
+    if (m_cameras.size() == 0) {
+        glClearColor(1,0,1,1);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        return;
+    }
+
     if( m_shouldDrawGrid ) {
         Gizmos::clear();
 
@@ -118,7 +132,7 @@ void Engine::draw()
         glClearColor(clearColor.r, clearColor.g, clearColor.b, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        m_pGameObjectManager->draw(*pCamera, *m_pLight, renderPass.getProgram(), renderPass.getLayers());
+        m_pGameObjectManager->draw(*pCamera, m_pLight.get(), renderPass.getProgram(), renderPass.getLayers());
     }
 
     if( m_shouldDrawGrid ) {

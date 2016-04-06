@@ -6,6 +6,10 @@
 using glm::vec3;
 using glm::vec4;
 
+Camera::Camera(float a_fovY, float a_aspectRatio, float a_nearClip, float a_farClip) :
+    Camera(CameraConfig{a_fovY, a_aspectRatio, a_nearClip, a_farClip})
+{}
+
 Camera::Camera( CameraConfig config )
 {
     setPerspective(config.fovY, config.aspectRatio, config.nearClip, config.farClip);

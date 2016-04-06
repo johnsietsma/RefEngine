@@ -42,11 +42,11 @@ function (GenerateEngineExecutable PROJECT_NAME)
 		# Hmm, can't figure out how to do per-config commands, copying all the dlls.
 		add_custom_command(
 			TARGET ${PROJECT_NAME}
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Core,LOCATION> $<TARGET_FILE_DIR:RefEngineQT>
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Widgets,LOCATION> $<TARGET_FILE_DIR:RefEngineQT>
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Core,LOCATION_Debug> $<TARGET_FILE_DIR:RefEngineQT>
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Gui,LOCATION_Debug> $<TARGET_FILE_DIR:RefEngineQT>
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Widgets,LOCATION_Debug> $<TARGET_FILE_DIR:RefEngineQT>
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Core,LOCATION> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Widgets,LOCATION> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Core,LOCATION_Debug> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Gui,LOCATION_Debug> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PROPERTY:Qt5::Widgets,LOCATION_Debug> $<TARGET_FILE_DIR:${PROJECT_NAME}>
 			COMMENT "Copying Qt dlls" 
 		)
     endif()

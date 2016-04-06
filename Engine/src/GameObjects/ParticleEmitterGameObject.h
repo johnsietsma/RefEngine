@@ -43,7 +43,7 @@ public:
     bool create() override;
     void destroy() override;
     void update(float deltaTime) override;
-    void preDraw(const CameraGameObject& camera, const Light& light) override;
+    void preDraw(const CameraGameObject& camera, const Light* pLight) override;
 
     ParticleEmitterGameObject(const ParticleEmitterGameObject& rhs) = delete;
     void operator =(const ParticleEmitterGameObject& rhs) = delete;

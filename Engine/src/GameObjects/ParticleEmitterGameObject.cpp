@@ -232,7 +232,7 @@ void ParticleEmitterGameObject::positionBillboardParticle(unsigned int vertexInd
         + glm::vec4(particle->position, 0); // Move the vert to the particles position
 }
 
-void ParticleEmitterGameObject::preDraw(const CameraGameObject& camera, const Light& light)
+void ParticleEmitterGameObject::preDraw(const CameraGameObject& camera, const Light* pLight)
 {
     assert(m_renderables.size() > 0);
 

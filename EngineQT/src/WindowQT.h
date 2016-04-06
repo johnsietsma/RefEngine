@@ -1,12 +1,15 @@
 #pragma once
 
+#include <graphics/gl_core_3_3.h>
 #include <engine/Window.h>
 
 #include <glm/vec2.hpp>
 
+#include <memory>
 #undef QT_OPENGL_ES_3
 #include <QOpenGLWidget>
 
+class Engine;
 class QWidget;
 
 class WindowQT : public QOpenGLWidget, public Window
@@ -38,9 +41,9 @@ signals:
     void clicked();
 
 protected:
-    //void initializeGL() Q_DECL_OVERRIDE {};
-    //void paintGL() Q_DECL_OVERRIDE {};
-    //void resizeGL(int width, int height) Q_DECL_OVERRIDE {};
+    void initializeGL() Q_DECL_OVERRIDE;
+    void paintGL() Q_DECL_OVERRIDE;
+    void resizeGL(int width, int height) Q_DECL_OVERRIDE;
 
     void keyPressEvent(QKeyEvent *) Q_DECL_OVERRIDE;
     void keyReleaseEvent(QKeyEvent *) Q_DECL_OVERRIDE;
@@ -51,4 +54,5 @@ protected:
 
 private:
     //QMainWindow* pMainWindow;
+    std::shared_ptr<Engine> m_pEngine;
 };
