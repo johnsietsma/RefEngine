@@ -1,26 +1,24 @@
 #include "WindowQT.h"
 
+#include "InputManagerQT.h"
+
 #include <Engine.h>
 #include <engine/GameObjectManager.h>
 #include <gameobjects/CameraGameObject.h>
+#include <test/Test.h>
 
 #include <QApplication>
 #include <QKeyEvent>
+#include <QOpenGLContext>
 #include <QMainWindow>
+#include <QScreen>
 
 WindowQT::WindowQT(QWidget *parent) :
     QOpenGLWidget(parent),
     m_pEngine(std::make_shared<Engine>())
 {  
-    // Specify the format and create platform-specific surface
-    QSurfaceFormat format;
-    format.setDepthBufferSize( 24 );
-    format.setMajorVersion( 3 );
-    format.setMinorVersion( 3 );
-    format.setSamples( 4 );
-    format.setProfile( QSurfaceFormat::CoreProfile );
-    setFormat( format );
-    QSurfaceFormat::setDefaultFormat(format);
+    m_pInputManager = std::make_shared<InputManagerQT>(m_pEngine->getGameObjectManager().lock());
+
 }
 
 WindowQT::~WindowQT()
@@ -30,17 +28,19 @@ WindowQT::~WindowQT()
 
 glm::ivec2 WindowQT::getFramebufferSize() const
 {
-    return glm::ivec2(0);
+    qreal devicePixelRatio = QApplication::primaryScreen()->devicePixelRatio();
+    glm::ivec2 size = getWindowSize();
+    return glm::ivec2(size.x*devicePixelRatio, size.y*devicePixelRatio);
 }
 
 glm::ivec2 WindowQT::getWindowSize() const
 {
-    return glm::ivec2(0);
+    return glm::ivec2(width(), height());
 }
 
 float WindowQT::getAspectRatio() const
 {
-    return 0;
+    return width()/static_cast<float>(height());
 }
 
 void WindowQT::initializeGL()
@@ -59,30 +59,34 @@ void WindowQT::initializeGL()
         }
     }
 
-    auto pGameObjectManager = m_pEngine->getGameObjectManager().lock();
+    if (ogl_LoadFunctions() == ogl_LOAD_FAILED) {
+        return;
+    }
 
-    glm::ivec2 size(500, 500);
-    Transform camTransform(glm::vec3(2, 6, 13), glm::vec3(0));
+    connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &WindowQT::cleanup);
 
-    auto mainCamera = std::make_shared<CameraGameObject>(camTransform, glm::radians(45.f), size.x / (float)size.y, 0.1f, 1000.f);
-    pGameObjectManager->addGameObject(mainCamera);
-    m_pEngine->addCamera(mainCamera);
+    //std::shared_ptr<Window> pWindow(this); // Not ref counted correctly
+    if(!setupTestScene(m_pEngine, m_pInputManager, this)) return;
 
-    RenderPass renderPass(mainCamera, glm::vec3(0.25f, 0.25f, 0.25f), size);
-    m_pEngine->addRenderPass(renderPass);
-
-
-    m_pEngine->startup();
+    if (!m_pEngine->startup()) return;
 }
 
 void WindowQT::paintGL()
 {
-    m_pEngine->update(0.03f);
-    m_pEngine->draw();
-};
+    makeCurrent();
 
-void WindowQT::resizeGL(int width, int height)
-{
+    unsigned int fboId = context()->defaultFramebufferObject();
+    unsigned int fboIdWidget = defaultFramebufferObject();
+
+//    GLint prev_fbo_id;
+    //glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prev_fbo_id);
+
+    m_pEngine->update(0.03f);
+    m_pEngine->draw(fboIdWidget);
+
+    //glBindFramebuffer(GL_FRAMEBUFFER, prev_fbo_id);
+
+    update(); // Schedule another draw
 };
 
 void WindowQT::keyPressEvent(QKeyEvent * pEvent)

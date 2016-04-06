@@ -12,8 +12,20 @@
 int main(int argc, char** argv) 
 {
     QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+
+    // Specify the format and create platform-specific surface
+    QSurfaceFormat format;
+    format.setDepthBufferSize(24);
+    format.setMajorVersion(3);
+    format.setMinorVersion(3);
+//    format.setSamples(4);
+    format.setProfile(QSurfaceFormat::CoreProfile);
+    QSurfaceFormat::setDefaultFormat(format);
+
+
+    MainWindow mainWindow;
+    mainWindow.resize(mainWindow.sizeHint());
+    mainWindow.show();
 
     return a.exec();
 }

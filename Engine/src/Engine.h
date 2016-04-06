@@ -18,7 +18,7 @@ using sp_vector = std::vector< std::shared_ptr<T> >;
 
 /*
 */
-class Engine : public std::enable_shared_from_this<Engine>
+class Engine
 {
 public:
     Engine();
@@ -28,7 +28,7 @@ public:
     void shutdown();
 
     void update(float deltaTime);
-    void draw();
+    void draw(GLuint backbufferId=0);
 
     const std::shared_ptr<CameraGameObject> getMainCamera() const { assert(m_cameras.size()>0); return m_cameras[0]; }
 

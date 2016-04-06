@@ -56,6 +56,8 @@ protected:
     {
     }
 
+    virtual ~GameObject() = default;
+
     // Enables child classes to update render state before drawing.
     virtual void preDraw(const CameraGameObject& camera, const Light* pLight) {}; // no-op
 

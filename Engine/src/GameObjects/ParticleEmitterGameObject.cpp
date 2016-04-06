@@ -84,12 +84,13 @@ bool ParticleEmitterGameObject::create()
 
 void ParticleEmitterGameObject::destroy()
 {
-    assert(isValid());
+    if (!isValid()) return;
 
     GameObject::destroy();
 
     delete[] m_pParticles;
     delete[] m_pVertices;
+    m_firstDeadIndex = -1;
 }
 
 void ParticleEmitterGameObject::emit()
@@ -145,6 +146,8 @@ void ParticleEmitterGameObject::update(float deltaTime)
         emit();
         m_emitTimer -= timePerParticle;
     }
+
+    if (static_cast<int>(m_firstDeadIndex) < 0) return;
 
     std::shared_ptr<CameraGameObject> pBillboardCamera = m_pBillboardCamera.lock();
     if (pBillboardCamera == nullptr) return;

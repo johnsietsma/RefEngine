@@ -29,7 +29,8 @@ class RenderPass
 {
 public:
     // The backbuffer
-    RenderPass(std::weak_ptr<CameraGameObject> pCamera, glm::vec3 clearColor, glm::ivec2 size) :
+    RenderPass(std::weak_ptr<CameraGameObject> pCamera, glm::vec3 clearColor, glm::ivec2 size, GLuint fboId=0) :
+        m_fboId(fboId),
         m_clearColor(clearColor),
         m_fboSize(size),
         m_pCamera(pCamera)

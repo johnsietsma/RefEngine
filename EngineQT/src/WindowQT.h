@@ -6,10 +6,12 @@
 #include <glm/vec2.hpp>
 
 #include <memory>
+
 #undef QT_OPENGL_ES_3
 #include <QOpenGLWidget>
 
 class Engine;
+class InputManager;
 class QWidget;
 
 class WindowQT : public QOpenGLWidget, public Window
@@ -32,10 +34,13 @@ public:
     float getAspectRatio() const override;
     
     // QT interface
-    //QSize minimumSizeHint() const Q_DECL_OVERRIDE;
-    //QSize sizeHint() const Q_DECL_OVERRIDE ;
+    //QSize minimumSizeHint() const Q_DECL_OVERRIDE { return QSize(512, 512); };
+    //QSize sizeHint() const Q_DECL_OVERRIDE { return QSize(512, 512); };
     //void rotateBy(int xAngle, int yAngle, int zAngle);
     //void setClearColor(const QColor &color);
+
+    void cleanup() {};
+
 
 signals:
     void clicked();
@@ -43,7 +48,6 @@ signals:
 protected:
     void initializeGL() Q_DECL_OVERRIDE;
     void paintGL() Q_DECL_OVERRIDE;
-    void resizeGL(int width, int height) Q_DECL_OVERRIDE;
 
     void keyPressEvent(QKeyEvent *) Q_DECL_OVERRIDE;
     void keyReleaseEvent(QKeyEvent *) Q_DECL_OVERRIDE;
@@ -55,4 +59,5 @@ protected:
 private:
     //QMainWindow* pMainWindow;
     std::shared_ptr<Engine> m_pEngine;
+    std::shared_ptr<InputManager> m_pInputManager;
 };

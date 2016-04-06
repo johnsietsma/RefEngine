@@ -30,6 +30,7 @@ Engine::Engine() :
     m_pLight(nullptr),
     m_shouldDrawGrid(true)
 {
+
 }
 
 
@@ -40,10 +41,6 @@ Engine::~Engine()
 
 bool Engine::startup()
 {
-    if (ogl_LoadFunctions() == ogl_LOAD_FAILED) {
-        return false;
-    }
-
     glClearColor(0.25f, 0.25f, 0.25f, 1);
 
     glEnable(GL_DEPTH_TEST);
@@ -88,7 +85,7 @@ void Engine::update(float deltaTime) {
     m_pGameObjectManager->update(deltaTime);
 }
 
-void Engine::draw()
+void Engine::draw(GLuint backbufferId)
 {
     if (m_cameras.size() == 0) {
         glClearColor(1,0,1,1);
@@ -124,7 +121,9 @@ void Engine::draw()
         }
 
         glm::ivec2 fboSize = renderPass.getSize();
-        glBindFramebuffer(GL_FRAMEBUFFER, renderPass.getId()); // fboId may be 0
+        GLuint fboId = renderPass.getId();
+        fboId = fboId == 0 ? backbufferId : fboId;
+        glBindFramebuffer(GL_FRAMEBUFFER, fboId);
         glViewport(0, 0, fboSize.x, fboSize.y);
 
         // clear the screen for this frame

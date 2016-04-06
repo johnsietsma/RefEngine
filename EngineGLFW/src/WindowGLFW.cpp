@@ -26,6 +26,11 @@ WindowGLFW::WindowGLFW(const char* title, int width, int height)
 
     glfwMakeContextCurrent(m_pWindow);
 
+
+    if (ogl_LoadFunctions() == ogl_LOAD_FAILED) {
+        return;
+    }
+
     glfwSetWindowSizeCallback(m_pWindow, [](GLFWwindow*, int w, int h)
         {
             glViewport(0, 0, w, h);

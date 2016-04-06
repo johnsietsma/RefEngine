@@ -28,7 +28,9 @@ void GameObject::draw(const CameraGameObject& camera, const Light* pLight, const
         return;
     }
 
-    glm::mat4 textureOffsetTransform(1);
+    glm::mat4 textureOffsetTransform(0.5f);
+    textureOffsetTransform[3] = glm::vec4(0.5f, 0.5f, 0.5f, 1.f);
+
     glm::mat4 lightProjectionViewNDC(1);
     glm::mat4 lightProjectionView(1);
 
@@ -37,10 +39,8 @@ void GameObject::draw(const CameraGameObject& camera, const Light* pLight, const
         const float lightOrthoSize = 15;
         glm::mat4 lightProjection = glm::ortho(-lightOrthoSize, lightOrthoSize, -lightOrthoSize, lightOrthoSize, -lightOrthoSize, lightOrthoSize);
         glm::mat4 lightViewInverse = pLight->getTransform().getInverseMatrix();
-        glm::mat4 textureOffsetTransform(0.5f);
-        textureOffsetTransform[3] = glm::vec4(0.5f, 0.5f, 0.5f, 1.f);
-        glm::mat4 lightProjectionViewNDC = lightProjection * lightViewInverse;
-        glm::mat4 lightProjectionView = textureOffsetTransform * lightProjectionViewNDC;
+        lightProjectionViewNDC = lightProjection * lightViewInverse;
+        lightProjectionView = textureOffsetTransform * lightProjectionViewNDC;
     }
 
     for (auto& renderable : m_renderables)
