@@ -4,10 +4,10 @@
 #include <vld.h>
 #endif
 
-#include "WindowQT.h"
 #include "mainwindow.h"
 
 #include <QApplication>
+#include <QSurfaceFormat>
 
 int main(int argc, char** argv) 
 {

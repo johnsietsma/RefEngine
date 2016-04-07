@@ -1,7 +1,8 @@
 #pragma once
 
-#include <graphics/gl_core_3_3.h>
+
 #include <engine/Window.h>
+#include <graphics/gl_core_3_3.h> // Include OpenGL defs before QTs
 
 #include <glm/vec2.hpp>
 
@@ -14,13 +15,13 @@ class Engine;
 class InputManager;
 class QWidget;
 
-class WindowQT : public QOpenGLWidget, public Window
+class QRefEngineWidget : public QOpenGLWidget, public Window
 {
     Q_OBJECT
 
 public:
-    WindowQT(QWidget* pQMainWindow);
-    ~WindowQT();
+    QRefEngineWidget(QWidget* pQMainWindow);
+    ~QRefEngineWidget();
 
     // ---- Window overrides ----
     bool isValid() const override { return true; }

@@ -51,12 +51,15 @@
      </widget>
     </item>
     <item>
-     <widget class="QRefEngineWidget" name="openGLWidget">
+     <widget class="WindowQT" name="openGLWidget">
       <property name="minimumSize">
        <size>
         <width>200</width>
         <height>200</height>
        </size>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::StrongFocus</enum>
       </property>
      </widget>
     </item>
@@ -68,7 +71,7 @@
      <x>0</x>
      <y>0</y>
      <width>680</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAsset_Renovator">
@@ -97,9 +100,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QRefEngineWidget</class>
+   <class>WindowQT</class>
    <extends>QOpenGLWidget</extends>
-   <header>QRefEngineWidget.h</header>
+   <header>WindowQT.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
