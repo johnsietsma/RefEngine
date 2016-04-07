@@ -43,6 +43,7 @@ public:
     void cleanup() {};
 
 
+
 signals:
     void clicked();
 
@@ -50,7 +51,6 @@ protected:
     void initializeGL() Q_DECL_OVERRIDE;
     void paintGL() Q_DECL_OVERRIDE;
 
-    void keyPressEvent(QKeyEvent *) Q_DECL_OVERRIDE;
     void keyReleaseEvent(QKeyEvent *) Q_DECL_OVERRIDE;
 
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
@@ -58,7 +58,5 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
 private:
-    //QMainWindow* pMainWindow;
     std::shared_ptr<Engine> m_pEngine;
-    std::shared_ptr<InputManager> m_pInputManager;
 };

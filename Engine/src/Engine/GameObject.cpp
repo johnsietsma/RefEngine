@@ -24,7 +24,7 @@ void GameObject::draw(const CameraGameObject& camera, const Light* pLight, const
 
     // TODO: Take scale into account
     if (!m_boundingVolume.isInsideFrustum(getTransform().getPosition(), frustum)) {
-        std::cout << "Not visible" << std::endl;
+        //std::cout << "Not visible" << std::endl;
         return;
     }
 

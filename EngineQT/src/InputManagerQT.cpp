@@ -6,6 +6,21 @@
 
 static std::unordered_map<int,Input::Key> keyCodeMap;
 
+Input::Key getKey(int keyCode)
+{
+    auto keyItr = keyCodeMap.find(keyCode);
+    if (keyItr == keyCodeMap.end()) return Input::Key::None;
+    return keyItr->second;
+}
+
+Input::MouseButton getMouseButton(Qt::MouseButton mouseButton)
+{
+    if (mouseButton == Qt::LeftButton) return Input::MouseButton::Left;
+    if (mouseButton == Qt::MiddleButton) return Input::MouseButton::Middle;
+    if (mouseButton == Qt::RightButton) return Input::MouseButton::Right;
+    return Input::MouseButton::None;
+}
+
 void makeKeyCodeMap()
 {
     keyCodeMap[Qt::Key_Backspace] = Input::Key::Backspace;
@@ -117,3 +132,64 @@ InputManagerQT::InputManagerQT(std::shared_ptr<InputEventHandler> pInputHandler)
 }
 
 
+bool InputManagerQT::handleKeyEvent(QEvent *event, Input::Action action )
+{
+    QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+    Input::Key key = getKey(keyEvent->key());
+    if (key != Input::Key::None) {
+        onKeyEvent(key, action);
+        event->accept();
+        return true;
+    }
+    return false;
+}
+
+bool InputManagerQT::handleMouseEvent(QEvent *event, Input::Action action)
+{
+    QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+    Input::MouseButton mouseButton = getMouseButton(mouseEvent->button());
+
+    if (mouseButton != Input::MouseButton::None) {
+        onMouseButton(mouseButton, action);
+        event->accept();
+        return true;
+    }
+
+    return false;
+}
+
+bool InputManagerQT::eventFilter(QObject *obj, QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::KeyPress:
+    {
+        if (handleKeyEvent(event, Input::Action::Press)) return true;
+        break;
+    }
+    case QEvent::KeyRelease:
+    {
+        if (handleKeyEvent(event, Input::Action::Release)) return true;
+        break;
+    }
+    case QEvent::MouseMove:
+    {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        onMouseMove(mouseEvent->x(), mouseEvent->y());
+        event->accept();
+        break;
+    }
+    case QEvent::MouseButtonPress:
+    {
+        if (handleMouseEvent(event, Input::Action::Press)) return true;
+        break;
+    }
+    case QEvent::MouseButtonRelease:
+    {
+        if (handleMouseEvent(event, Input::Action::Release)) return true;
+        break;
+    }
+    }
+
+    // standard event processing
+    return QObject::eventFilter(obj, event);
+}

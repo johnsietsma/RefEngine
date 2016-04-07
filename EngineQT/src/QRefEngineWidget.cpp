@@ -3,6 +3,7 @@
 #include "InputManagerQT.h"
 
 #include <Engine.h>
+
 #include <engine/GameObjectManager.h>
 #include <gameobjects/CameraGameObject.h>
 #include <test/Test.h>
@@ -14,6 +15,7 @@
 #include <QScreen>
 
 Q_DECLARE_METATYPE(std::shared_ptr<Engine>)
+Q_DECLARE_METATYPE(std::shared_ptr<InputManagerQT>)
 
 
 QRefEngineWidget::QRefEngineWidget(QWidget *parent) :
@@ -47,13 +49,18 @@ float QRefEngineWidget::getAspectRatio() const
 
 void QRefEngineWidget::initializeGL()
 {
+    std::shared_ptr<InputManagerQT> pInputManager = nullptr;
+
     // Try to find the shared engine from the main window
     foreach(QWidget *widget, QApplication::topLevelWidgets()) {
         if (widget->objectName() == "MainWindow")
         {
             QVariant refEngineVariant = widget->property("RefEngine");
-            if (refEngineVariant.isValid()) {
-                m_pEngine = refEngineVariant.value<std::shared_ptr<Engine>>();
+            if (refEngineVariant.isValid()) m_pEngine = refEngineVariant.value<std::shared_ptr<Engine>>();
+
+            QVariant inputManagerVariant = widget->property("InputManager");
+            if (inputManagerVariant.isValid()) {
+                pInputManager = inputManagerVariant.value<std::shared_ptr<InputManagerQT>>();
             }
         }
     }
@@ -63,7 +70,11 @@ void QRefEngineWidget::initializeGL()
         m_pEngine = std::make_shared<Engine>();
     }
 
-    m_pInputManager = std::make_shared<InputManagerQT>(m_pEngine->getGameObjectManager().lock());
+    if (pInputManager == nullptr) {
+        pInputManager = std::make_shared<InputManagerQT>(m_pEngine->getGameObjectManager().lock());
+    }
+
+
 
     if (ogl_LoadFunctions() == ogl_LOAD_FAILED) {
         return;
@@ -72,7 +83,7 @@ void QRefEngineWidget::initializeGL()
     connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &QRefEngineWidget::cleanup);
 
     //std::shared_ptr<Window> pWindow(this); // Not ref counted correctly
-    if(!setupTestScene(m_pEngine, m_pInputManager, this)) return;
+    if(!setupTestScene(m_pEngine, pInputManager, this)) return;
 
     if (!m_pEngine->startup()) return;
 }
@@ -95,12 +106,6 @@ void QRefEngineWidget::paintGL()
     update(); // Schedule another draw
 };
 
-void QRefEngineWidget::keyPressEvent(QKeyEvent * pEvent)
-{
-    Qt::Key key = (Qt::Key)pEvent->key();
-
-    QOpenGLWidget::keyPressEvent(pEvent);
-}
 
 void QRefEngineWidget::keyReleaseEvent(QKeyEvent *pEvent)
 {

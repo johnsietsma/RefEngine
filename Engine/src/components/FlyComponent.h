@@ -13,7 +13,7 @@ class FlyComponent : public Component
 public:
     FlyComponent(std::shared_ptr<GameObject> pGameObject, std::shared_ptr<InputManager> pInputManager ) :
         Component(pGameObject),
-        m_speedMultiplier(1),
+        m_speedMultiplier(3),
         m_pInputManager(pInputManager)
     {
     }
