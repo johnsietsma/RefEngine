@@ -1,6 +1,6 @@
 # AIEOpenGL
 
-A simple OpenGL game engine. 
+An OpenGL game engine with QT and GLFW bindings.
 
 It purpose is to demonstrate OpenGL concepts and code layout.
 
