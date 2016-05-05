@@ -7,7 +7,7 @@
 
 #include "ApplicationGLFW.h"
 
-#include "test\Test.h"
+#include "test/Test.h"
 
 
 
